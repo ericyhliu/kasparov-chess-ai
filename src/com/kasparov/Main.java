@@ -10,9 +10,11 @@ public class Main {
         boardStructure.initBitMasks();
         boardStructure.initHashKeys();
         boardStructure.updateListMaterials();
-
         boardStructure.parseFEN(BoardConstants.startingFEN);
         boardStructure.printBoard();
+        boardStructure.initFileAndRankBoard();
+        boardStructure.printFileBoard();
+        boardStructure.printRankBoard();
 
     }
 }

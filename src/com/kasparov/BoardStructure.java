@@ -145,9 +145,19 @@ public class BoardStructure {
     long sideKey;
 
     /**
-     * castleKeys.
+     * Castle keys.
      */
     long[] castleKeys = new long[16];
+
+    /**
+     * Files board.
+     */
+    int[] fileBoard = new int[BoardConstants.BOARD_SQR_NUM];
+
+    /**
+     * Ranks board.
+     */
+    int[] rankBoard = new int[BoardConstants.BOARD_SQR_NUM];
 
     /**
      * Initializes an empty BoardStructure.
@@ -558,4 +568,55 @@ public class BoardStructure {
             }
         }
     }
+
+    /**
+     * Initializes file and rank board.
+     */
+    public void initFileAndRankBoard() {
+        int file = BoardFile.FILE_A.value;
+        int rank = BoardRank.RANK_1.value;
+        int sqr = BoardSquare.A1.value;
+        int sqr64 = 0;
+
+        for (int i = 0; i < BoardConstants.BOARD_SQR_NUM; i++) {
+            this.fileBoard[i] = BoardSquare.OFFBOARD.value;
+            this.rankBoard[i] = BoardSquare.OFFBOARD.value;
+        }
+
+        for (int r = BoardRank.RANK_1.value; r <= BoardRank.RANK_8.value; r++) {
+            for (int f = BoardFile.FILE_A.value; f <= BoardFile.FILE_H.value; f++) {
+                sqr = BoardConstants.convertFileRankToSqr(f, r);
+                this.fileBoard[sqr] = f;
+                this.rankBoard[sqr] = r;
+            }
+        }
+    }
+
+    /**
+     * Prints the file board.
+     */
+    public void printFileBoard() {
+        System.out.println("\nFiles Board:\n");
+        for (int i = 0; i < BoardConstants.BOARD_SQR_NUM; i++) {
+            if (i % 10 == 0 && i != 0)
+                System.out.println();
+            System.out.printf("%4d", this.fileBoard[i]);
+        }
+        System.out.println();
+    }
+
+    /**
+     * Prints the rank board.
+     */
+    public void printRankBoard() {
+        System.out.println("\nRanks Board:\n");
+        for (int i = 0; i < BoardConstants.BOARD_SQR_NUM; i++) {
+            if (i % 10 == 0 && i != 0)
+                System.out.println();
+            System.out.printf("%4d", this.rankBoard[i]);
+        }
+        System.out.println();
+    }
+
+
 }
