@@ -1,6 +1,6 @@
 package com.kasparov;
 
-import com.kasparov.unsigned.UInt64;
+import java.util.Random;
 
 /**
  * Structure and properties of the chess board.
@@ -126,6 +126,21 @@ public class BoardStructure {
      * Clear mask.
      */
     long[] clearMask = new long[64];
+
+    /**
+     * Piece keys.
+     */
+    long[][] pieceKeys = new long[13][120];
+
+    /**
+     * Side key.
+     */
+    long sideKey;
+
+    /**
+     * castleKeys.
+     */
+    long[] castleKeys = new long[16];
 
 
     /**
@@ -262,6 +277,32 @@ public class BoardStructure {
      */
     public long setBit(long bitboard, int sqr) {
         return bitboard | setMask[sqr];
+    }
+
+    /**
+     * Initializes hash keys.
+     */
+    public void initHashKeys() {
+        Random random = new Random();
+
+        for (int i = 0; i < 13; i++) {
+            for (int j = 0; j < 120; j++) {
+                this.pieceKeys[i][j] = random.nextLong();
+            }
+        }
+
+        this.sideKey = random.nextLong();
+
+        for (int i = 0; i < 16; i++) {
+            castleKeys[i] = random.nextLong();
+        }
+    }
+
+    /**
+     * Resets the board structure.
+     */
+    public long resetBoard() {
+
     }
 
 }
