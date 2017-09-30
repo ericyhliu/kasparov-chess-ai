@@ -144,7 +144,6 @@ public class BoardStructure {
      */
     long[] castleKeys = new long[16];
 
-
     /**
      * Initializes an empty BoardStructure.
      */
@@ -461,7 +460,7 @@ public class BoardStructure {
                     this.castlePerm |= BoardCastleLink.BLACK_KING_CASTLE.value;
                     break;
                 case 'q':
-                    this.castlePerm |= BoardCastleLink.WHITE_QUEEN_CASTLE.value;
+                    this.castlePerm |= BoardCastleLink.BLACK_QUEEN_CASTLE.value;
                     break;
                 default:
                     break;
@@ -484,10 +483,43 @@ public class BoardStructure {
         }
 
         this.positionKey = PositionKey.generatePositionKey(this);
-
-        System.out.println(positionKey);
-
         return 0;
+    }
+
+    /**
+     * Prints the state of the board.
+     */
+    public void printBoard() {
+
+        int sqr;
+        int piece;
+
+        System.out.println("Board State:\n");
+
+        for (int r = BoardRank.RANK_8.value; r >= BoardRank.RANK_1.value; r--) {
+            System.out.print((r+1) + "  ");
+            for (int f = BoardFile.FILE_A.value; f <= BoardFile.FILE_H.value; f++) {
+                sqr = BoardConstants.convertFileRankToSqr(f, r);
+                piece = this.pieces[sqr];
+                System.out.print(BoardConstants.pieceChars.charAt(piece) + " ");
+            }
+            System.out.println();
+        }
+
+        System.out.print("\n   ");
+        for (int f = BoardFile.FILE_A.value; f <= BoardFile.FILE_H.value; f++)
+            System.out.print((char) (f + 'a') + " ");
+
+        System.out.println("\n");
+
+        System.out.println("        Side: " + BoardConstants.sideChars.charAt(this.side));
+        System.out.println("  En Passant: " + this.enPassant);
+        System.out.println("      Castle: " +
+                ((this.castlePerm & BoardCastleLink.WHITE_KING_CASTLE.value)  != 0 ? "K" : "-") +
+                ((this.castlePerm & BoardCastleLink.WHITE_QUEEN_CASTLE.value) != 0 ? "Q" : "-") +
+                ((this.castlePerm & BoardCastleLink.BLACK_KING_CASTLE.value)  != 0 ? "k" : "-") +
+                ((this.castlePerm & BoardCastleLink.BLACK_QUEEN_CASTLE.value) != 0 ? "q" : "-"));
+        System.out.println("Position Key: " + this.positionKey);
     }
 
 }

@@ -22,5 +22,4 @@ public enum BoardSquare {
     BoardSquare(int value) {
         this.value = value;
     }
-
 }

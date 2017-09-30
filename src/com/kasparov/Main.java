@@ -11,7 +11,17 @@ public class Main {
         boardStructure.initHashKeys();
 
         boardStructure.parseFEN(BoardConstants.startingFEN);
+        boardStructure.printBoard();
 
-        long bitboard = 0L;
+        boardStructure.parseFEN(BoardConstants.FEN2);
+        boardStructure.printBoard();
+
+        boardStructure.parseFEN(BoardConstants.FEN3);
+        boardStructure.printBoard();
+
+        boardStructure.parseFEN(BoardConstants.FEN4);
+        boardStructure.printBoard();
+
+
     }
 }
