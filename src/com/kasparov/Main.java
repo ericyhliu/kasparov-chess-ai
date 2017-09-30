@@ -9,19 +9,10 @@ public class Main {
         boardStructure.initSqr120AndSqr64();
         boardStructure.initBitMasks();
         boardStructure.initHashKeys();
+        boardStructure.updateListMaterials();
 
         boardStructure.parseFEN(BoardConstants.startingFEN);
         boardStructure.printBoard();
-
-        boardStructure.parseFEN(BoardConstants.FEN2);
-        boardStructure.printBoard();
-
-        boardStructure.parseFEN(BoardConstants.FEN3);
-        boardStructure.printBoard();
-
-        boardStructure.parseFEN(BoardConstants.FEN4);
-        boardStructure.printBoard();
-
 
     }
 }

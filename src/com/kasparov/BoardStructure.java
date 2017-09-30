@@ -66,19 +66,24 @@ public class BoardStructure {
      * Number of big pieces (any piece not a pawn), by color
      * (white, black, both).
      */
-    int[] pieceBig = new int[3];
+    int[] pieceBig = new int[2];
 
     /**
      * Number of major pieces (queens and rooks), by color
      * (white, black, both).
      */
-    int[] pieceMajor = new int[3];
+    int[] pieceMajor = new int[2];
 
     /**
      * Number of minor pieces (bishops and knights), by color
      * (white, black, both).
      */
-    int[] pieceMinor = new int[3];
+    int[] pieceMinor = new int[2];
+
+    /**
+     * Material.
+     */
+    int[] material = new int[2];
 
     /**
      * Castle permissions.
@@ -319,7 +324,7 @@ public class BoardStructure {
         for (i = 0; i < 64; i++)
             this.pieces[sqr120(i)] = BoardPiece.EMPTY.value;
 
-        for (i = 0; i < 3; i++) {
+        for (i = 0; i < 2; i++) {
             this.pieceBig[i] = 0;
             this.pieceMajor[i] = 0;
             this.pieceMinor[i] = 0;
@@ -522,4 +527,35 @@ public class BoardStructure {
         System.out.println("Position Key: " + this.positionKey);
     }
 
+    /**
+     * Updates list materials.
+     */
+    public void updateListMaterials() {
+        int piece = 0;
+        int sqr = 0;
+        int color = 0;
+        for (int i = 0; i < BoardConstants.BOARD_SQR_NUM; i++) {
+            sqr = i;
+            piece = this.pieces[i];
+            if (piece != BoardSquare.OFFBOARD.value && piece != BoardSquare.NONE.value &&
+                piece != BoardPiece.EMPTY.value) {
+                color = BoardConstants.pieceColor[piece];
+                if (BoardConstants.pieceBig[piece])
+                    this.pieceBig[color]++;
+                if (BoardConstants.pieceMajor[piece])
+                    this.pieceMajor[color]++;
+                if (BoardConstants.pieceMinor[piece])
+                    this.pieceMinor[color]++;
+
+                this.material[color] += BoardConstants.pieceValue[piece];
+                this.pieceList[piece][this.pieceNum[piece]] = sqr;
+                this.pieceNum[piece]++;
+
+                if (piece == BoardPiece.WHITE_KING.value)
+                    this.kingSqr[BoardColor.WHITE.value] = sqr;
+                if (piece == BoardPiece.BLACK_KING.value)
+                    this.kingSqr[BoardColor.BLACK.value] = sqr;
+            }
+        }
+    }
 }

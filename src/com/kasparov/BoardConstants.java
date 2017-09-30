@@ -46,6 +46,53 @@ public class BoardConstants {
     static final String fileChars = "abcdefgh";
 
     /**
+     * Array that maps piece to boolean for checking if it is a big piece.
+     */
+    static final boolean[] pieceBig = {
+        false, // Empty piece
+        false, true, true, true, true, true, // White pieces
+        false, true, true, true, true, true  // Black pieces
+    };
+
+    /**
+     * Array that maps piece to boolean for checking if it is a major piece.
+     */
+    static final boolean[] pieceMajor = {
+        false, // Empty piece
+        false, false, false, true, true, true, // White pieces
+        false, false, false, true, true, true  // Black pieces
+    };
+
+    /**
+     * Array that maps piece to boolean for checking if it is a minor piece.
+     */
+    static final boolean[] pieceMinor = {
+        false, // Empty piece
+        false, false, true, true, false, false, // White pieces
+        false, false, true, true, false, false  // Black pieces
+    };
+
+    /**
+     * Array that maps piece to value.
+     */
+    static final int[] pieceValue = {
+        0, // Empty piece
+        100, 325, 325, 550, 1000, 50000, // White pieces
+        100, 325, 325, 550, 1000, 50000  // Black pieces
+    };
+
+    /**
+     * Array that maps piece to color.
+     */
+    static final int[] pieceColor = {
+        BoardColor.BOTH.value, // Empty piece
+        BoardColor.WHITE.value, BoardColor.WHITE.value, BoardColor.WHITE.value, // White pieces
+        BoardColor.WHITE.value, BoardColor.WHITE.value, BoardColor.WHITE.value,
+        BoardColor.BLACK.value, BoardColor.BLACK.value, BoardColor.BLACK.value, // Black pieces
+        BoardColor.BLACK.value, BoardColor.BLACK.value, BoardColor.BLACK.value
+    };
+
+    /**
      * Converts a file and rank value to a square value.
      *
      * @param file
