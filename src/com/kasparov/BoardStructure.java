@@ -429,7 +429,6 @@ public class BoardStructure {
 
             for (int i = 0; i < count; i++) {
                 sqr64 = rank * 8 + file;
-                // System.out.println(sqr64);
                 sqr120 = sqr120(sqr64);
                 if (piece != BoardPiece.EMPTY.value)
                     this.pieces[sqr120] = piece;
@@ -440,7 +439,7 @@ public class BoardStructure {
         }
 
         currentChar = fen.charAt(ptr);
-        // System.out.println(currentChar == 'w' || currentChar == 'b');
+        assert (currentChar == 'w' || currentChar == 'b');
 
         this.side = (currentChar == 'w') ? BoardColor.WHITE.value : BoardColor.BLACK.value;
         ptr += 2;
@@ -471,15 +470,15 @@ public class BoardStructure {
         }
         ptr++;
 
-        // System.out.println(this.castlePerm >= 0 && this.castlePerm <= 15);
+        assert (this.castlePerm >= 0 && this.castlePerm <= 15);
 
         currentChar = fen.charAt(ptr);
         if (currentChar != '-') {
             file = fen.charAt(ptr) - 'a';
             rank = fen.charAt(ptr+1) - '1';
 
-            // System.out.println(file >= BoardFile.FILE_A.value && file <= BoardFile.FILE_H.value);
-            // System.out.println(rank >= BoardRank.RANK_1.value && rank <= BoardRank.RANK_8.value);
+            assert (file >= BoardFile.FILE_A.value && file <= BoardFile.FILE_H.value);
+            assert (rank >= BoardRank.RANK_1.value && rank <= BoardRank.RANK_8.value);
 
             this.enPassant = BoardConstants.convertFileRankToSqr(file, rank);
         }
