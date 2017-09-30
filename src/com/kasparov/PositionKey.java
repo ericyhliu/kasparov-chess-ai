@@ -22,7 +22,7 @@ public class PositionKey {
             }
         }
 
-        if (boardStructure.side == BoardColors.WHITE.value) {
+        if (boardStructure.side == BoardColor.WHITE.value) {
             finalKey ^= boardStructure.sideKey;
         }
 

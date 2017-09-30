@@ -5,7 +5,7 @@ package com.kasparov;
  *
  * @author Eric Liu
  */
-public enum BoardColors {
+public enum BoardColor {
 
     WHITE(0),
     BLACK(1),
@@ -13,7 +13,7 @@ public enum BoardColors {
 
     public final int value;
 
-    BoardColors(int value) {
+    BoardColor(int value) {
         this.value = value;
     }
 }

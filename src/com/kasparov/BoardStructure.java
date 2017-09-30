@@ -249,10 +249,19 @@ public class BoardStructure {
     /**
      * Get index from size 120 board to size 64 board.
      *
-     * @param i
+     * @param sqr120
      */
-    public int sqr64(int i) {
-        return this.sqr120ToSqr64[i];
+    public int sqr64(int sqr120) {
+        return this.sqr120ToSqr64[sqr120];
+    }
+
+    /**
+     * Get index from size 64 board to size 120 board.
+     *
+     * @param sqr64
+     */
+    public int sqr120(int sqr64) {
+        return this.sqr64ToSqr120[sqr64];
     }
 
     /**
@@ -301,7 +310,37 @@ public class BoardStructure {
     /**
      * Resets the board structure.
      */
-    public long resetBoard() {
+    public void resetBoard() {
+        int i;
+        for (i = 0; i < BoardConstants.BOARD_SQR_NUM; i++)
+            this.pieces[i] = BoardPiece.OFFBOARD.value;
+
+        for (i = 0; i < 64; i++)
+            this.pieces[sqr120(i)] = BoardPiece.EMPTY.value;
+
+        for (i = 0; i < 3; i++) {
+            this.pieceBig[i] = 0;
+            this.pieceMajor[i] = 0;
+            this.pieceMinor[i] = 0;
+            this.pawns[i] = 0L;
+        }
+
+        for (i = 0; i < 13; i++) {
+            this.pieceNum[i] = 0;
+        }
+
+        this.kingSqr[BoardColor.WHITE.value] = BoardSquare.NONE.value;
+        this.kingSqr[BoardColor.BLACK.value] = BoardSquare.NONE.value;
+
+        this.side = BoardColor.BOTH.value;
+        this.enPassant = BoardSquare.NONE.value;
+        this.fiftyMove = 0;
+
+        this.ply = 0;
+        this.historyPly = 0;
+
+        this.castlePerm = 0;
+        this.positionKey = 0L;
 
     }
 
