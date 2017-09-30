@@ -118,6 +118,17 @@ public class BoardStructure {
     };
 
     /**
+     * Set mask.
+     */
+    long[] setMask = new long[64];
+
+    /**
+     * Clear mask.
+     */
+    long[] clearMask = new long[64];
+
+
+    /**
      * Initializes an empty BoardStructure.
      */
     public BoardStructure() {}
@@ -205,18 +216,8 @@ public class BoardStructure {
      *
      * @param bitboard
      */
-    public long[] popBit(long bitboard) {
-        long b = bitboard ^ (bitboard - 1);
-        UInt64 fold = new UInt64((b & 0xffffff) ^ (b >> 32));
-        bitboard &= (bitboard - 1);
-        long[] result = new long[2];
-        result[0] = bitboard;
-        int index = (int) ((fold.longValue() * 0x783a9b23) >> 26);
-
-        System.out.println(index);
-
-        result[1] = bitTable[index];
-        return result;
+    public long popBit(long bitboard) {
+        return bitboard & (bitboard - 1);
     }
 
     /**
@@ -237,6 +238,30 @@ public class BoardStructure {
      */
     public int sqr64(int i) {
         return this.sqr120ToSqr64[i];
+    }
+
+    /**
+     * Initialize bit masks.
+     */
+    public void initBitMasks() {
+        for (int i = 0; i < 64; i++) {
+            setMask[i] = 1L << i;
+            clearMask[i] = ~setMask[i];
+        }
+    }
+
+    /**
+     * Clear bit.
+     */
+    public long clearBit(long bitboard, int sqr) {
+        return bitboard & clearMask[sqr];
+    }
+
+    /**
+     * Set bit.
+     */
+    public long setBit(long bitboard, int sqr) {
+        return bitboard | setMask[sqr];
     }
 
 }
