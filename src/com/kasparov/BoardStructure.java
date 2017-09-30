@@ -547,7 +547,8 @@ public class BoardStructure {
         for (int i = 0; i < BoardConstants.BOARD_SQR_NUM; i++) {
             sqr = i;
             piece = this.pieces[i];
-            if (piece != BoardSquare.OFFBOARD.value && piece != BoardSquare.NONE.value &&
+
+            if (piece != BoardSquare.OFFBOARD.value &&
                 piece != BoardPiece.EMPTY.value) {
                 color = BoardConstants.pieceColor[piece];
                 if (BoardConstants.pieceBig[piece])
@@ -561,10 +562,25 @@ public class BoardStructure {
                 this.pieceList[piece][this.pieceNum[piece]] = sqr;
                 this.pieceNum[piece]++;
 
-                if (piece == BoardPiece.WHITE_KING.value)
+                System.out.println(piece);
+
+                if (piece == BoardPiece.WHITE_KING.value) {
                     this.kingSqr[BoardColor.WHITE.value] = sqr;
-                if (piece == BoardPiece.BLACK_KING.value)
+                } else if (piece == BoardPiece.BLACK_KING.value) {
                     this.kingSqr[BoardColor.BLACK.value] = sqr;
+                }
+
+                if (piece == BoardPiece.WHITE_PAWN.value) {
+                    this.pawns[BoardColor.WHITE.value] =
+                            this.setBit(this.pawns[BoardColor.WHITE.value], sqr64(sqr));
+                    this.pawns[BoardColor.BOTH.value] =
+                            this.setBit(this.pawns[BoardColor.BOTH.value], sqr64(sqr));
+                } else if (piece == BoardPiece.BLACK_PAWN.value) {
+                    this.pawns[BoardColor.BLACK.value] =
+                            this.setBit(this.pawns[BoardColor.BLACK.value], sqr64(sqr));
+                    this.pawns[BoardColor.BOTH.value] =
+                            this.setBit(this.pawns[BoardColor.BOTH.value], sqr64(sqr));
+                }
             }
         }
     }
