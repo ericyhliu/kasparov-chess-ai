@@ -24,6 +24,8 @@ public class Main {
         System.out.println("\nBoth:");
         boardStructure.printBitBoard(boardStructure.pawns[BoardColor.BOTH.value]);
 
+        System.out.println(boardStructure.checkBoard());
+
 
 
     }

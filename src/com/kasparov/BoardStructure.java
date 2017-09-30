@@ -562,8 +562,6 @@ public class BoardStructure {
                 this.pieceList[piece][this.pieceNum[piece]] = sqr;
                 this.pieceNum[piece]++;
 
-                System.out.println(piece);
-
                 if (piece == BoardPiece.WHITE_KING.value) {
                     this.kingSqr[BoardColor.WHITE.value] = sqr;
                 } else if (piece == BoardPiece.BLACK_KING.value) {
@@ -632,6 +630,75 @@ public class BoardStructure {
             System.out.printf("%4d", this.rankBoard[i]);
         }
         System.out.println();
+    }
+
+    /**
+     * Checkboard.
+     */
+    public boolean checkBoard() {
+
+        int[] tempPieceNum = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        int[] tempPieceBig = {0, 0};
+        int[] tempPieceMajor = {0, 0};
+        int[] tempPieceMinor = {0, 0};
+        int[] tempMaterial = {0, 0};
+
+        int tempPiece;
+        int sqr120;
+        int color;
+        int pCount;
+
+        long[] tempPawns = {0L, 0L, 0L};
+
+        tempPawns[BoardColor.WHITE.value] = this.pawns[BoardColor.WHITE.value];
+        tempPawns[BoardColor.BLACK.value] = this.pawns[BoardColor.BLACK.value];
+        tempPawns[BoardColor.BOTH.value] = this.pawns[BoardColor.BOTH.value];
+
+        for (tempPiece = BoardPiece.WHITE_PAWN.value; tempPiece <= BoardPiece.BLACK_KING.value; tempPiece++) {
+            for (int num = 0; num < this.pieceNum[tempPiece]; num++) {
+                sqr120 = this.pieceList[tempPiece][num];
+                assert (tempPiece == this.pieces[sqr120]);
+            }
+        }
+
+        for (int sqr64 = 0; sqr64 < 64; sqr64++) {
+            sqr120 = sqr120(sqr64);
+            tempPiece = this.pieces[sqr120];
+            tempPieceNum[tempPiece]++;
+            color = BoardConstants.pieceColor[tempPiece];
+
+            if (BoardConstants.pieceBig[tempPiece])
+                tempPieceBig[color]++;
+            if (BoardConstants.pieceMajor[tempPiece])
+                tempPieceMajor[color]++;
+            if (BoardConstants.pieceMinor[tempPiece])
+                tempPieceMinor[color]++;
+        }
+
+        for (tempPiece = BoardPiece.WHITE_PAWN.value; tempPiece <= BoardPiece.BLACK_KING.value; tempPiece++) {
+            assert (tempPieceNum[tempPiece] == this.pieceNum[tempPiece]);
+        }
+
+        assert((tempPieceMajor[BoardColor.WHITE.value] == this.pieceMajor[BoardColor.WHITE.value]) &&
+               (tempPieceMajor[BoardColor.BLACK.value] == this.pieceMajor[BoardColor.BLACK.value]));
+        assert((tempPieceMinor[BoardColor.WHITE.value] == this.pieceMinor[BoardColor.WHITE.value]) &&
+               (tempPieceMinor[BoardColor.BLACK.value] == this.pieceMinor[BoardColor.BLACK.value]));
+        assert((tempPieceBig[BoardColor.WHITE.value] == this.pieceBig[BoardColor.WHITE.value]) &&
+               (tempPieceBig[BoardColor.BLACK.value] == this.pieceBig[BoardColor.BLACK.value]));
+        assert (this.side == BoardColor.WHITE.value ||
+                this.side == BoardColor.BLACK.value);
+        assert (PositionKey.generatePositionKey(this) == this.positionKey);
+
+        assert (this.enPassant == BoardSquare.NONE.value ||
+                (this.rankBoard[this.enPassant] == BoardRank.RANK_6.value &&
+                 this.side == BoardColor.WHITE.value) ||
+                (this.rankBoard[this.enPassant] == BoardRank.RANK_3.value &&
+                 this.side == BoardColor.BLACK.value));
+
+        assert (this.pieces[this.kingSqr[BoardColor.WHITE.value]] == BoardPiece.WHITE_KING.value);
+        assert (this.pieces[this.kingSqr[BoardColor.BLACK.value]] == BoardPiece.BLACK_KING.value);
+
+        return true;
     }
 
 
