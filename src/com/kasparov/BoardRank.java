@@ -15,7 +15,7 @@ public enum BoardRank {
     RANK_6(5),
     RANK_7(6),
     RANK_8(7),
-    RANK_NONE(0);
+    RANK_NONE(8);
 
     public final int value;
 

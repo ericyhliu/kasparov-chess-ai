@@ -315,7 +315,7 @@ public class BoardStructure {
     public void resetBoard() {
         int i;
         for (i = 0; i < BoardConstants.BOARD_SQR_NUM; i++)
-            this.pieces[i] = BoardPiece.OFFBOARD.value;
+            this.pieces[i] = BoardSquare.OFFBOARD.value;
 
         for (i = 0; i < 64; i++)
             this.pieces[sqr120(i)] = BoardPiece.EMPTY.value;
@@ -351,7 +351,7 @@ public class BoardStructure {
     public int parseFEN(String fen) {
 
         int rank = BoardRank.RANK_8.value;
-        int file = BoardFile.FILE_E.value;
+        int file = BoardFile.FILE_A.value;
         int piece = 0;
         int count = 0;
         int sqr64 = 0;
@@ -429,6 +429,7 @@ public class BoardStructure {
 
             for (int i = 0; i < count; i++) {
                 sqr64 = rank * 8 + file;
+                // System.out.println(sqr64);
                 sqr120 = sqr120(sqr64);
                 if (piece != BoardPiece.EMPTY.value)
                     this.pieces[sqr120] = piece;
@@ -438,7 +439,8 @@ public class BoardStructure {
             ptr++;
         }
 
-        System.out.println(currentChar == 'w' || currentChar == 'b');
+        currentChar = fen.charAt(ptr);
+        // System.out.println(currentChar == 'w' || currentChar == 'b');
 
         this.side = (currentChar == 'w') ? BoardColor.WHITE.value : BoardColor.BLACK.value;
         ptr += 2;
@@ -467,23 +469,24 @@ public class BoardStructure {
             }
             ptr++;
         }
-
         ptr++;
 
-        System.out.println(this.castlePerm >= 0 && this.castlePerm <= 15);
+        // System.out.println(this.castlePerm >= 0 && this.castlePerm <= 15);
 
         currentChar = fen.charAt(ptr);
         if (currentChar != '-') {
-            file = fen.charAt(0) - 'a';
-            rank = fen.charAt(1) - '1';
+            file = fen.charAt(ptr) - 'a';
+            rank = fen.charAt(ptr+1) - '1';
 
-            System.out.println(file >= BoardFile.FILE_A.value && file <= BoardFile.FILE_H.value);
-            System.out.println(rank >= BoardRank.RANK_1.value && rank <= BoardRank.RANK_8.value);
+            // System.out.println(file >= BoardFile.FILE_A.value && file <= BoardFile.FILE_H.value);
+            // System.out.println(rank >= BoardRank.RANK_1.value && rank <= BoardRank.RANK_8.value);
 
             this.enPassant = BoardConstants.convertFileRankToSqr(file, rank);
         }
 
         this.positionKey = PositionKey.generatePositionKey(this);
+
+        System.out.println(positionKey);
 
         return 0;
     }

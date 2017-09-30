@@ -15,7 +15,7 @@ public enum BoardSquare {
     A6(71), B6(72), C6(73), D6(74), E6(75), F6(76), G6(77), H6(78),
     A7(81), B7(82), C7(83), D7(84), E7(85), F7(86), G7(87), H7(88),
     A8(91), B8(92), C8(93), D8(94), E8(95), F8(96), G8(97), H8(98),
-    NONE(99);
+    NONE(99), OFFBOARD(100);
 
     public final int value;
 

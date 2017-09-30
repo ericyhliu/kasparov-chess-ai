@@ -19,8 +19,7 @@ public enum BoardPiece {
     BLACK_BISHOP(9),
     BLACK_ROOK(10),
     BLACK_QUEEN(11),
-    BLACK_KING(12),
-    OFFBOARD(13);
+    BLACK_KING(12);
 
     public final int value;
 
