@@ -5,7 +5,7 @@ package com.kasparov;
  *
  * @author Eric Liu
  */
-public enum BoardSquares {
+public enum BoardSquare {
 
     A1(21), B1(22), C1(23), D1(24), E1(25), F1(26), G1(27), H1(28),
     A2(31), B2(32), C2(33), D2(34), E2(35), F2(36), G2(37), H2(38),
@@ -19,7 +19,7 @@ public enum BoardSquares {
 
     public final int value;
 
-    BoardSquares(int value) {
+    BoardSquare(int value) {
         this.value = value;
     }
 
