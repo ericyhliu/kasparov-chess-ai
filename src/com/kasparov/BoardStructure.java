@@ -1,7 +1,5 @@
 package com.kasparov;
 
-import javafx.geometry.Pos;
-
 import java.util.Random;
 
 /**
@@ -158,6 +156,14 @@ public class BoardStructure {
      * Ranks board.
      */
     int[] rankBoard = new int[BoardConstants.BOARD_SQR_NUM];
+
+    /**
+     * Pieces check.
+     */
+    int[] piecesKnight = new int[13];
+    int[] piecesKing = new int[13];
+    int[] piecesRookOrQueen = new int[13];
+    int[] piecesBishopOrQueen = new int[13];
 
     /**
      * Initializes an empty BoardStructure.
@@ -700,6 +706,5 @@ public class BoardStructure {
 
         return true;
     }
-
 
 }

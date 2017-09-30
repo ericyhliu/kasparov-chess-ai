@@ -94,6 +94,42 @@ public class BoardConstants {
     };
 
     /**
+     * Array that maps piece to boolean for checking if it is a knight.
+     */
+    static final boolean[] pieceKnight = {
+        false, // Empty piece
+        false, true, false, false, false, false, // White pieces
+        false, true, false, false, false, false  // Black pieces
+    };
+
+    /**
+     * Array that maps piece to boolean for checking if it is a king.
+     */
+    static final boolean[] pieceKing = {
+        false, // Empty piece
+        false, false, false, false, false, true, // White pieces
+        false, false, false, false, false, true  // Black pieces
+    };
+
+    /**
+     * Array that maps piece to boolean for checking if it is a rook or queen.
+     */
+    static final boolean[] pieceRookOrQueen = {
+        false, // Empty piece
+        false, false, false, true, true, false, // White pieces
+        false, false, false, true, true, false  // Black pieces
+    };
+
+    /**
+     * Array that maps piece to boolean for checking if it is a bishop or queen.
+     */
+    static final boolean[] pieceBishopOrQueen = {
+        false, // Empty piece
+        false, false, true, false, true, false, // White pieces
+        false, false, true, false, true, false  // Black pieces
+    };
+
+    /**
      * Converts a file and rank value to a square value.
      *
      * @param file
@@ -101,6 +137,34 @@ public class BoardConstants {
      */
     static int convertFileRankToSqr(int file, int rank) {
         return 21 + file + 10 * rank;
+    }
+
+    /**
+     * Checks if piece is a knight.
+     */
+    static boolean isKnight(int piece) {
+        return pieceKnight[piece];
+    }
+
+    /**
+     * Checks if piece is a rook or queen.
+     */
+    static boolean isRookOrQueen(int piece) {
+        return pieceRookOrQueen[piece];
+    }
+
+    /**
+     * Checks if piece is a bishop or queen.
+     */
+    static boolean isBishopOrQueen(int piece) {
+        return pieceBishopOrQueen[piece];
+    }
+
+    /**
+     * Checks if piece is a king.
+     */
+    static boolean isKing(int piece) {
+        return pieceKing[piece];
     }
 
 }
