@@ -10,6 +10,8 @@ public class Main {
         boardStructure.initBitMasks();
         boardStructure.initHashKeys();
 
+        boardStructure.parseFEN(BoardConstants.startingFEN);
+
         long bitboard = 0L;
     }
 }

@@ -1,5 +1,7 @@
 package com.kasparov;
 
+import javafx.geometry.Pos;
+
 import java.util.Random;
 
 /**
@@ -341,7 +343,149 @@ public class BoardStructure {
 
         this.castlePerm = 0;
         this.positionKey = 0L;
+    }
 
+    /**
+     * Parses a board position in Forsyth-Edwards Notation (FEN).
+     */
+    public int parseFEN(String fen) {
+
+        int rank = BoardRank.RANK_8.value;
+        int file = BoardFile.FILE_E.value;
+        int piece = 0;
+        int count = 0;
+        int sqr64 = 0;
+        int sqr120 = 0;
+        int ptr = 0;
+        char currentChar = ' ';
+
+        this.resetBoard();
+
+        while ((rank >= BoardRank.RANK_1.value) && ptr < fen.length()) {
+            count = 1;
+            currentChar = fen.charAt(ptr);
+
+            switch (currentChar) {
+                case 'p':
+                    piece = BoardPiece.BLACK_PAWN.value;
+                    break;
+                case 'r':
+                    piece = BoardPiece.BLACK_ROOK.value;
+                    break;
+                case 'n':
+                    piece = BoardPiece.BLACK_KNIGHT.value;
+                    break;
+                case 'b':
+                    piece = BoardPiece.BLACK_BISHOP.value;
+                    break;
+                case 'k':
+                    piece = BoardPiece.BLACK_KING.value;
+                    break;
+                case 'q':
+                    piece = BoardPiece.BLACK_QUEEN.value;
+                    break;
+                case 'P':
+                    piece = BoardPiece.WHITE_PAWN.value;
+                    break;
+                case 'R':
+                    piece = BoardPiece.WHITE_ROOK.value;
+                    break;
+                case 'N':
+                    piece = BoardPiece.WHITE_KNIGHT.value;
+                    break;
+                case 'B':
+                    piece = BoardPiece.WHITE_BISHOP.value;
+                    break;
+                case 'K':
+                    piece = BoardPiece.WHITE_KING.value;
+                    break;
+                case 'Q':
+                    piece = BoardPiece.WHITE_QUEEN.value;
+                    break;
+
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                    piece = BoardPiece.EMPTY.value;
+                    count = currentChar - '0';
+                    break;
+
+                case '/':
+                case ' ':
+                    rank--;
+                    file = BoardFile.FILE_A.value;
+                    ptr++;
+                    continue;
+
+                default:
+                    System.out.println("Error with FEN.");
+                    break;
+            }
+
+            for (int i = 0; i < count; i++) {
+                sqr64 = rank * 8 + file;
+                sqr120 = sqr120(sqr64);
+                if (piece != BoardPiece.EMPTY.value)
+                    this.pieces[sqr120] = piece;
+                file++;
+            }
+
+            ptr++;
+        }
+
+        System.out.println(currentChar == 'w' || currentChar == 'b');
+
+        this.side = (currentChar == 'w') ? BoardColor.WHITE.value : BoardColor.BLACK.value;
+        ptr += 2;
+
+        for (int i = 0; i < 4; i++) {
+            currentChar = fen.charAt(ptr);
+
+            if (currentChar == ' ')
+                break;
+
+            switch(currentChar) {
+                case 'K':
+                    this.castlePerm |= BoardCastleLink.WHITE_KING_CASTLE.value;
+                    break;
+                case 'Q':
+                    this.castlePerm |= BoardCastleLink.WHITE_QUEEN_CASTLE.value;
+                    break;
+                case 'k':
+                    this.castlePerm |= BoardCastleLink.BLACK_KING_CASTLE.value;
+                    break;
+                case 'q':
+                    this.castlePerm |= BoardCastleLink.WHITE_QUEEN_CASTLE.value;
+                    break;
+                default:
+                    break;
+            }
+            ptr++;
+        }
+
+        ptr++;
+
+        System.out.println(this.castlePerm >= 0 && this.castlePerm <= 15);
+
+        currentChar = fen.charAt(ptr);
+        if (currentChar != '-') {
+            file = fen.charAt(0) - 'a';
+            rank = fen.charAt(1) - '1';
+
+            System.out.println(file >= BoardFile.FILE_A.value && file <= BoardFile.FILE_H.value);
+            System.out.println(rank >= BoardRank.RANK_1.value && rank <= BoardRank.RANK_8.value);
+
+            this.enPassant = BoardConstants.convertFileRankToSqr(file, rank);
+        }
+
+        this.positionKey = PositionKey.generatePositionKey(this);
+
+        return 0;
     }
 
 }
