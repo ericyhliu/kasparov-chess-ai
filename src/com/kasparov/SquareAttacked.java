@@ -51,6 +51,10 @@ public class SquareAttacked {
         // Knights:
         for (int i = 0; i < 8; i++) {
             piece = boardStructure.pieces[sqr + knightDirection[i]];
+
+            if (piece == BoardSquare.OFFBOARD.value)
+                continue;
+
             if (BoardConstants.isKnight(piece) && BoardConstants.pieceColor[piece] == side)
                 return true;
         }
@@ -90,11 +94,33 @@ public class SquareAttacked {
         // Kings:
         for (int i = 0; i < 8; i++) {
             piece = boardStructure.pieces[sqr + kingDirection[i]];
+
+            if (piece == BoardSquare.OFFBOARD.value)
+                continue;
+
             if (BoardConstants.isKing(piece) && BoardConstants.pieceColor[piece] == side)
                 return true;
         }
 
         return false;
+    }
+
+    /**
+     * Show square attacked by side.
+     */
+    public static void showSqrAttackedBySide(int side, BoardStructure boardStructure) {
+        int sqr = 0;
+        for (int r = BoardRank.RANK_8.value; r >= BoardRank.RANK_1.value; r--) {
+            for (int f = BoardFile.FILE_A.value; f <= BoardFile.FILE_H.value; f++) {
+                sqr = BoardConstants.convertFileRankToSqr(f, r);
+                if (squareAttacked(sqr, side, boardStructure))
+                    System.out.print("X ");
+                else
+                    System.out.print("- ");
+            }
+            System.out.println();
+        }
+        System.out.println("\n");
     }
 
 }
