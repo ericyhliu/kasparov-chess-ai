@@ -707,4 +707,64 @@ public class BoardStructure {
         return true;
     }
 
+    /**
+     * Prints out a square.
+     */
+    public String printSqr(int sqr) {
+        String sqrStr = "";
+
+        int file = this.fileBoard[sqr];
+        int rank = this.rankBoard[sqr];
+
+        sqrStr = new String(new char[] {
+                (char)('a' + file),
+                (char)('1' + rank)
+        });
+
+        System.out.println(sqrStr);
+        return sqrStr;
+    }
+
+    /**
+     * Prints out the move.
+     */
+    public String printMove(int move) {
+        String moveString = "";
+
+        int fileFrom = this.fileBoard[Move.from(move)];
+        int rankFrom = this.rankBoard[Move.from(move)];
+        int fileTo = this.fileBoard[Move.to(move)];
+        int rankTo = this.rankBoard[Move.to(move)];
+        int promoted = Move.promoted(move);
+
+        if (promoted != 0) {
+            char pChar = 'q';
+            if (BoardConstants.isKnight(promoted)) {
+                pChar = 'n';
+            } else if (BoardConstants.isRookOrQueen(promoted) &&
+                    !BoardConstants.isBishopOrQueen(promoted)) {
+                pChar = 'r';
+            } else if (!BoardConstants.isRookOrQueen(promoted) &&
+                    BoardConstants.isRookOrQueen(promoted)) {
+                pChar = 'b';
+            }
+            moveString = new String(new char[]{
+                    (char)('a' + fileFrom),
+                    (char)('1' + rankFrom),
+                    (char)('a' + rankTo),
+                    (char)('1' + rankTo),
+                    pChar
+            });
+        } else {
+            moveString = new String(new char[]{
+                    (char)('a' + fileFrom),
+                    (char)('1' + rankFrom),
+                    (char)('a' + rankTo),
+                    (char)('1' + rankTo)
+            });
+        }
+
+        return moveString;
+    }
+
 }

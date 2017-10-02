@@ -10,11 +10,11 @@ public class Move {
     int score;
 
     static int from(int move) {
-        return move & 0x3F;
+        return move & 0x7F;
     }
 
     static int to(int move) {
-        return (move >> 7) & 0x3F;
+        return (move >> 7) & 0x7F;
     }
 
     static int captured(int move) {
