@@ -710,7 +710,7 @@ public class BoardStructure {
     /**
      * Prints out a square.
      */
-    public String printSqr(int sqr) {
+    public void printSqr(int sqr) {
         String sqrStr = "";
 
         int file = this.fileBoard[sqr];
@@ -722,13 +722,12 @@ public class BoardStructure {
         });
 
         System.out.println(sqrStr);
-        return sqrStr;
     }
 
     /**
      * Prints out the move.
      */
-    public String printMove(int move) {
+    public void printMove(int move) {
         String moveString = "";
 
         int fileFrom = this.fileBoard[Move.from(move)];
@@ -745,13 +744,13 @@ public class BoardStructure {
                     !BoardConstants.isBishopOrQueen(promoted)) {
                 pChar = 'r';
             } else if (!BoardConstants.isRookOrQueen(promoted) &&
-                    BoardConstants.isRookOrQueen(promoted)) {
+                    BoardConstants.isBishopOrQueen(promoted)) {
                 pChar = 'b';
             }
             moveString = new String(new char[]{
                     (char)('a' + fileFrom),
                     (char)('1' + rankFrom),
-                    (char)('a' + rankTo),
+                    (char)('a' + fileTo),
                     (char)('1' + rankTo),
                     pChar
             });
@@ -759,12 +758,11 @@ public class BoardStructure {
             moveString = new String(new char[]{
                     (char)('a' + fileFrom),
                     (char)('1' + rankFrom),
-                    (char)('a' + rankTo),
+                    (char)('a' + fileTo),
                     (char)('1' + rankTo)
             });
         }
-
-        return moveString;
+        System.out.println(moveString);
     }
 
 }
