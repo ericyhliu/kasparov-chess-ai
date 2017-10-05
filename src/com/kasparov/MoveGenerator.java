@@ -41,12 +41,34 @@ public class MoveGenerator {
 
     public static void addWhitePawnMove(BoardStructure boardStructure, int from, int to, MoveList moveList) {
         if (boardStructure.rankBoard[from] == BoardRank.RANK_7.value) {
-            addCaptureMove(boardStructure, move(from, to, BoardPiece.EMPTY.value, BoardPiece.WHITE_QUEEN.value, 0), moveList);
-            addCaptureMove(boardStructure, move(from, to, BoardPiece.EMPTY.value, BoardPiece.WHITE_ROOK.value, 0), moveList);
-            addCaptureMove(boardStructure, move(from, to, BoardPiece.EMPTY.value, BoardPiece.WHITE_BISHOP.value, 0), moveList);
-            addCaptureMove(boardStructure, move(from, to, BoardPiece.EMPTY.value, BoardPiece.WHITE_KNIGHT.value, 0), moveList);
+            addQuietMove(boardStructure, move(from, to, BoardPiece.EMPTY.value, BoardPiece.WHITE_QUEEN.value, 0), moveList);
+            addQuietMove(boardStructure, move(from, to, BoardPiece.EMPTY.value, BoardPiece.WHITE_ROOK.value, 0), moveList);
+            addQuietMove(boardStructure, move(from, to, BoardPiece.EMPTY.value, BoardPiece.WHITE_BISHOP.value, 0), moveList);
+            addQuietMove(boardStructure, move(from, to, BoardPiece.EMPTY.value, BoardPiece.WHITE_KNIGHT.value, 0), moveList);
         } else {
-            addCaptureMove(boardStructure, move(from, to, BoardPiece.EMPTY.value, BoardPiece.EMPTY.value, 0), moveList);
+            addQuietMove(boardStructure, move(from, to, BoardPiece.EMPTY.value, BoardPiece.EMPTY.value, 0), moveList);
+        }
+    }
+
+    public static void addBlackPawnCaptureMove(BoardStructure boardStructure, int from, int to, int capture, MoveList moveList) {
+        if (boardStructure.rankBoard[from] == BoardRank.RANK_2.value) {
+            addCaptureMove(boardStructure, move(from, to, capture, BoardPiece.BLACK_QUEEN.value, 0), moveList);
+            addCaptureMove(boardStructure, move(from, to, capture, BoardPiece.BLACK_ROOK.value, 0), moveList);
+            addCaptureMove(boardStructure, move(from, to, capture, BoardPiece.BLACK_BISHOP.value, 0), moveList);
+            addCaptureMove(boardStructure, move(from, to, capture, BoardPiece.BLACK_KNIGHT.value, 0), moveList);
+        } else {
+            addCaptureMove(boardStructure, move(from, to, capture, BoardPiece.EMPTY.value, 0), moveList);
+        }
+    }
+
+    public static void addBlackPawnMove(BoardStructure boardStructure, int from, int to, MoveList moveList) {
+        if (boardStructure.rankBoard[from] == BoardRank.RANK_2.value) {
+            addQuietMove(boardStructure, move(from, to, BoardPiece.EMPTY.value, BoardPiece.BLACK_QUEEN.value, 0), moveList);
+            addQuietMove(boardStructure, move(from, to, BoardPiece.EMPTY.value, BoardPiece.BLACK_ROOK.value, 0), moveList);
+            addQuietMove(boardStructure, move(from, to, BoardPiece.EMPTY.value, BoardPiece.BLACK_BISHOP.value, 0), moveList);
+            addQuietMove(boardStructure, move(from, to, BoardPiece.EMPTY.value, BoardPiece.BLACK_KNIGHT.value, 0), moveList);
+        } else {
+            addQuietMove(boardStructure, move(from, to, BoardPiece.EMPTY.value, BoardPiece.EMPTY.value, 0), moveList);
         }
     }
 
@@ -94,7 +116,39 @@ public class MoveGenerator {
 
             }
         } else {
+            for (pieceNum = 0; pieceNum < boardStructure.pieceNum[BoardPiece.BLACK_PAWN.value]; ++pieceNum) {
+                sqr = boardStructure.pieceList[BoardPiece.BLACK_PAWN.value][pieceNum];
+                assert(Validate.isSquareOnBoard(boardStructure, sqr));
 
+                if (boardStructure.pieces[sqr - 10] == BoardPiece.EMPTY.value) {
+                    addBlackPawnMove(boardStructure, sqr, sqr - 10, moveList);
+
+                    if (boardStructure.rankBoard[sqr] == BoardRank.RANK_7.value && boardStructure.pieces[sqr - 20] == BoardPiece.EMPTY.value) {
+                        addQuietMove(boardStructure, move(sqr, sqr - 20, BoardPiece.EMPTY.value, BoardPiece.EMPTY.value, Move.moveFlagPawnStart), moveList);
+                    }
+                }
+
+                if (!Validate.isSquareOffboard(boardStructure, sqr - 9) &&
+                        BoardConstants.pieceColor[boardStructure.pieces[sqr - 9]] == BoardColor.WHITE.value) {
+                    addBlackPawnCaptureMove(boardStructure, sqr, sqr - 9, boardStructure.pieces[sqr - 9], moveList);
+                }
+
+                if (!Validate.isSquareOffboard(boardStructure, sqr - 11) &&
+                        BoardConstants.pieceColor[boardStructure.pieces[sqr - 11]] == BoardColor.WHITE.value) {
+                    addBlackPawnCaptureMove(boardStructure, sqr, sqr - 11, boardStructure.pieces[sqr - 11], moveList);
+                }
+
+                if (sqr - 9 == boardStructure.enPassant) {
+                    addCaptureMove(boardStructure, move(sqr, sqr - 9, BoardPiece.EMPTY.value,
+                            BoardPiece.EMPTY.value, Move.moveFlagEnPassant), moveList);
+                }
+
+                if (sqr - 11 == boardStructure.enPassant) {
+                    addCaptureMove(boardStructure, move(sqr, sqr - 11, BoardPiece.EMPTY.value,
+                            BoardPiece.EMPTY.value, Move.moveFlagEnPassant), moveList);
+                }
+
+            }
         }
 
 
