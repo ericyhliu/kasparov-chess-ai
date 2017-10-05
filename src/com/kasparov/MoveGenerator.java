@@ -9,11 +9,6 @@ public class MoveGenerator {
         return from | ((to << 7) | (captured << 14)) | (promoted << 20) | flag;
     }
 
-    public static boolean isSqrOffboard(int sqr) {
-        return
-    }
-
-
     public void moveGen(BoardStructure boardStructure, MoveList moveList) {
         // Loop all pieces
             // If slider, loop each dir and add move
@@ -21,19 +16,19 @@ public class MoveGenerator {
                 // list.count++
     }
 
-    public void addQuietMove(BoardStructure boardStructure, int move, MoveList moveList) {
+    public static void addQuietMove(BoardStructure boardStructure, int move, MoveList moveList) {
         moveList.addMove(move);
     }
 
-    public void addCaptureMove(BoardStructure boardStructure, int move, MoveList moveList) {
-
+    public static void addCaptureMove(BoardStructure boardStructure, int move, MoveList moveList) {
+        moveList.addMove(move);
     }
 
-    public void addEnPassantMove(BoardStructure boardStructure, int move, MoveList moveList) {
-
+    public static void addEnPassantMove(BoardStructure boardStructure, int move, MoveList moveList) {
+        moveList.addMove(move);
     }
 
-    public void addWhitePawnCaptureMove(BoardStructure boardStructure, int from, int to, int capture, MoveList moveList) {
+    public static void addWhitePawnCaptureMove(BoardStructure boardStructure, int from, int to, int capture, MoveList moveList) {
         if (boardStructure.rankBoard[from] == BoardRank.RANK_7.value) {
             addCaptureMove(boardStructure, move(from, to, capture, BoardPiece.WHITE_QUEEN.value, 0), moveList);
             addCaptureMove(boardStructure, move(from, to, capture, BoardPiece.WHITE_ROOK.value, 0), moveList);
@@ -44,7 +39,7 @@ public class MoveGenerator {
         }
     }
 
-    public void addWhitePawnMove(BoardStructure boardStructure, int from, int to, MoveList moveList) {
+    public static void addWhitePawnMove(BoardStructure boardStructure, int from, int to, MoveList moveList) {
         if (boardStructure.rankBoard[from] == BoardRank.RANK_7.value) {
             addCaptureMove(boardStructure, move(from, to, BoardPiece.EMPTY.value, BoardPiece.WHITE_QUEEN.value, 0), moveList);
             addCaptureMove(boardStructure, move(from, to, BoardPiece.EMPTY.value, BoardPiece.WHITE_ROOK.value, 0), moveList);
@@ -55,7 +50,7 @@ public class MoveGenerator {
         }
     }
 
-    public void generateAddMoves(BoardStructure boardStructure, MoveList moveList) {
+    public static void generateAddMoves(BoardStructure boardStructure, MoveList moveList) {
         moveList.setCount(0);
 
         int piece = BoardPiece.EMPTY.value;

@@ -33,4 +33,17 @@ public class MoveList {
     public void setCount(int i) {
         count = 0;
     }
+
+    public static void printMoveList(MoveList moveList, BoardStructure boardStructure) {
+        int move = 0;
+        int score = 0;
+        System.out.println("Move List: " + moveList.count);
+        for (int i = 0; i < moveList.getCount(); i++) {
+            move = moveList.moves[i].move;
+            score = moveList.moves[i].score;
+            System.out.println("Move: " + boardStructure.printMove(move) + "   Score: " + score);
+        }
+
+        System.out.println("Move List Total Moves: " + moveList.count);
+    }
 }

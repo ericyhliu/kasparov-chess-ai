@@ -727,7 +727,7 @@ public class BoardStructure {
     /**
      * Prints out the move.
      */
-    public void printMove(int move) {
+    public String printMove(int move) {
         String moveString = "";
 
         int fileFrom = this.fileBoard[Move.from(move)];
@@ -762,7 +762,7 @@ public class BoardStructure {
                     (char)('1' + rankTo)
             });
         }
-        System.out.println(moveString);
+        return moveString;
     }
 
 }
