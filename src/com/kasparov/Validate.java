@@ -6,6 +6,10 @@ package com.kasparov;
 public class Validate {
 
     static boolean isSquareOnBoard(BoardStructure boardStructure, int sqr) {
+        return boardStructure.fileBoard[sqr] != BoardSquare.OFFBOARD.value;
+    }
+
+    static boolean isSquareOffboard(BoardStructure boardStructure, int sqr) {
         return boardStructure.fileBoard[sqr] == BoardSquare.OFFBOARD.value;
     }
 
