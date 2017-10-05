@@ -35,4 +35,11 @@ public class Move {
 
     static int moveFlagPromoted = 0xF00000;
 
+    public Move() {}
+
+    public Move(int move, int score) {
+        this.move = move;
+        this.score = score;
+    }
+
 }
