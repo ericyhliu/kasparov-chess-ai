@@ -9,7 +9,7 @@ public class Main {
         boardStructure.initHashKeys();
         boardStructure.initFileAndRankBoard();
 
-        boardStructure.parseFEN(BoardConstants.FEN9);
+        boardStructure.parseFEN(BoardConstants.FEN13);
         boardStructure.printBoard();
 
         boardStructure.updateListMaterials();

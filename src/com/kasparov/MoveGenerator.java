@@ -217,6 +217,32 @@ public class MoveGenerator {
         piece = loopPieceSlides[pieceIndex++];
         while (piece != 0) {
             System.out.println("Sliders Piece Index: " + pieceIndex + "   Piece: " + piece);
+
+            for (pieceNum = 0; pieceNum < boardStructure.pieceNum[piece]; pieceNum++) {
+                sqr = boardStructure.pieceList[piece][pieceNum];
+                System.out.print("Piece: " + BoardConstants.pieceChars.charAt(piece) + " on ");
+                boardStructure.printSqr(sqr);
+
+                for (int i = 0; i < numDirections[piece]; i++) {
+                    dir = pieceDirections[piece][i];
+                    tempSqr = sqr + dir;
+
+                    while (!Validate.isSquareOffboard(boardStructure, tempSqr)) {
+                        if (boardStructure.pieces[tempSqr] != BoardPiece.EMPTY.value) {
+                            if (BoardConstants.pieceColor[boardStructure.pieces[tempSqr]] == (side ^ 1)) {
+                                System.out.print("Capture on: " );
+                                boardStructure.printSqr(tempSqr);
+                            }
+                            break;
+                        }
+
+                        System.out.print("Normal on: " );
+                        boardStructure.printSqr(tempSqr);
+                        tempSqr += dir;
+                    }
+                }
+            }
+
             piece = loopPieceSlides[pieceIndex++];
         }
 
@@ -251,8 +277,6 @@ public class MoveGenerator {
                     boardStructure.printSqr(tempSqr);
                 }
             }
-
-
 
             piece = loopPieceNonSlides[pieceIndex++];
         }
