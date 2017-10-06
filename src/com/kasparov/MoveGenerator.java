@@ -5,6 +5,41 @@ package com.kasparov;
  */
 public class MoveGenerator {
 
+    /**
+     * Array of slider pieces.
+     */
+    static final int[] loopPieceSlides = {
+        BoardPiece.WHITE_BISHOP.value,
+        BoardPiece.WHITE_ROOK.value,
+        BoardPiece.WHITE_QUEEN.value,
+        0,
+        BoardPiece.BLACK_BISHOP.value,
+        BoardPiece.BLACK_ROOK.value,
+        BoardPiece.BLACK_QUEEN.value,
+        0
+    };
+
+    /**
+     * Array of non slider pieces.
+     */
+    static final int[] loopPieceNonSlides = {
+        BoardPiece.WHITE_KNIGHT.value,
+        BoardPiece.WHITE_KING.value,
+        0,
+        BoardPiece.BLACK_KNIGHT.value,
+        BoardPiece.BLACK_KING.value,
+        0
+    };
+
+    static final int[] loopSlideIndex = {
+        0, 4
+    };
+
+    static final int[] loopNonSlideIndex = {
+        0, 3
+    };
+
+
     public static int move(int from, int to, int captured, int promoted, int flag) {
         return from | ((to << 7) | (captured << 14)) | (promoted << 20) | flag;
     }
@@ -80,6 +115,11 @@ public class MoveGenerator {
         int sqr = 0;
         int tempSqr = 0;
         int pieceNum = 0;
+        int dir = 0;
+        int index = 0;
+        int pieceIndex = 0;
+
+        System.out.println("Side: " + side);
 
         if (side == BoardColor.WHITE.value) {
             for (pieceNum = 0; pieceNum < boardStructure.pieceNum[BoardPiece.WHITE_PAWN.value]; ++pieceNum) {
@@ -151,6 +191,21 @@ public class MoveGenerator {
             }
         }
 
+        // Slide pieces:
+        pieceIndex = loopSlideIndex[side];
+        piece = loopPieceSlides[pieceIndex++];
+        while (piece != 0) {
+            System.out.println("Sliders Piece Index: " + pieceIndex + "   Piece: " + piece);
+            piece = loopPieceSlides[pieceIndex++];
+        }
+
+        // Non slide pieces:
+        pieceIndex = loopNonSlideIndex[side];
+        piece = loopPieceNonSlides[pieceIndex++];
+        while (piece != 0) {
+            System.out.println("Non Sliders Piece Index: " + pieceIndex + "   Piece: " + piece);
+            piece = loopPieceNonSlides[pieceIndex++];
+        }
 
 
     }

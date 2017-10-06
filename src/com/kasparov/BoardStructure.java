@@ -344,6 +344,7 @@ public class BoardStructure {
             this.pieceBig[i] = 0;
             this.pieceMajor[i] = 0;
             this.pieceMinor[i] = 0;
+            this.material[i] = 0;
             this.pawns[i] = 0L;
         }
 

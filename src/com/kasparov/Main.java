@@ -20,7 +20,7 @@ public class Main {
 
         MoveGenerator.generateAddMoves(boardStructure, moveList);
 
-        MoveList.printMoveList(moveList, boardStructure);
+        // MoveList.printMoveList(moveList, boardStructure);
 
     }
 }
