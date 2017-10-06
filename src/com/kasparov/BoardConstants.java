@@ -35,6 +35,10 @@ public class BoardConstants {
     static final String FEN11 = "6k1/8/5r2/8/1nR5/5N2/8/6K1 w - - 0 1";
     static final String FEN12 = "6k1/8/4nq2/8/1nQ5/5N2/1N6/6K1 w - - 0 1 ";
     static final String FEN13 = "6k1/1b6/4n3/8/1n4B1/1B3N2/1N6/2b3K1 b - - 0 1 ";
+    static final String FEN14 = "r3k2r/8/8/8/8/8/8/R3K2R b KQkq - 0 1";
+    static final String FEN15 = "r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1";
+    static final String FEN16 = "3rk2r/8/8/8/8/8/6p1/R3K2R b KQk - 0 1";
+    static final String FEN17 = "3rk2r/8/8/8/8/8/6p1/R3K2R w KQk - 0 1";
 
     /**
      * Piece characters for printing.

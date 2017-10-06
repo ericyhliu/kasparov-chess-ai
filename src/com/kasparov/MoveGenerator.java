@@ -176,6 +176,28 @@ public class MoveGenerator {
                 }
 
             }
+
+            if ((boardStructure.castlePerm & BoardCastleLink.WHITE_KING_CASTLE.value) != 0) {
+                if (boardStructure.pieces[BoardSquare.F1.value] == BoardPiece.EMPTY.value &&
+                    boardStructure.pieces[BoardSquare.G1.value] == BoardPiece.EMPTY.value) {
+                    if (!SquareAttacked.squareAttacked(BoardSquare.E1.value, BoardColor.BLACK.value, boardStructure) &&
+                        !SquareAttacked.squareAttacked(BoardSquare.F1.value, BoardColor.BLACK.value, boardStructure)) {
+                        System.out.println("WKCA Move Gen: ");
+                    }
+                }
+            }
+
+            if ((boardStructure.castlePerm & BoardCastleLink.WHITE_QUEEN_CASTLE.value) != 0) {
+                if (boardStructure.pieces[BoardSquare.D1.value] == BoardPiece.EMPTY.value &&
+                    boardStructure.pieces[BoardSquare.C1.value] == BoardPiece.EMPTY.value &&
+                    boardStructure.pieces[BoardSquare.B1.value] == BoardPiece.EMPTY.value) {
+                    if (!SquareAttacked.squareAttacked(BoardSquare.E1.value, BoardColor.BLACK.value, boardStructure) &&
+                        !SquareAttacked.squareAttacked(BoardSquare.D1.value, BoardColor.BLACK.value, boardStructure)) {
+                        System.out.println("WQCA Move Gen: ");
+                    }
+                }
+            }
+
         } else {
             for (pieceNum = 0; pieceNum < boardStructure.pieceNum[BoardPiece.BLACK_PAWN.value]; ++pieceNum) {
                 sqr = boardStructure.pieceList[BoardPiece.BLACK_PAWN.value][pieceNum];
@@ -208,8 +230,29 @@ public class MoveGenerator {
                     addCaptureMove(boardStructure, move(sqr, sqr - 11, BoardPiece.EMPTY.value,
                             BoardPiece.EMPTY.value, Move.moveFlagEnPassant), moveList);
                 }
-
             }
+
+            if ((boardStructure.castlePerm & BoardCastleLink.BLACK_KING_CASTLE.value) != 0) {
+                if (boardStructure.pieces[BoardSquare.F8.value] == BoardPiece.EMPTY.value &&
+                    boardStructure.pieces[BoardSquare.G8.value] == BoardPiece.EMPTY.value) {
+                    if (!SquareAttacked.squareAttacked(BoardSquare.E8.value, BoardColor.WHITE.value, boardStructure) &&
+                        !SquareAttacked.squareAttacked(BoardSquare.F8.value, BoardColor.WHITE.value, boardStructure)) {
+                        System.out.println("BKCA Move Gen: ");
+                    }
+                }
+            }
+
+            if ((boardStructure.castlePerm & BoardCastleLink.BLACK_QUEEN_CASTLE.value) != 0) {
+                if (boardStructure.pieces[BoardSquare.D8.value] == BoardPiece.EMPTY.value &&
+                    boardStructure.pieces[BoardSquare.C8.value] == BoardPiece.EMPTY.value &&
+                    boardStructure.pieces[BoardSquare.B8.value] == BoardPiece.EMPTY.value) {
+                    if (!SquareAttacked.squareAttacked(BoardSquare.E8.value, BoardColor.WHITE.value, boardStructure) &&
+                        !SquareAttacked.squareAttacked(BoardSquare.D8.value, BoardColor.WHITE.value, boardStructure)) {
+                        System.out.println("BQCA Move Gen: ");
+                    }
+                }
+            }
+
         }
 
         // Slide pieces:
@@ -280,10 +323,5 @@ public class MoveGenerator {
 
             piece = loopPieceNonSlides[pieceIndex++];
         }
-
-
     }
-
-
-
 }
