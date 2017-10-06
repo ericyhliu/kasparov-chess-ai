@@ -345,6 +345,9 @@ public class BoardStructure {
             this.pieceMajor[i] = 0;
             this.pieceMinor[i] = 0;
             this.material[i] = 0;
+        }
+
+        for (i = 0; i < 3; i++) {
             this.pawns[i] = 0L;
         }
 

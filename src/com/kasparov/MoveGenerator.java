@@ -140,7 +140,7 @@ public class MoveGenerator {
         int index = 0;
         int pieceIndex = 0;
 
-        System.out.println("Side: " + side);
+        // System.out.println("Side: " + side);
 
         if (side == BoardColor.WHITE.value) {
             for (pieceNum = 0; pieceNum < boardStructure.pieceNum[BoardPiece.WHITE_PAWN.value]; ++pieceNum) {
@@ -182,7 +182,9 @@ public class MoveGenerator {
                     boardStructure.pieces[BoardSquare.G1.value] == BoardPiece.EMPTY.value) {
                     if (!SquareAttacked.squareAttacked(BoardSquare.E1.value, BoardColor.BLACK.value, boardStructure) &&
                         !SquareAttacked.squareAttacked(BoardSquare.F1.value, BoardColor.BLACK.value, boardStructure)) {
-                        System.out.println("WKCA Move Gen: ");
+                        // System.out.println("WKCA Move Gen: ");
+                        addQuietMove(boardStructure, move(BoardSquare.E1.value, BoardSquare.G1.value,
+                                BoardPiece.EMPTY.value, BoardPiece.EMPTY.value, Move.moveFlagCastle), moveList);
                     }
                 }
             }
@@ -193,7 +195,9 @@ public class MoveGenerator {
                     boardStructure.pieces[BoardSquare.B1.value] == BoardPiece.EMPTY.value) {
                     if (!SquareAttacked.squareAttacked(BoardSquare.E1.value, BoardColor.BLACK.value, boardStructure) &&
                         !SquareAttacked.squareAttacked(BoardSquare.D1.value, BoardColor.BLACK.value, boardStructure)) {
-                        System.out.println("WQCA Move Gen: ");
+                        // System.out.println("WQCA Move Gen: ");
+                        addQuietMove(boardStructure, move(BoardSquare.E1.value, BoardSquare.C1.value,
+                                BoardPiece.EMPTY.value, BoardPiece.EMPTY.value, Move.moveFlagCastle), moveList);
                     }
                 }
             }
@@ -237,7 +241,9 @@ public class MoveGenerator {
                     boardStructure.pieces[BoardSquare.G8.value] == BoardPiece.EMPTY.value) {
                     if (!SquareAttacked.squareAttacked(BoardSquare.E8.value, BoardColor.WHITE.value, boardStructure) &&
                         !SquareAttacked.squareAttacked(BoardSquare.F8.value, BoardColor.WHITE.value, boardStructure)) {
-                        System.out.println("BKCA Move Gen: ");
+                        // System.out.println("BKCA Move Gen: ");
+                        addQuietMove(boardStructure, move(BoardSquare.E8.value, BoardSquare.G8.value,
+                                BoardPiece.EMPTY.value, BoardPiece.EMPTY.value, Move.moveFlagCastle), moveList);
                     }
                 }
             }
@@ -248,7 +254,9 @@ public class MoveGenerator {
                     boardStructure.pieces[BoardSquare.B8.value] == BoardPiece.EMPTY.value) {
                     if (!SquareAttacked.squareAttacked(BoardSquare.E8.value, BoardColor.WHITE.value, boardStructure) &&
                         !SquareAttacked.squareAttacked(BoardSquare.D8.value, BoardColor.WHITE.value, boardStructure)) {
-                        System.out.println("BQCA Move Gen: ");
+                        // System.out.println("BQCA Move Gen: ");
+                        addQuietMove(boardStructure, move(BoardSquare.E8.value, BoardSquare.C8.value,
+                                BoardPiece.EMPTY.value, BoardPiece.EMPTY.value, Move.moveFlagCastle), moveList);
                     }
                 }
             }
@@ -259,12 +267,12 @@ public class MoveGenerator {
         pieceIndex = loopSlideIndex[side];
         piece = loopPieceSlides[pieceIndex++];
         while (piece != 0) {
-            System.out.println("Sliders Piece Index: " + pieceIndex + "   Piece: " + piece);
+            // System.out.println("Sliders Piece Index: " + pieceIndex + "   Piece: " + piece);
 
             for (pieceNum = 0; pieceNum < boardStructure.pieceNum[piece]; pieceNum++) {
                 sqr = boardStructure.pieceList[piece][pieceNum];
-                System.out.print("Piece: " + BoardConstants.pieceChars.charAt(piece) + " on ");
-                boardStructure.printSqr(sqr);
+                // System.out.print("Piece: " + BoardConstants.pieceChars.charAt(piece) + " on ");
+                // boardStructure.printSqr(sqr);
 
                 for (int i = 0; i < numDirections[piece]; i++) {
                     dir = pieceDirections[piece][i];
@@ -273,14 +281,18 @@ public class MoveGenerator {
                     while (!Validate.isSquareOffboard(boardStructure, tempSqr)) {
                         if (boardStructure.pieces[tempSqr] != BoardPiece.EMPTY.value) {
                             if (BoardConstants.pieceColor[boardStructure.pieces[tempSqr]] == (side ^ 1)) {
-                                System.out.print("Capture on: " );
-                                boardStructure.printSqr(tempSqr);
+                                // System.out.print("Capture on: " );
+                                // boardStructure.printSqr(tempSqr);
+                                addCaptureMove(boardStructure, move(sqr, tempSqr, boardStructure.pieces[tempSqr],
+                                        BoardPiece.EMPTY.value, 0), moveList);
                             }
                             break;
                         }
 
-                        System.out.print("Normal on: " );
-                        boardStructure.printSqr(tempSqr);
+                        // System.out.print("Normal on: " );
+                        // boardStructure.printSqr(tempSqr);
+                        addQuietMove(boardStructure, move(sqr, tempSqr, BoardPiece.EMPTY.value,
+                                BoardPiece.EMPTY.value, 0), moveList);
                         tempSqr += dir;
                     }
                 }
@@ -293,12 +305,12 @@ public class MoveGenerator {
         pieceIndex = loopNonSlideIndex[side];
         piece = loopPieceNonSlides[pieceIndex++];
         while (piece != 0) {
-            System.out.println("Non Sliders Piece Index: " + pieceIndex + "   Piece: " + piece);
+            // System.out.println("Non Sliders Piece Index: " + pieceIndex + "   Piece: " + piece);
 
             for (pieceNum = 0; pieceNum < boardStructure.pieceNum[piece]; pieceNum++) {
                 sqr = boardStructure.pieceList[piece][pieceNum];
-                System.out.print("Piece: " + BoardConstants.pieceChars.charAt(piece) + " on ");
-                boardStructure.printSqr(sqr);
+                // System.out.print("Piece: " + BoardConstants.pieceChars.charAt(piece) + " on ");
+                // boardStructure.printSqr(sqr);
 
                 for (int i = 0; i < numDirections[piece]; i++) {
                     dir = pieceDirections[piece][i];
@@ -310,14 +322,18 @@ public class MoveGenerator {
 
                     if (boardStructure.pieces[tempSqr] != BoardPiece.EMPTY.value) {
                         if (BoardConstants.pieceColor[boardStructure.pieces[tempSqr]] == (side ^ 1)) {
-                            System.out.print("Capture on: " );
-                            boardStructure.printSqr(tempSqr);
+                            // System.out.print("Capture on: " );
+                            // boardStructure.printSqr(tempSqr);
+                            addCaptureMove(boardStructure, move(sqr, tempSqr, boardStructure.pieces[tempSqr],
+                                    BoardPiece.EMPTY.value, 0), moveList);
                         }
                         continue;
                     }
 
-                    System.out.print("Normal on: " );
-                    boardStructure.printSqr(tempSqr);
+                    // System.out.print("Normal on: " );
+                    // boardStructure.printSqr(tempSqr);
+                    addQuietMove(boardStructure, move(sqr, tempSqr, BoardPiece.EMPTY.value,
+                            BoardPiece.EMPTY.value, 0), moveList);
                 }
             }
 

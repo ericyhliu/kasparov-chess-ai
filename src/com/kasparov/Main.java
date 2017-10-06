@@ -9,7 +9,7 @@ public class Main {
         boardStructure.initHashKeys();
         boardStructure.initFileAndRankBoard();
 
-        boardStructure.parseFEN(BoardConstants.FEN16);
+        boardStructure.parseFEN(BoardConstants.FEN19);
         boardStructure.printBoard();
 
         boardStructure.updateListMaterials();
@@ -19,5 +19,7 @@ public class Main {
         MoveList moveList = new MoveList();
 
         MoveGenerator.generateAddMoves(boardStructure, moveList);
+
+        MoveList.printMoveList(moveList, boardStructure);
     }
 }
