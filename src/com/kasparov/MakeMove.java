@@ -120,4 +120,124 @@ public class MakeMove {
         assert (tempPieceNum);
     }
 
+    static boolean makeMove(BoardStructure boardStructure, int move) {
+        int from = Move.from(move);
+        int to = Move.to(move);
+        int side = boardStructure.side;
+
+
+        boardStructure.history[boardStructure.historyPly].posKey = boardStructure.positionKey;
+
+        if ((move & Move.moveFlagEnPassant) != 0) {
+            if (side == BoardColor.WHITE.value)
+                clearPiece(boardStructure, to - 10);
+            else
+                clearPiece(boardStructure, to + 10);
+        } else if ((move & Move.moveFlagCastle) != 0) {
+            if (to == BoardSquare.C1.value) {
+                movePiece(boardStructure, BoardSquare.A1.value,
+                        BoardSquare.D1.value);
+            } else if (to == BoardSquare.C8.value) {
+                movePiece(boardStructure, BoardSquare.A8.value,
+                        BoardSquare.D8.value);
+            } else if (to == BoardSquare.G1.value) {
+                movePiece(boardStructure, BoardSquare.H1.value,
+                        BoardSquare.F1.value);
+            } else if (to == BoardSquare.G8.value) {
+                movePiece(boardStructure, BoardSquare.H8.value,
+                        BoardSquare.F8.value);
+            }
+        }
+
+        if (boardStructure.enPassant != BoardSquare.NONE.value)
+            hashEnPassant(boardStructure);
+        hashCastle(boardStructure);
+
+        boardStructure.history[boardStructure.historyPly].move = move;
+        boardStructure.history[boardStructure.historyPly].fiftyMove =
+                boardStructure.fiftyMove;
+        boardStructure.history[boardStructure.historyPly].enPassant =
+                boardStructure.enPassant;
+        boardStructure.history[boardStructure.historyPly].castlePerm =
+                boardStructure.castlePerm;
+
+        boardStructure.castlePerm &= castlePerm[from];
+        boardStructure.castlePerm &= castlePerm[to];
+        boardStructure.enPassant = BoardSquare.NONE.value;
+        hashCastle(boardStructure);
+
+        int captured = Move.captured(move);
+        boardStructure.fiftyMove++;
+
+        if (captured != BoardPiece.EMPTY.value) {
+            clearPiece(boardStructure, to);
+            boardStructure.fiftyMove = 0;
+        }
+
+        boardStructure.historyPly++;
+        boardStructure.ply++;
+
+        if (BoardConstants.piecePawn[boardStructure.pieces[from]]) {
+            boardStructure.fiftyMove = 0;
+            if ((move & Move.moveFlagPawnStart) != 0) {
+                if (side == BoardColor.WHITE.value) {
+                    boardStructure.enPassant = from + 10;
+                } else {
+                    boardStructure.enPassant = from - 10;
+                }
+                hashEnPassant(boardStructure);
+            }
+        }
+
+        movePiece(boardStructure, from, to);
+
+        int promotedPiece = Move.promoted(move);
+        if (promotedPiece != BoardPiece.EMPTY.value) {
+            clearPiece(boardStructure, to);
+            addPiece(boardStructure, to, promotedPiece);
+        }
+
+        if (BoardConstants.pieceKing[boardStructure.pieces[to]])
+            boardStructure.kingSqr[boardStructure.side] = to;
+
+        boardStructure.side ^= 1;
+        hashSide(boardStructure);
+
+        if (SquareAttacked.squareAttacked(boardStructure.kingSqr[side],
+                boardStructure.side, boardStructure)) {
+            // takeMove(boardStructure);
+            return false;
+        }
+
+        return true;
+    }
+
+    static void takeMove(BoardStructure boardStructure) {
+
+        boardStructure.historyPly--;
+        boardStructure.ply--;
+
+        int move = boardStructure.history[boardStructure.historyPly].move;
+        int from = Move.from(move);
+        int to = Move.to(move);
+
+        if (boardStructure.enPassant != BoardSquare.NONE.value)
+            hashEnPassant(boardStructure);
+        hashCastle(boardStructure);
+
+        boardStructure.castlePerm = boardStructure.history[boardStructure.historyPly].castlePerm;
+        boardStructure.fiftyMove = boardStructure.history[boardStructure.historyPly].fiftyMove;
+        boardStructure.enPassant = boardStructure.history[boardStructure.historyPly].enPassant;
+
+        if (boardStructure.enPassant != BoardSquare.NONE.value)
+            hashEnPassant(boardStructure);
+        hashCastle(boardStructure);
+
+        boardStructure.side ^= 1;
+        hashSide(boardStructure);
+        
+    }
+
+
+
 }

@@ -110,6 +110,15 @@ public class BoardConstants {
     };
 
     /**
+     * Array that maps piece to boolean for checking if it is a pawn.
+     */
+    static final boolean[] piecePawn = {
+        false, // Empty piece
+        true, false, false, false, false, false, // White pieces
+        true, false, false, false, false, false  // Black pieces
+    };
+
+    /**
      * Array that maps piece to boolean for checking if it is a knight.
      */
     static final boolean[] pieceKnight = {
