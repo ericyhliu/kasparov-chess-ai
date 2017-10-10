@@ -128,7 +128,7 @@ public class MoveGenerator {
         }
     }
 
-    public static void generateAddMoves(BoardStructure boardStructure, MoveList moveList) {
+    public static void generateAllMoves(BoardStructure boardStructure, MoveList moveList) {
         moveList.setCount(0);
 
         int piece = BoardPiece.EMPTY.value;

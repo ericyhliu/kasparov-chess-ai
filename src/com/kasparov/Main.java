@@ -1,5 +1,7 @@
 package com.kasparov;
 
+import java.util.Scanner;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -8,18 +10,14 @@ public class Main {
         boardStructure.initBitMasks();
         boardStructure.initHashKeys();
         boardStructure.initFileAndRankBoard();
+        boardStructure.initHistory();
 
-        boardStructure.parseFEN(BoardConstants.FEN19);
-        boardStructure.printBoard();
-
+        boardStructure.parseFEN(BoardConstants.STARTING_FEN);
         boardStructure.updateListMaterials();
 
-        System.out.println();
+        boardStructure.printBoard();
+        PerftTest pf = new PerftTest();
+        pf.perftTest(boardStructure, 3);
 
-        MoveList moveList = new MoveList();
-
-        MoveGenerator.generateAddMoves(boardStructure, moveList);
-
-        MoveList.printMoveList(moveList, boardStructure);
     }
 }

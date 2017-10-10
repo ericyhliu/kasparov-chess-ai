@@ -311,6 +311,14 @@ public class BoardStructure {
     }
 
     /**
+     * Initializes history.
+     */
+    public void initHistory() {
+        for (int i = 0; i < BoardConstants.MAX_GAME_MOVES; i++)
+            history[i] = new UndoStructure();
+    }
+
+    /**
      * Initializes hash keys.
      */
     public void initHashKeys() {

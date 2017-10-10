@@ -32,4 +32,8 @@ public class UndoStructure {
      */
     int castlePerm;
 
+    /**
+     * Initializes an empty UndoStructure.
+     */
+    public UndoStructure() {}
 }

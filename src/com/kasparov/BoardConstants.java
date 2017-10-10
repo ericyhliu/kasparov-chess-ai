@@ -17,7 +17,7 @@ public class BoardConstants {
     /**
      * Starting position of the board in Forsyth-Edwards Notation (FEN).
      */
-    static final String startingFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    static final String STARTING_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
     /**
      * Sample FEN states for testing.

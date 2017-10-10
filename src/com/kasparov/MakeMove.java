@@ -1,5 +1,10 @@
 package com.kasparov;
 
+/**
+ * For making a move.
+ *
+ * @author Eric Liu
+ */
 public class MakeMove {
 
     static void hashPiece(BoardStructure boardStructure, int piece, int sqr) {
@@ -124,7 +129,6 @@ public class MakeMove {
         int from = Move.from(move);
         int to = Move.to(move);
         int side = boardStructure.side;
-
 
         boardStructure.history[boardStructure.historyPly].posKey = boardStructure.positionKey;
 
@@ -264,12 +268,12 @@ public class MakeMove {
             addPiece(boardStructure, to, captured);
         }
 
-        if (Move.promoted(move) != BoardPiece.EMPTY.value) {
+        int promoted = Move.promoted(move);
+        if (promoted != BoardPiece.EMPTY.value) {
             clearPiece(boardStructure, from);
-            addPiece(boardStructure, from, (BoardConstants.pieceColor[Move.promoted(move)] ==
-                    BoardColor.WHITE.value ? BoardPiece.WHITE_PAWN.value : BoardPiece.BLACK_PAWN.value));
+            addPiece(boardStructure, from, (BoardConstants.pieceColor[promoted] == BoardColor.WHITE.value ?
+                    BoardPiece.WHITE_PAWN.value : BoardPiece.BLACK_PAWN.value));
         }
     }
-
 
 }
