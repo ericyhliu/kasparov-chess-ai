@@ -213,7 +213,6 @@ public class MakeMove {
     }
 
     static void takeMove(BoardStructure boardStructure) {
-
         boardStructure.historyPly--;
         boardStructure.ply--;
 
@@ -235,9 +234,42 @@ public class MakeMove {
 
         boardStructure.side ^= 1;
         hashSide(boardStructure);
-        
-    }
 
+        if ((move & Move.moveFlagEnPassant) != 0) {
+            if (boardStructure.side == BoardColor.WHITE.value) {
+                addPiece(boardStructure, to-10, BoardPiece.BLACK_PAWN.value);
+            } else {
+                addPiece(boardStructure, to+10, BoardPiece.WHITE_PAWN.value);
+            }
+        } else if ((move & Move.moveFlagCastle) != 0) {
+            if (to == BoardSquare.C1.value) {
+                movePiece(boardStructure, BoardSquare.D1.value, BoardSquare.A1.value);
+            } else if (to == BoardSquare.C8.value) {
+                movePiece(boardStructure, BoardSquare.D8.value, BoardSquare.A8.value);
+            } else if (to == BoardSquare.G1.value) {
+                movePiece(boardStructure, BoardSquare.F1.value, BoardSquare.H1.value);
+            } else if (to == BoardSquare.G8.value) {
+                movePiece(boardStructure, BoardSquare.F8.value, BoardSquare.H8.value);
+            }
+        }
+
+        movePiece(boardStructure, to, from);
+
+        if (BoardConstants.pieceKing[boardStructure.pieces[from]]) {
+            boardStructure.kingSqr[boardStructure.side] = from;
+        }
+
+        int captured = Move.captured(move);
+        if (captured != BoardPiece.EMPTY.value) {
+            addPiece(boardStructure, to, captured);
+        }
+
+        if (Move.promoted(move) != BoardPiece.EMPTY.value) {
+            clearPiece(boardStructure, from);
+            addPiece(boardStructure, from, (BoardConstants.pieceColor[Move.promoted(move)] ==
+                    BoardColor.WHITE.value ? BoardPiece.WHITE_PAWN.value : BoardPiece.BLACK_PAWN.value));
+        }
+    }
 
 
 }
