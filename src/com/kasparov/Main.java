@@ -1,7 +1,5 @@
 package com.kasparov;
 
-import java.util.Scanner;
-
 public class Main {
 
     public static void main(String[] args) {
@@ -15,9 +13,11 @@ public class Main {
         boardStructure.parseFEN(BoardConstants.STARTING_FEN);
         boardStructure.updateListMaterials();
 
-        boardStructure.printBoard();
+        // boardStructure.printBoard();
         PerftTest pf = new PerftTest();
-        pf.perftTest(boardStructure, 3);
+        // pf.perftTest(boardStructure, 6);
+
+        PerftSuite.generatePerftSuiteTests();
 
     }
 }

@@ -209,7 +209,7 @@ public class MakeMove {
 
         if (SquareAttacked.squareAttacked(boardStructure.kingSqr[side],
                 boardStructure.side, boardStructure)) {
-            // takeMove(boardStructure);
+            takeMove(boardStructure);
             return false;
         }
 
