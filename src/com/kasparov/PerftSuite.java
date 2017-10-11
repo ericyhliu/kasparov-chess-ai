@@ -46,12 +46,8 @@ public class PerftSuite {
             while ((line = bufferedReader.readLine()) != null) {
                 parts = line.split(";");
                 long[] depthCount = new long[6];
-                depthCount[0] = Long.parseLong(parts[1].split(" ")[1]);
-                depthCount[1] = Long.parseLong(parts[2].split(" ")[1]);
-                depthCount[2] = Long.parseLong(parts[3].split(" ")[1]);
-                depthCount[3] = Long.parseLong(parts[4].split(" ")[1]);
-                depthCount[4] = Long.parseLong(parts[5].split(" ")[1]);
-                depthCount[5] = Long.parseLong(parts[6].split(" ")[1]);
+                for (int j = 0; j < 6; j++)
+                    depthCount[j] = Long.parseLong(parts[j+1].split(" ")[1]);
                 tests[i] = new PerftSuiteTest(parts[0], depthCount);
                 i++;
             }
@@ -86,7 +82,7 @@ public class PerftSuite {
                 pf = new PerftTest();
                 result = pf.perftTest(boardStructure, j);
                 System.out.print("Test " + (i+1) + ", " + j + ": ");
-                
+
                 if (tests[i].depthCount[j-1] == result)
                     System.out.println("Passed");
                 else
