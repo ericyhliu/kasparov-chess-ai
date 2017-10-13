@@ -13,6 +13,7 @@ public class BoardConstants {
     static final int BOARD_SQR_NUM = 120;
     static final int MAX_GAME_MOVES = 2048;
     static final int MAX_POSITION_MOVES = 256;
+    static final int NO_MOVE = 0;
 
     /**
      * Starting position of the board in Forsyth-Edwards Notation (FEN).

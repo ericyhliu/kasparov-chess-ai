@@ -13,11 +13,13 @@ public class Main {
         boardStructure.parseFEN(BoardConstants.STARTING_FEN);
         boardStructure.updateListMaterials();
 
-        // boardStructure.printBoard();
-        PerftTest pf = new PerftTest();
-        // pf.perftTest(boardStructure, 6);
+        String input;
+        while (true) {
+            boardStructure.printBoard();
+            System.out.println("Please enter a move: ");
 
-        PerftSuite.generatePerftSuiteTests();
+
+        }
 
     }
 }

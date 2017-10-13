@@ -35,6 +35,58 @@ public class Move {
 
     static int moveFlagPromoted = 0xF00000;
 
+    static int parseMove(BoardStructure boardStructure, String s) {
+        if (s.charAt(1) > '8' || s.charAt(1) < '1')
+            return BoardConstants.NO_MOVE;
+        if (s.charAt(3) > '8' || s.charAt(3) < '1')
+            return BoardConstants.NO_MOVE;
+        if (s.charAt(0) > 'h' || s.charAt(0) < 'a')
+            return BoardConstants.NO_MOVE;
+        if (s.charAt(2) > 'h' || s.charAt(2) < 'a')
+            return BoardConstants.NO_MOVE;
+
+        int from = BoardConstants.convertFileRankToSqr(s.charAt(0)-'a', s.charAt(1)-'1');
+        int to = BoardConstants.convertFileRankToSqr(s.charAt(2)-'a', s.charAt(3)-'1');
+        System.out.println("s: " + s + " from: " + from + " to: " + to);
+
+        assert(Validate.isSquareOnBoard(boardStructure, from) &&
+                Validate.isSquareOnBoard(boardStructure, to));
+
+        MoveList moveList = new MoveList();
+        MoveGenerator.generateAllMoves(boardStructure, moveList);
+        int moveNum = 0;
+        int move = 0;
+        int promotedPiece = BoardPiece.EMPTY.value;
+
+        for (moveNum = 0; moveNum < moveList.count; moveNum++) {
+            move = moveList.moves[moveNum].move;
+            if (from(move) == from && to(move) == to) {
+                promotedPiece = promoted(move);
+                if (promotedPiece != BoardPiece.EMPTY.value) {
+                    if (BoardConstants.isRookOrQueen(promotedPiece) &&
+                        !BoardConstants.isBishopOrQueen(promotedPiece) &&
+                            s.charAt(4) == 'r')
+                        return move;
+                    else if (!BoardConstants.isRookOrQueen(promotedPiece) &&
+                             BoardConstants.isBishopOrQueen(promotedPiece) &&
+                            s.charAt(4) == 'b')
+                        return move;
+                    else if (BoardConstants.isRookOrQueen(promotedPiece) &&
+                             BoardConstants.isBishopOrQueen(promotedPiece) &&
+                             s.charAt(4) == 'q')
+                        return move;
+                    else if (BoardConstants.isKnight(promotedPiece) &&
+                            s.charAt(4) == 'n')
+                        return move;
+                    continue;
+                }
+                return move;
+            }
+        }
+        return BoardConstants.NO_MOVE;
+    }
+
+
     public Move() {}
 
     public Move(int move, int score) {

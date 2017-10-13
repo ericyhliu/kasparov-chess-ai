@@ -84,9 +84,9 @@ public class PerftSuite {
                 System.out.print("Test " + (i+1) + ", " + j + ": ");
 
                 if (tests[i].depthCount[j-1] == result)
-                    System.out.println("Passed");
+                    System.out.println("Passed " + (tests[i].depthCount[j-1]) + " " + result);
                 else
-                    System.out.println("Failed");
+                    System.out.println("Failed " + (tests[i].depthCount[j-1]) + " " + result);
             }
         }
     }
