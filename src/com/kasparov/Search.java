@@ -16,7 +16,25 @@ public class Search {
         return false;
     }
 
-    static void searchPosition(BoardStructure boardStructure) {
+    static void searchPosition(BoardStructure boardStructure, SearchEntry searchEntry) {
+        // handle iterative deepening
+    }
 
+    static void clearForSearch(BoardStructure boardStructure, SearchEntry searchEntry) {
+
+    }
+
+    static void checkUp() {
+        // check if time up or interrupt from GUI
+    }
+
+    static int quiescenceSearch(BoardStructure boardStructure, SearchEntry searchEntry,
+                                int alpha, int beta) {
+        return 0;
+    }
+
+    static int alphaBeta(BoardStructure boardStructure, SearchEntry searchEntry,
+                         int alpha, int beta, int depth, int doNull) {
+        return 0;
     }
 }

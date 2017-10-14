@@ -171,6 +171,12 @@ public class BoardStructure {
     PVTable pvTable;
     int[] pvArray = new int[BoardConstants.MAX_DEPTH];
 
+    /**
+     * Search history.
+     */
+    int[][] searchhistory = new int[13][BoardConstants.BOARD_SQR_NUM];
+    int[][] searchKillers = new int[2][BoardConstants.MAX_DEPTH];
+
 
     /**
      * Initializes an empty BoardStructure.
