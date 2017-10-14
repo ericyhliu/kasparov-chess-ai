@@ -69,14 +69,70 @@ public class Search {
 
     static int quiescenceSearch(BoardStructure boardStructure, SearchEntry searchEntry,
                                 int alpha, int beta) {
-        return 0;
+        searchEntry.nodes++;
+
+        if (isRepetition(boardStructure) || boardStructure.fiftyMove >= 100)
+            return 0;
+
+        if (boardStructure.ply > BoardConstants.MAX_DEPTH - 1)
+            return PositionEvaluator.evaluatePosition(boardStructure);
+
+        int score = PositionEvaluator.evaluatePosition(boardStructure);
+
+        if (score >= beta) {
+            return beta;
+        }
+
+        if (score >= alpha) {
+            alpha = score;
+        }
+
+        MoveList moveList = new MoveList();
+        MoveGenerator.generateAllCaptureMoves(boardStructure, moveList);
+
+        int moveNum = 0;
+        int legal = 0;
+        int oldAlpha = alpha;
+        int bestMove = BoardConstants.NO_MOVE;
+        score = -INF;
+        int pvMove = PVTable.probePVTable(boardStructure);
+
+        for (moveNum = 0; moveNum < moveList.count; moveNum++) {
+
+            pickNextMove(moveList, moveNum);
+
+            if (!MakeMove.makeMove(boardStructure, moveList.moves[moveNum].move))
+                continue;
+
+            legal++;
+            score = -quiescenceSearch(boardStructure, searchEntry, -beta, -alpha);
+            MakeMove.takeMove(boardStructure);
+
+            if (score > alpha) {
+                if (score >= beta) {
+                    if (legal == 1) {
+                        searchEntry.failHighFirst++;
+                    }
+                    searchEntry.failHigh++;
+
+                    return beta;
+                }
+                alpha = score;
+                bestMove = moveList.moves[moveNum].move;
+            }
+        }
+
+        if (alpha != oldAlpha) {
+            PVTable.storePVMove(boardStructure, bestMove);
+        }
+
+        return alpha;
     }
 
     static int alphaBeta(BoardStructure boardStructure, SearchEntry searchEntry,
                          int alpha, int beta, int depth, boolean isNull) {
         if (depth == 0) {
-            searchEntry.nodes++;
-            return PositionEvaluator.evaluatePosition(boardStructure);
+            return quiescenceSearch(boardStructure, searchEntry, alpha, beta);
         }
 
         searchEntry.nodes++;

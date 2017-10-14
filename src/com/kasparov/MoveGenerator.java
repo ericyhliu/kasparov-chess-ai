@@ -386,4 +386,134 @@ public class MoveGenerator {
             piece = loopPieceNonSlides[pieceIndex++];
         }
     }
+
+    public static void generateAllCaptureMoves(BoardStructure boardStructure, MoveList moveList) {
+        moveList.setCount(0);
+
+        int piece = BoardPiece.EMPTY.value;
+        int side = boardStructure.side;
+        int sqr = 0;
+        int tempSqr = 0;
+        int pieceNum = 0;
+        int dir = 0;
+        int index = 0;
+        int pieceIndex = 0;
+
+        // System.out.println("Side: " + side);
+
+        if (side == BoardColor.WHITE.value) {
+            for (pieceNum = 0; pieceNum < boardStructure.pieceNum[BoardPiece.WHITE_PAWN.value]; ++pieceNum) {
+                sqr = boardStructure.pieceList[BoardPiece.WHITE_PAWN.value][pieceNum];
+                assert(Validate.isSquareOnBoard(boardStructure, sqr));
+
+                if (!Validate.isSquareOffboard(boardStructure, sqr + 9) &&
+                        BoardConstants.pieceColor[boardStructure.pieces[sqr + 9]] == BoardColor.BLACK.value) {
+                    addWhitePawnCaptureMove(boardStructure, sqr, sqr + 9, boardStructure.pieces[sqr + 9], moveList);
+                }
+
+                if (!Validate.isSquareOffboard(boardStructure, sqr + 11) &&
+                        BoardConstants.pieceColor[boardStructure.pieces[sqr + 11]] == BoardColor.BLACK.value) {
+                    addWhitePawnCaptureMove(boardStructure, sqr, sqr + 11, boardStructure.pieces[sqr + 11], moveList);
+                }
+
+                if (boardStructure.enPassant != BoardSquare.NONE.value) {
+                    if (sqr + 9 == boardStructure.enPassant) {
+                        addEnPassantMove(boardStructure, move(sqr, sqr + 9, BoardPiece.EMPTY.value,
+                                BoardPiece.EMPTY.value, Move.moveFlagEnPassant), moveList);
+                    }
+
+                    if (sqr + 11 == boardStructure.enPassant) {
+                        addEnPassantMove(boardStructure, move(sqr, sqr + 11, BoardPiece.EMPTY.value,
+                                BoardPiece.EMPTY.value, Move.moveFlagEnPassant), moveList);
+                    }
+                }
+            }
+
+        } else {
+            for (pieceNum = 0; pieceNum < boardStructure.pieceNum[BoardPiece.BLACK_PAWN.value]; ++pieceNum) {
+                sqr = boardStructure.pieceList[BoardPiece.BLACK_PAWN.value][pieceNum];
+                assert(Validate.isSquareOnBoard(boardStructure, sqr));
+
+                if (!Validate.isSquareOffboard(boardStructure, sqr - 9) &&
+                        BoardConstants.pieceColor[boardStructure.pieces[sqr - 9]] == BoardColor.WHITE.value) {
+                    addBlackPawnCaptureMove(boardStructure, sqr, sqr - 9, boardStructure.pieces[sqr - 9], moveList);
+                }
+
+                if (!Validate.isSquareOffboard(boardStructure, sqr - 11) &&
+                        BoardConstants.pieceColor[boardStructure.pieces[sqr - 11]] == BoardColor.WHITE.value) {
+                    addBlackPawnCaptureMove(boardStructure, sqr, sqr - 11, boardStructure.pieces[sqr - 11], moveList);
+                }
+
+                if (boardStructure.enPassant != BoardSquare.NONE.value) {
+                    if (sqr - 9 == boardStructure.enPassant) {
+                        addEnPassantMove(boardStructure, move(sqr, sqr - 9, BoardPiece.EMPTY.value,
+                                BoardPiece.EMPTY.value, Move.moveFlagEnPassant), moveList);
+                    }
+
+                    if (sqr - 11 == boardStructure.enPassant) {
+                        addEnPassantMove(boardStructure, move(sqr, sqr - 11, BoardPiece.EMPTY.value,
+                                BoardPiece.EMPTY.value, Move.moveFlagEnPassant), moveList);
+                    }
+                }
+            }
+
+        }
+
+        // Slide pieces:
+        pieceIndex = loopSlideIndex[side];
+        piece = loopPieceSlides[pieceIndex++];
+        while (piece != 0) {
+
+            for (pieceNum = 0; pieceNum < boardStructure.pieceNum[piece]; pieceNum++) {
+                sqr = boardStructure.pieceList[piece][pieceNum];
+
+                for (int i = 0; i < numDirections[piece]; i++) {
+                    dir = pieceDirections[piece][i];
+                    tempSqr = sqr + dir;
+
+                    while (!Validate.isSquareOffboard(boardStructure, tempSqr)) {
+                        if (boardStructure.pieces[tempSqr] != BoardPiece.EMPTY.value) {
+                            if (BoardConstants.pieceColor[boardStructure.pieces[tempSqr]] == (side ^ 1)) {
+                                addCaptureMove(boardStructure, move(sqr, tempSqr, boardStructure.pieces[tempSqr],
+                                        BoardPiece.EMPTY.value, 0), moveList);
+                            }
+                            break;
+                        }
+                        tempSqr += dir;
+                    }
+                }
+            }
+
+            piece = loopPieceSlides[pieceIndex++];
+        }
+
+        // Non slide pieces:
+        pieceIndex = loopNonSlideIndex[side];
+        piece = loopPieceNonSlides[pieceIndex++];
+        while (piece != 0) {
+
+            for (pieceNum = 0; pieceNum < boardStructure.pieceNum[piece]; pieceNum++) {
+                sqr = boardStructure.pieceList[piece][pieceNum];
+
+                for (int i = 0; i < numDirections[piece]; i++) {
+                    dir = pieceDirections[piece][i];
+                    tempSqr = sqr + dir;
+
+                    if (Validate.isSquareOffboard(boardStructure, tempSqr)) {
+                        continue;
+                    }
+
+                    if (boardStructure.pieces[tempSqr] != BoardPiece.EMPTY.value) {
+                        if (BoardConstants.pieceColor[boardStructure.pieces[tempSqr]] == (side ^ 1)) {
+                            addCaptureMove(boardStructure, move(sqr, tempSqr, boardStructure.pieces[tempSqr],
+                                    BoardPiece.EMPTY.value, 0), moveList);
+                        }
+                        continue;
+                    }
+                }
+            }
+
+            piece = loopPieceNonSlides[pieceIndex++];
+        }
+    }
 }
