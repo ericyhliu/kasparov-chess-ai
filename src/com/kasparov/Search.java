@@ -93,8 +93,21 @@ public class Search {
         int oldAlpha = alpha;
         int bestMove = BoardConstants.NO_MOVE;
         int score = -INF;
+        int pvMove = PVTable.probePVTable(boardStructure);
+
+        if (pvMove != BoardConstants.NO_MOVE) {
+            for (int moveNum = 0; moveNum < moveList.count; moveNum++) {
+                if (moveList.moves[moveNum].move == pvMove) {
+                    moveList.moves[moveNum].score = 2000000;
+                    break;
+                }
+            }
+        }
 
         for (int moveNum = 0; moveNum < moveList.count; moveNum++) {
+
+            pickNextMove(moveList, moveNum);
+
             if (!MakeMove.makeMove(boardStructure, moveList.moves[moveNum].move))
                 continue;
 
@@ -108,10 +121,23 @@ public class Search {
                         searchEntry.failHighFirst++;
                     }
                     searchEntry.failHigh++;
+
+                    if ((moveList.moves[moveNum].move & Move.moveFlagCapture) == 0) {
+                        boardStructure.searchKillers[1][boardStructure.ply] =
+                                boardStructure.searchKillers[0][boardStructure.ply];
+                        boardStructure.searchKillers[0][boardStructure.ply] =
+                                moveList.moves[moveNum].move;
+                    }
+
                     return beta;
                 }
                 alpha = score;
                 bestMove = moveList.moves[moveNum].move;
+
+                if ((moveList.moves[moveNum].move & Move.moveFlagCapture) == 0) {
+                    boardStructure.searchHistory[boardStructure.pieces[Move.from(bestMove)]][Move.to(bestMove)]
+                            += depth;
+                }
             }
         }
 
@@ -130,4 +156,22 @@ public class Search {
 
         return alpha;
     }
+
+    static void pickNextMove(MoveList moveList, int moveNum) {
+        Move temp;
+        int bestScore = 0;
+        int bestNum = moveNum;
+
+        for (int i = moveNum; i < moveList.count; i++) {
+            if (moveList.moves[i].score > bestScore) {
+                bestScore = moveList.moves[i].score;
+                bestNum = i;
+            }
+        }
+
+        temp = moveList.moves[moveNum];
+        moveList.moves[moveNum] = moveList.moves[bestNum];
+        moveList.moves[bestNum] = temp;
+    }
+
 }

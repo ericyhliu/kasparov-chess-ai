@@ -13,7 +13,7 @@ public class Main {
         boardStructure.initHistory();
         MoveGenerator.initMvvLva();
 
-        boardStructure.parseFEN(BoardConstants.FEN21);
+        boardStructure.parseFEN(BoardConstants.FEN22);
         boardStructure.updateListMaterials();
 
         String input;
@@ -32,7 +32,7 @@ public class Main {
                 MakeMove.takeMove(boardStructure);
                 continue;
             } else if (input.charAt(0) == 's') {
-                searchEntry.depth = 4;
+                searchEntry.depth = 6;
                 Search.searchPosition(boardStructure, searchEntry);
             } else {
                 move = Move.parseMove(boardStructure, input);

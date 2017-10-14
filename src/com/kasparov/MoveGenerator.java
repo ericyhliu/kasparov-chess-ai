@@ -77,15 +77,6 @@ public class MoveGenerator {
                 mvvLva[victim][attacker] = victimScore[victim] + 6 - (victimScore[attacker]/100);
             }
         }
-
-        /*
-        for (victim = BoardPiece.WHITE_PAWN.value; victim <= BoardPiece.BLACK_KING.value; victim++) {
-            for (attacker = BoardPiece.WHITE_PAWN.value; attacker <= BoardPiece.BLACK_KING.value; attacker++) {
-                System.out.printf("%c x %c = %d\n", BoardConstants.pieceChars.charAt(attacker),
-                        BoardConstants.pieceChars.charAt(victim), mvvLva[victim][attacker]);
-            }
-        }
-        */
     }
 
 
@@ -109,21 +100,30 @@ public class MoveGenerator {
     public static void addQuietMove(BoardStructure boardStructure, int move, MoveList moveList) {
         moveList.moves[moveList.count] = new Move();
         moveList.moves[moveList.count].move = move;
-        moveList.moves[moveList.count].score = 0;
+
+        if (boardStructure.searchKillers[0][boardStructure.ply] == move) {
+            moveList.moves[moveList.count].score = 900000;
+        } else if (boardStructure.searchKillers[1][boardStructure.ply] == move) {
+            moveList.moves[moveList.count].score = 800000;
+        } else {
+            moveList.moves[moveList.count].score = boardStructure
+                    .searchHistory[boardStructure.pieces[Move.from(move)]][Move.to(move)];
+        }
         moveList.count++;
     }
 
     public static void addCaptureMove(BoardStructure boardStructure, int move, MoveList moveList) {
         moveList.moves[moveList.count] = new Move();
         moveList.moves[moveList.count].move = move;
-        moveList.moves[moveList.count].score = mvvLva[Move.captured(move)][boardStructure.pieces[Move.from(move)]];
+        moveList.moves[moveList.count].score = mvvLva[Move.captured(move)][boardStructure.pieces[Move.from(move)]] +
+            1000000;
         moveList.count++;
     }
 
     public static void addEnPassantMove(BoardStructure boardStructure, int move, MoveList moveList) {
         moveList.moves[moveList.count] = new Move();
         moveList.moves[moveList.count].move = move;
-        moveList.moves[moveList.count].score = 105;
+        moveList.moves[moveList.count].score = 105 + 1000000;
         moveList.count++;
     }
 
@@ -208,16 +208,17 @@ public class MoveGenerator {
                     addWhitePawnCaptureMove(boardStructure, sqr, sqr + 11, boardStructure.pieces[sqr + 11], moveList);
                 }
 
-                if (sqr + 9 == boardStructure.enPassant) {
-                    addCaptureMove(boardStructure, move(sqr, sqr + 9, BoardPiece.EMPTY.value,
-                            BoardPiece.EMPTY.value, Move.moveFlagEnPassant), moveList);
-                }
+                if (boardStructure.enPassant != BoardSquare.NONE.value) {
+                    if (sqr + 9 == boardStructure.enPassant) {
+                        addEnPassantMove(boardStructure, move(sqr, sqr + 9, BoardPiece.EMPTY.value,
+                                BoardPiece.EMPTY.value, Move.moveFlagEnPassant), moveList);
+                    }
 
-                if (sqr + 11 == boardStructure.enPassant) {
-                    addCaptureMove(boardStructure, move(sqr, sqr + 11, BoardPiece.EMPTY.value,
-                            BoardPiece.EMPTY.value, Move.moveFlagEnPassant), moveList);
+                    if (sqr + 11 == boardStructure.enPassant) {
+                        addEnPassantMove(boardStructure, move(sqr, sqr + 11, BoardPiece.EMPTY.value,
+                                BoardPiece.EMPTY.value, Move.moveFlagEnPassant), moveList);
+                    }
                 }
-
             }
 
             if ((boardStructure.castlePerm & BoardCastleLink.WHITE_KING_CASTLE.value) != 0) {
@@ -268,14 +269,16 @@ public class MoveGenerator {
                     addBlackPawnCaptureMove(boardStructure, sqr, sqr - 11, boardStructure.pieces[sqr - 11], moveList);
                 }
 
-                if (sqr - 9 == boardStructure.enPassant) {
-                    addCaptureMove(boardStructure, move(sqr, sqr - 9, BoardPiece.EMPTY.value,
-                            BoardPiece.EMPTY.value, Move.moveFlagEnPassant), moveList);
-                }
+                if (boardStructure.enPassant != BoardSquare.NONE.value) {
+                    if (sqr - 9 == boardStructure.enPassant) {
+                        addEnPassantMove(boardStructure, move(sqr, sqr - 9, BoardPiece.EMPTY.value,
+                                BoardPiece.EMPTY.value, Move.moveFlagEnPassant), moveList);
+                    }
 
-                if (sqr - 11 == boardStructure.enPassant) {
-                    addCaptureMove(boardStructure, move(sqr, sqr - 11, BoardPiece.EMPTY.value,
-                            BoardPiece.EMPTY.value, Move.moveFlagEnPassant), moveList);
+                    if (sqr - 11 == boardStructure.enPassant) {
+                        addEnPassantMove(boardStructure, move(sqr, sqr - 11, BoardPiece.EMPTY.value,
+                                BoardPiece.EMPTY.value, Move.moveFlagEnPassant), moveList);
+                    }
                 }
             }
 
