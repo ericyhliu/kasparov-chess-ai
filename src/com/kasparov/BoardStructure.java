@@ -166,6 +166,11 @@ public class BoardStructure {
     int[] piecesBishopOrQueen = new int[13];
 
     /**
+     * Principle variation table.
+     */
+    PVTable pvTable;
+
+    /**
      * Initializes an empty BoardStructure.
      */
     public BoardStructure() {}
@@ -375,6 +380,9 @@ public class BoardStructure {
 
         this.castlePerm = 0;
         this.positionKey = 0L;
+
+        this.pvTable = new PVTable();
+        this.pvTable.initPVTable();
     }
 
     /**
