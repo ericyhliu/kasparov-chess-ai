@@ -65,13 +65,6 @@ public class MoveGenerator {
         return from | ((to << 7) | (captured << 14)) | (promoted << 20) | flag;
     }
 
-    public void moveGen(BoardStructure boardStructure, MoveList moveList) {
-        // Loop all pieces
-            // If slider, loop each dir and add move
-                // AddMove list.moves[list.count] = move
-                // list.count++
-    }
-
     public static void addQuietMove(BoardStructure boardStructure, int move, MoveList moveList) {
         moveList.addMove(move);
     }

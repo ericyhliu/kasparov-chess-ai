@@ -17,7 +17,30 @@ public class Search {
     }
 
     static void searchPosition(BoardStructure boardStructure, SearchEntry searchEntry) {
-        // handle iterative deepening
+
+        int bestMove = BoardConstants.NO_MOVE;
+        int bestScore = Integer.MIN_VALUE;
+        int pvMoves = 0;
+        clearForSearch(boardStructure, searchEntry);
+
+        for (int currentDepth = 1; currentDepth <= searchEntry.depth; currentDepth++) {
+            bestScore = alphaBeta(boardStructure, searchEntry,
+                    Integer.MIN_VALUE, Integer.MAX_VALUE, currentDepth, true);
+
+            // check for time here
+
+            pvMoves = PVTable.getPVLine(boardStructure, currentDepth);
+            bestMove = boardStructure.pvArray[0];
+            System.out.println("Depth: " + currentDepth);
+            System.out.println("Best Score: " + bestScore);
+            System.out.println("Move: " + boardStructure.printMove(bestMove));
+            System.out.println("Nodes: " + searchEntry.nodes);
+            System.out.print("PV Moves: ");
+            for (int pvNum = 0; pvNum < pvMoves; pvNum++) {
+                System.out.print(boardStructure.printMove(boardStructure.pvArray[pvNum]) + " ");
+            }
+            System.out.println();
+        }
     }
 
     static void clearForSearch(BoardStructure boardStructure, SearchEntry searchEntry) {
@@ -37,7 +60,6 @@ public class Search {
         searchEntry.startTime = Time.getTimeInMilleseconds();
         searchEntry.stopped = 0;
         searchEntry.nodes = 0;
-
     }
 
     static void checkUp() {
@@ -50,7 +72,7 @@ public class Search {
     }
 
     static int alphaBeta(BoardStructure boardStructure, SearchEntry searchEntry,
-                         int alpha, int beta, int depth, int doNull) {
+                         int alpha, int beta, int depth, boolean isNull) {
         return 0;
     }
 }
