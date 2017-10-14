@@ -16,7 +16,7 @@ public class PVTable {
     public PVTable() {}
 
     public void initPVTable() {
-        this.numEntries = 1024;
+        this.numEntries = 150000;
         this.pvEntryTable = new PVEntry[this.numEntries];
         for (int i = 0; i < this.numEntries; i++)
             this.pvEntryTable[i] = new PVEntry();
@@ -29,6 +29,23 @@ public class PVTable {
             this.pvEntryTable[i].posKey = 0;
             this.pvEntryTable[i].move = BoardConstants.NO_MOVE;
         }
+    }
+
+    static void storePVMove(BoardStructure boardStructure, int move) {
+        int index = (int) boardStructure.positionKey % boardStructure.pvTable.numEntries;
+        assert(index >= 0 && index <= boardStructure.pvTable.numEntries - 1);
+        boardStructure.pvTable.pvEntryTable[index].move = move;
+        boardStructure.pvTable.pvEntryTable[index].posKey = boardStructure.positionKey;
+    }
+
+    static long probePVTable(BoardStructure boardStructure) {
+        int index = (int) boardStructure.positionKey % boardStructure.pvTable.numEntries;
+        assert(index >= 0 && index <= boardStructure.pvTable.numEntries - 1);
+
+        if (boardStructure.pvTable.pvEntryTable[index].posKey == boardStructure.positionKey)
+            return boardStructure.pvTable.pvEntryTable[index].posKey;
+
+        return BoardConstants.NO_MOVE;
     }
 
 }
