@@ -14,6 +14,7 @@ public class BoardConstants {
     static final int MAX_GAME_MOVES = 2048;
     static final int MAX_POSITION_MOVES = 256;
     static final int MAX_DEPTH = 64;
+    static final int MATE = 29000;
     static final int NO_MOVE = 0;
 
     /**

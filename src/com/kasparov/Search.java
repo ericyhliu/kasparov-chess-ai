@@ -7,6 +7,8 @@ package com.kasparov;
  */
 public class Search {
 
+    static final int MATE = 29000;
+
     static boolean isRepetition(BoardStructure boardStructure) {
         for (int i = boardStructure.historyPly - boardStructure.fiftyMove;
              i < boardStructure.historyPly - 1; i++) {
@@ -17,7 +19,6 @@ public class Search {
     }
 
     static void searchPosition(BoardStructure boardStructure, SearchEntry searchEntry) {
-
         int bestMove = BoardConstants.NO_MOVE;
         int bestScore = Integer.MIN_VALUE;
         int pvMoves = 0;
@@ -73,6 +74,55 @@ public class Search {
 
     static int alphaBeta(BoardStructure boardStructure, SearchEntry searchEntry,
                          int alpha, int beta, int depth, boolean isNull) {
-        return 0;
+        if (depth == 0) {
+            searchEntry.nodes++;
+            return PositionEvaluator.evaluatePosition(boardStructure);
+        }
+
+        searchEntry.nodes++;
+
+        if (isRepetition(boardStructure) || boardStructure.fiftyMove >= 100)
+            return 0;
+
+        if (boardStructure.ply > BoardConstants.MAX_DEPTH - 1)
+            return PositionEvaluator.evaluatePosition(boardStructure);
+
+        MoveList moveList = new MoveList();
+        MoveGenerator.generateAllMoves(boardStructure, moveList);
+        int legal = 0;
+        int oldAlpha = alpha;
+        int bestMove = BoardConstants.NO_MOVE;
+        int score = Integer.MIN_VALUE;
+
+        for (int moveNum = 0; moveNum < moveList.count; moveNum++) {
+            if (!MakeMove.makeMove(boardStructure, moveList.moves[moveNum].move))
+                continue;
+
+            legal++;
+            score = -alphaBeta(boardStructure, searchEntry, -beta, -alpha, depth-1, true);
+            MakeMove.takeMove(boardStructure);
+
+            if (score > alpha) {
+                if (score >= beta)
+                    return beta;
+                alpha = score;
+                bestMove = moveList.moves[moveNum].move;
+            }
+        }
+
+        if (legal == 0) {
+            if (SquareAttacked.squareAttacked(boardStructure.kingSqr[boardStructure.side],
+                    boardStructure.side ^ 1, boardStructure)) {
+                return -MATE + boardStructure.ply;
+            } else {
+                return 0;
+            }
+        }
+
+        if (alpha != oldAlpha) {
+            PVTable.storePVMove(boardStructure, bestMove);
+        }
+
+        return alpha;
     }
 }
