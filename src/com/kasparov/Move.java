@@ -47,7 +47,7 @@ public class Move {
 
         int from = BoardConstants.convertFileRankToSqr(s.charAt(0)-'a', s.charAt(1)-'1');
         int to = BoardConstants.convertFileRankToSqr(s.charAt(2)-'a', s.charAt(3)-'1');
-        System.out.println("s: " + s + " from: " + from + " to: " + to);
+        // System.out.println("s: " + s + " from: " + from + " to: " + to);
 
         assert(Validate.isSquareOnBoard(boardStructure, from) &&
                 Validate.isSquareOnBoard(boardStructure, to));

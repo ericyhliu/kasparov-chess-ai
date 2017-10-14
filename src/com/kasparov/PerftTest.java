@@ -29,9 +29,9 @@ public class PerftTest {
     }
 
     long perftTest(BoardStructure boardStructure, int depth) {
-        // System.out.println("\nStarting Test to Depth: " + depth);
+        System.out.println("\nStarting Test to Depth: " + depth);
         leafNodes = 0;
-
+        long start = Time.getTimeInMilleseconds();
         MoveList moveList = new MoveList();
         MoveGenerator.generateAllMoves(boardStructure, moveList);
 
@@ -44,10 +44,11 @@ public class PerftTest {
             perft(boardStructure, depth - 1);
             MakeMove.takeMove(boardStructure);
             long oldNodes = leafNodes - cumNodes;
-            // System.out.println("Move " + (moveNum+1) + ": " +
-            //         boardStructure.printMove(move) + ": " + oldNodes);
+             System.out.println("Move " + (moveNum+1) + ": " +
+                     boardStructure.printMove(move) + ": " + oldNodes);
         }
-        // System.out.println("Total Nodes Visited: " + leafNodes);
+        System.out.println("Total Nodes Visited: " + leafNodes);
+        System.out.println("Test completed in: " + (Time.getTimeInMilleseconds() - start) + " ms");
         return leafNodes;
     }
 }
