@@ -7,8 +7,8 @@ package com.kasparov;
  */
 public class SearchEntry {
 
-    int startTime;
-    int stopTime;
+    long startTime;
+    long stopTime;
     int depth;
     int depthSet;
     int timeSet;

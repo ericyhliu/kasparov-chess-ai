@@ -174,7 +174,7 @@ public class BoardStructure {
     /**
      * Search history.
      */
-    int[][] searchhistory = new int[13][BoardConstants.BOARD_SQR_NUM];
+    int[][] searchHistory = new int[13][BoardConstants.BOARD_SQR_NUM];
     int[][] searchKillers = new int[2][BoardConstants.MAX_DEPTH];
 
 
