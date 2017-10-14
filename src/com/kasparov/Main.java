@@ -33,6 +33,8 @@ public class Main {
                 continue;
             } else if (input.charAt(0) == 's') {
                 searchEntry.depth = 6;
+                searchEntry.startTime = Time.getTimeInMilleseconds();
+                searchEntry.stopTime = Time.getTimeInMilleseconds() + 2000000;
                 Search.searchPosition(boardStructure, searchEntry);
             } else {
                 move = Move.parseMove(boardStructure, input);

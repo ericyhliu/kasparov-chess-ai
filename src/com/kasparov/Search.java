@@ -27,21 +27,27 @@ public class Search {
 
         for (int currentDepth = 1; currentDepth <= searchEntry.depth; currentDepth++) {
             bestScore = alphaBeta(boardStructure, searchEntry, -INF, INF, currentDepth, true);
+
+            if (searchEntry.isStopped == true) {
+                break;
+            }
+
             pvMoves = PVTable.getPVLine(boardStructure, currentDepth);
             bestMove = boardStructure.pvArray[0];
 
-            System.out.printf("Depth: %d  Score: %d  Move: %s  Nodes: %d ",
-                    currentDepth, bestScore, boardStructure.printMove(bestMove), searchEntry.nodes);
+            System.out.printf("info score cp %d depth %d nodes %d time %d ",
+                    bestScore, currentDepth, searchEntry.nodes,
+                    Time.getTimeInMilleseconds() - searchEntry.startTime);
 
             pvMoves = PVTable.getPVLine(boardStructure, currentDepth);
-            System.out.print("PV Moves: ");
+            System.out.print("pv ");
             for (int pvNum = 0; pvNum < pvMoves; pvNum++) {
                 System.out.print(boardStructure.printMove(boardStructure.pvArray[pvNum]) + " ");
             }
-            System.out.println();
-
-            System.out.printf("Ordering: %.2f\n", (searchEntry.failHighFirst/searchEntry.failHigh));
+            System.out.printf("\nOrdering: %.2f\n", (searchEntry.failHighFirst/searchEntry.failHigh));
         }
+
+        System.out.printf("bestmove %s\n", boardStructure.printMove(bestMove));
     }
 
     static void clearForSearch(BoardStructure boardStructure, SearchEntry searchEntry) {
@@ -59,16 +65,22 @@ public class Search {
         boardStructure.ply = 0;
 
         searchEntry.startTime = Time.getTimeInMilleseconds();
-        searchEntry.stopped = 0;
+        searchEntry.isStopped = false;
         searchEntry.nodes = 0;
     }
 
-    static void checkUp() {
-        // check if time up or interrupt from GUI
+    static void checkUp(SearchEntry searchEntry) {
+        if (searchEntry.timeSet && Time.getTimeInMilleseconds() > searchEntry.stopTime) {
+            searchEntry.isStopped = true;
+        }
     }
 
     static int quiescenceSearch(BoardStructure boardStructure, SearchEntry searchEntry,
                                 int alpha, int beta) {
+        if ((searchEntry.nodes & 2047) == 0) {
+            checkUp(searchEntry);
+        }
+
         searchEntry.nodes++;
 
         if (isRepetition(boardStructure) || boardStructure.fiftyMove >= 100)
@@ -108,6 +120,10 @@ public class Search {
             score = -quiescenceSearch(boardStructure, searchEntry, -beta, -alpha);
             MakeMove.takeMove(boardStructure);
 
+            if (searchEntry.isStopped) {
+                return 0;
+            }
+
             if (score > alpha) {
                 if (score >= beta) {
                     if (legal == 1) {
@@ -133,6 +149,10 @@ public class Search {
                          int alpha, int beta, int depth, boolean isNull) {
         if (depth == 0) {
             return quiescenceSearch(boardStructure, searchEntry, alpha, beta);
+        }
+
+        if ((searchEntry.nodes & 2047) == 0) {
+            checkUp(searchEntry);
         }
 
         searchEntry.nodes++;
@@ -170,6 +190,10 @@ public class Search {
             legal++;
             score = -alphaBeta(boardStructure, searchEntry, -beta, -alpha, depth-1, true);
             MakeMove.takeMove(boardStructure);
+
+            if (searchEntry.isStopped) {
+                return 0;
+            }
 
             if (score > alpha) {
                 if (score >= beta) {

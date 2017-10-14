@@ -11,10 +11,10 @@ public class SearchEntry {
     long stopTime;
     int depth;
     int depthSet;
-    int timeSet;
+    boolean timeSet;
     long nodes;
     int quit;
-    int stopped;
+    boolean isStopped;
     int movesToGo;
     int infinite;
     double failHigh;
