@@ -1,7 +1,7 @@
 package com.kasparov;
 
 /**
- * Principle variation entry.
+ * Principal variation entry.
  *
  * @author Eric Liu
  */

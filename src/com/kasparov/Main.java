@@ -18,7 +18,7 @@ public class Main {
         String input;
 
         Scanner in = new Scanner(System.in);
-        int move = BoardConstants.NO_MOVE;
+        int move;
         while (true) {
             boardStructure.printBoard();
             System.out.print("Please enter a move: ");
@@ -30,11 +30,21 @@ public class Main {
                 MakeMove.takeMove(boardStructure);
                 continue;
             } else if (input.charAt(0) == 'p') {
-                PerftTest pt = new PerftTest();
-                pt.perftTest(boardStructure, 4);
+//                PerftTest pt = new PerftTest();
+//                pt.perftTest(boardStructure, 4);
+
+                int max = PVTable.getPVLine(boardStructure, 4);
+                System.out.println("\nPVLine of " + max + " moves");
+                for (int i = 0; i < max; i++) {
+                    move = boardStructure.pvArray[i];
+                    System.out.println("Move: " + boardStructure.printMove(move));
+                }
+                System.out.println();
+
             } else {
                 move = Move.parseMove(boardStructure, input);
                 if (move != BoardConstants.NO_MOVE) {
+                    PVTable.storePVMove(boardStructure, move);
                     MakeMove.makeMove(boardStructure, move);
 //                    if (Search.isRepetition(boardStructure))
 //                        System.out.println("Repetition Seen");

@@ -1,7 +1,7 @@
 package com.kasparov;
 
 /**
- * Principle variation table.
+ * Principal variation table.
  *
  * @author Eric Liu
  */
@@ -34,18 +34,53 @@ public class PVTable {
     static void storePVMove(BoardStructure boardStructure, int move) {
         int index = (int) boardStructure.positionKey % boardStructure.pvTable.numEntries;
         assert(index >= 0 && index <= boardStructure.pvTable.numEntries - 1);
+        if (index < 0)
+            index *= -1;
         boardStructure.pvTable.pvEntryTable[index].move = move;
         boardStructure.pvTable.pvEntryTable[index].posKey = boardStructure.positionKey;
     }
 
-    static long probePVTable(BoardStructure boardStructure) {
+    static int probePVTable(BoardStructure boardStructure) {
         int index = (int) boardStructure.positionKey % boardStructure.pvTable.numEntries;
         assert(index >= 0 && index <= boardStructure.pvTable.numEntries - 1);
-
+        if (index < 0)
+            index *= -1;
         if (boardStructure.pvTable.pvEntryTable[index].posKey == boardStructure.positionKey)
-            return boardStructure.pvTable.pvEntryTable[index].posKey;
+            return boardStructure.pvTable.pvEntryTable[index].move;
 
         return BoardConstants.NO_MOVE;
+    }
+
+    static int getPVLine(BoardStructure boardStructure, int depth) {
+        int move = probePVTable(boardStructure);
+
+        int count = 0;
+        while (move != BoardConstants.NO_MOVE && count < depth) {
+            if (moveExists(boardStructure, move)) {
+                MakeMove.makeMove(boardStructure, move);
+                boardStructure.pvArray[count++] = move;
+            } else {
+                break;
+            }
+            move = probePVTable(boardStructure);
+        }
+
+        while (boardStructure.ply > 0)
+            MakeMove.takeMove(boardStructure);
+        return count;
+    }
+
+    static boolean moveExists(BoardStructure boardStructure, int move) {
+        MoveList moveList = new MoveList();
+        MoveGenerator.generateAllMoves(boardStructure, moveList);
+        for (int moveNum = 0; moveNum < moveList.count; moveNum++) {
+            if (!MakeMove.makeMove(boardStructure, moveList.moves[moveNum].move))
+                continue;
+            MakeMove.takeMove(boardStructure);
+            if (moveList.moves[moveNum].move == move)
+                return true;
+        }
+        return false;
     }
 
 }

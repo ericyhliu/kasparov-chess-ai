@@ -169,6 +169,8 @@ public class BoardStructure {
      * Principle variation table.
      */
     PVTable pvTable;
+    int[] pvArray = new int[BoardConstants.MAX_DEPTH];
+
 
     /**
      * Initializes an empty BoardStructure.
