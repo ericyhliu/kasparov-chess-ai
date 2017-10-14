@@ -7,6 +7,7 @@ package com.kasparov;
  */
 public class Search {
 
+    static final int INF = 30000;
     static final int MATE = 29000;
 
     static boolean isRepetition(BoardStructure boardStructure) {
@@ -20,27 +21,26 @@ public class Search {
 
     static void searchPosition(BoardStructure boardStructure, SearchEntry searchEntry) {
         int bestMove = BoardConstants.NO_MOVE;
-        int bestScore = Integer.MIN_VALUE;
-        int pvMoves = 0;
+        int bestScore = -INF;
+        int pvMoves;
         clearForSearch(boardStructure, searchEntry);
 
         for (int currentDepth = 1; currentDepth <= searchEntry.depth; currentDepth++) {
-            bestScore = alphaBeta(boardStructure, searchEntry,
-                    Integer.MIN_VALUE, Integer.MAX_VALUE, currentDepth, true);
-
-            // check for time here
-
+            bestScore = alphaBeta(boardStructure, searchEntry, -INF, INF, currentDepth, true);
             pvMoves = PVTable.getPVLine(boardStructure, currentDepth);
             bestMove = boardStructure.pvArray[0];
-            System.out.println("Depth: " + currentDepth);
-            System.out.println("Best Score: " + bestScore);
-            System.out.println("Move: " + boardStructure.printMove(bestMove));
-            System.out.println("Nodes: " + searchEntry.nodes);
+
+            System.out.printf("Depth: %d  Score: %d  Move: %s  Nodes: %d ",
+                    currentDepth, bestScore, boardStructure.printMove(bestMove), searchEntry.nodes);
+
+            pvMoves = PVTable.getPVLine(boardStructure, currentDepth);
             System.out.print("PV Moves: ");
             for (int pvNum = 0; pvNum < pvMoves; pvNum++) {
                 System.out.print(boardStructure.printMove(boardStructure.pvArray[pvNum]) + " ");
             }
             System.out.println();
+
+            System.out.printf("Ordering: %.2f\n", (searchEntry.failHighFirst/searchEntry.failHigh));
         }
     }
 
@@ -92,7 +92,7 @@ public class Search {
         int legal = 0;
         int oldAlpha = alpha;
         int bestMove = BoardConstants.NO_MOVE;
-        int score = Integer.MIN_VALUE;
+        int score = -INF;
 
         for (int moveNum = 0; moveNum < moveList.count; moveNum++) {
             if (!MakeMove.makeMove(boardStructure, moveList.moves[moveNum].move))
@@ -103,8 +103,13 @@ public class Search {
             MakeMove.takeMove(boardStructure);
 
             if (score > alpha) {
-                if (score >= beta)
+                if (score >= beta) {
+                    if (legal == 1) {
+                        searchEntry.failHighFirst++;
+                    }
+                    searchEntry.failHigh++;
                     return beta;
+                }
                 alpha = score;
                 bestMove = moveList.moves[moveNum].move;
             }

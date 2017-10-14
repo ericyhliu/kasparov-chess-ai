@@ -17,5 +17,7 @@ public class SearchEntry {
     int stopped;
     int movesToGo;
     int infinite;
+    double failHigh;
+    double failHighFirst;
 
 }

@@ -121,6 +121,10 @@ public class PositionEvaluator {
             score -= rookTable[mirror64[boardStructure.sqr64(sqr)]];
         }
 
-        return 0;
+        if (boardStructure.side == BoardColor.WHITE.value) {
+            return score;
+        } else {
+            return -score;
+        }
     }
 }

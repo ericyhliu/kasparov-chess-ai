@@ -60,21 +60,71 @@ public class MoveGenerator {
     };
 
 
+    static final int[] victimScore = {
+        0, // Empty piece
+        100, 200, 300, 400, 500, 600, // White pieces
+        100, 200, 300, 400, 500, 600  // Black pieces
+    };
+
+    static int[][] mvvLva = new int[13][13];
+
+
+    static void initMvvLva() {
+        int attacker;
+        int victim;
+        for (attacker = BoardPiece.WHITE_PAWN.value; attacker <= BoardPiece.BLACK_KING.value; attacker++) {
+            for (victim = BoardPiece.WHITE_PAWN.value; victim <= BoardPiece.BLACK_KING.value; victim++) {
+                mvvLva[victim][attacker] = victimScore[victim] + 6 - (victimScore[attacker]/100);
+            }
+        }
+
+        /*
+        for (victim = BoardPiece.WHITE_PAWN.value; victim <= BoardPiece.BLACK_KING.value; victim++) {
+            for (attacker = BoardPiece.WHITE_PAWN.value; attacker <= BoardPiece.BLACK_KING.value; attacker++) {
+                System.out.printf("%c x %c = %d\n", BoardConstants.pieceChars.charAt(attacker),
+                        BoardConstants.pieceChars.charAt(victim), mvvLva[victim][attacker]);
+            }
+        }
+        */
+    }
+
+
+    public static boolean moveExists(BoardStructure boardStructure, int move) {
+        MoveList moveList = new MoveList();
+        MoveGenerator.generateAllMoves(boardStructure, moveList);
+        for (int moveNum = 0; moveNum < moveList.count; moveNum++) {
+            if (!MakeMove.makeMove(boardStructure, moveList.moves[moveNum].move))
+                continue;
+            MakeMove.takeMove(boardStructure);
+            if (moveList.moves[moveNum].move == move)
+                return true;
+        }
+        return false;
+    }
 
     public static int move(int from, int to, int captured, int promoted, int flag) {
         return from | ((to << 7) | (captured << 14)) | (promoted << 20) | flag;
     }
 
     public static void addQuietMove(BoardStructure boardStructure, int move, MoveList moveList) {
-        moveList.addMove(move);
+        moveList.moves[moveList.count] = new Move();
+        moveList.moves[moveList.count].move = move;
+        moveList.moves[moveList.count].score = 0;
+        moveList.count++;
     }
 
     public static void addCaptureMove(BoardStructure boardStructure, int move, MoveList moveList) {
-        moveList.addMove(move);
+        moveList.moves[moveList.count] = new Move();
+        moveList.moves[moveList.count].move = move;
+        moveList.moves[moveList.count].score = mvvLva[Move.captured(move)][boardStructure.pieces[Move.from(move)]];
+        moveList.count++;
     }
 
     public static void addEnPassantMove(BoardStructure boardStructure, int move, MoveList moveList) {
-        moveList.addMove(move);
+        moveList.moves[moveList.count] = new Move();
+        moveList.moves[moveList.count].move = move;
+        moveList.moves[moveList.count].score = 105;
+        moveList.count++;
     }
 
     public static void addWhitePawnCaptureMove(BoardStructure boardStructure, int from, int to, int capture, MoveList moveList) {

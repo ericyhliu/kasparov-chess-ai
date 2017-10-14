@@ -56,7 +56,7 @@ public class PVTable {
 
         int count = 0;
         while (move != BoardConstants.NO_MOVE && count < depth) {
-            if (moveExists(boardStructure, move)) {
+            if (MoveGenerator.moveExists(boardStructure, move)) {
                 MakeMove.makeMove(boardStructure, move);
                 boardStructure.pvArray[count++] = move;
             } else {
@@ -68,19 +68,6 @@ public class PVTable {
         while (boardStructure.ply > 0)
             MakeMove.takeMove(boardStructure);
         return count;
-    }
-
-    static boolean moveExists(BoardStructure boardStructure, int move) {
-        MoveList moveList = new MoveList();
-        MoveGenerator.generateAllMoves(boardStructure, moveList);
-        for (int moveNum = 0; moveNum < moveList.count; moveNum++) {
-            if (!MakeMove.makeMove(boardStructure, moveList.moves[moveNum].move))
-                continue;
-            MakeMove.takeMove(boardStructure);
-            if (moveList.moves[moveNum].move == move)
-                return true;
-        }
-        return false;
     }
 
 }

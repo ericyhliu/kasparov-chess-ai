@@ -11,13 +11,15 @@ public class Main {
         boardStructure.initHashKeys();
         boardStructure.initFileAndRankBoard();
         boardStructure.initHistory();
+        MoveGenerator.initMvvLva();
 
-        boardStructure.parseFEN(BoardConstants.STARTING_FEN);
+        boardStructure.parseFEN(BoardConstants.FEN21);
         boardStructure.updateListMaterials();
 
         String input;
-
+        SearchEntry searchEntry = new SearchEntry();
         Scanner in = new Scanner(System.in);
+
         int move;
         while (true) {
             boardStructure.printBoard();
@@ -29,18 +31,9 @@ public class Main {
             } else if (input.charAt(0) == 't') {
                 MakeMove.takeMove(boardStructure);
                 continue;
-            } else if (input.charAt(0) == 'p') {
-//                PerftTest pt = new PerftTest();
-//                pt.perftTest(boardStructure, 4);
-
-                int max = PVTable.getPVLine(boardStructure, 4);
-                System.out.println("\nPVLine of " + max + " moves");
-                for (int i = 0; i < max; i++) {
-                    move = boardStructure.pvArray[i];
-                    System.out.println("Move: " + boardStructure.printMove(move));
-                }
-                System.out.println();
-
+            } else if (input.charAt(0) == 's') {
+                searchEntry.depth = 4;
+                Search.searchPosition(boardStructure, searchEntry);
             } else {
                 move = Move.parseMove(boardStructure, input);
                 if (move != BoardConstants.NO_MOVE) {
