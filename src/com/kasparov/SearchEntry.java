@@ -13,7 +13,7 @@ public class SearchEntry {
     int depthSet;
     boolean timeSet;
     long nodes;
-    int quit;
+    boolean quit;
     boolean isStopped;
     int movesToGo;
     int infinite;

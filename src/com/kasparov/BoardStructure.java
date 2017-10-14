@@ -793,4 +793,11 @@ public class BoardStructure {
         return moveString;
     }
 
+    /**
+     * Initializes the PVTable.
+     */
+    public void initPVTable() {
+        this.pvTable.initPVTable();
+    }
+
 }
