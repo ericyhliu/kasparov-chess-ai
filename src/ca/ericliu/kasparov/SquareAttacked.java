@@ -1,4 +1,4 @@
-package com.kasparov;
+package ca.ericliu.kasparov;
 
 /**
  * Used for checking if a square is being attacked.

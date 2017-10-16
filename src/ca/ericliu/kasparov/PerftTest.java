@@ -1,4 +1,4 @@
-package com.kasparov;
+package ca.ericliu.kasparov;
 
 /**
  * For perft testing (performance testing).

@@ -1,4 +1,4 @@
-package com.kasparov;
+package ca.ericliu.kasparov;
 
 /**
  * Structure used for undoing board positions.

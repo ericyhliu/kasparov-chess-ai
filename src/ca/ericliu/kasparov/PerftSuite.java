@@ -1,4 +1,4 @@
-package com.kasparov;
+package ca.ericliu.kasparov;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
