@@ -44,7 +44,8 @@ public class Search {
             for (int pvNum = 0; pvNum < pvMoves; pvNum++) {
                 System.out.print(boardStructure.printMove(boardStructure.pvArray[pvNum]) + " ");
             }
-            System.out.printf("\nOrdering: %.2f\n", (searchEntry.failHighFirst/searchEntry.failHigh));
+            System.out.println();
+            // System.out.printf("\nOrdering: %.2f\n", (searchEntry.failHighFirst/searchEntry.failHigh));
         }
 
         System.out.printf("bestmove %s\n", boardStructure.printMove(bestMove));
@@ -63,10 +64,10 @@ public class Search {
 
         boardStructure.pvTable.clearPVTable();
         boardStructure.ply = 0;
-
-        searchEntry.startTime = Time.getTimeInMilleseconds();
         searchEntry.isStopped = false;
         searchEntry.nodes = 0;
+        searchEntry.failHigh = 0;
+        searchEntry.failHighFirst = 0;
     }
 
     static void checkUp(SearchEntry searchEntry) {

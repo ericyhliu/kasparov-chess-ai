@@ -20,7 +20,7 @@ public class PVTable {
         this.pvEntryTable = new PVEntry[this.numEntries];
         for (int i = 0; i < this.numEntries; i++)
             this.pvEntryTable[i] = new PVEntry();
-        System.out.println("PVTable initialization complete with " + this.numEntries + " entries");
+//        System.out.println("PVTable initialization complete with " + this.numEntries + " entries");
         clearPVTable();
     }
 
