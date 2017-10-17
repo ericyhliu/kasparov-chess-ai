@@ -1,4 +1,4 @@
-package ca.ericliu.kasparov;
+package kasparov;
 
 /**
  * Generates moves.
@@ -221,7 +221,7 @@ public class MoveGenerator {
                 }
             }
 
-            if ((boardStructure.castlePerm & BoardCastleLink.WHITE_KING_CASTLE.value) != 0) {
+            if ((boardStructure.castlePerm & BoardCastle.WHITE_KING_CASTLE.value) != 0) {
                 if (boardStructure.pieces[BoardSquare.F1.value] == BoardPiece.EMPTY.value &&
                     boardStructure.pieces[BoardSquare.G1.value] == BoardPiece.EMPTY.value) {
                     if (!SquareAttacked.squareAttacked(BoardSquare.E1.value, BoardColor.BLACK.value, boardStructure) &&
@@ -233,7 +233,7 @@ public class MoveGenerator {
                 }
             }
 
-            if ((boardStructure.castlePerm & BoardCastleLink.WHITE_QUEEN_CASTLE.value) != 0) {
+            if ((boardStructure.castlePerm & BoardCastle.WHITE_QUEEN_CASTLE.value) != 0) {
                 if (boardStructure.pieces[BoardSquare.D1.value] == BoardPiece.EMPTY.value &&
                     boardStructure.pieces[BoardSquare.C1.value] == BoardPiece.EMPTY.value &&
                     boardStructure.pieces[BoardSquare.B1.value] == BoardPiece.EMPTY.value) {
@@ -282,7 +282,7 @@ public class MoveGenerator {
                 }
             }
 
-            if ((boardStructure.castlePerm & BoardCastleLink.BLACK_KING_CASTLE.value) != 0) {
+            if ((boardStructure.castlePerm & BoardCastle.BLACK_KING_CASTLE.value) != 0) {
                 if (boardStructure.pieces[BoardSquare.F8.value] == BoardPiece.EMPTY.value &&
                     boardStructure.pieces[BoardSquare.G8.value] == BoardPiece.EMPTY.value) {
                     if (!SquareAttacked.squareAttacked(BoardSquare.E8.value, BoardColor.WHITE.value, boardStructure) &&
@@ -294,7 +294,7 @@ public class MoveGenerator {
                 }
             }
 
-            if ((boardStructure.castlePerm & BoardCastleLink.BLACK_QUEEN_CASTLE.value) != 0) {
+            if ((boardStructure.castlePerm & BoardCastle.BLACK_QUEEN_CASTLE.value) != 0) {
                 if (boardStructure.pieces[BoardSquare.D8.value] == BoardPiece.EMPTY.value &&
                     boardStructure.pieces[BoardSquare.C8.value] == BoardPiece.EMPTY.value &&
                     boardStructure.pieces[BoardSquare.B8.value] == BoardPiece.EMPTY.value) {

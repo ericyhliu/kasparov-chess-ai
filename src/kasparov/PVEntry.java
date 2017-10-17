@@ -1,4 +1,4 @@
-package ca.ericliu.kasparov;
+package kasparov;
 
 /**
  * Principal variation entry.

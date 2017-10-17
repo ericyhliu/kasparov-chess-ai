@@ -1,4 +1,4 @@
-package ca.ericliu.kasparov;
+package kasparov;
 
 /**
  * For generating a position (hash) key.

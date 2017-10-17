@@ -1,8 +1,7 @@
-package ca.ericliu.kasparov;
+package kasparov;
 
 /**
- * Starts the Kasparov chess engine with UCI (Universal Chess
- * Interface) protocol.
+ * Starts the Kasparov chess engine with UCI.
  *
  * @author Eric Liu
  */

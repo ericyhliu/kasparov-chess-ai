@@ -1,4 +1,4 @@
-package ca.ericliu.kasparov;
+package kasparov;
 
 import java.util.Random;
 
@@ -500,16 +500,16 @@ public class BoardStructure {
 
             switch(currentChar) {
                 case 'K':
-                    this.castlePerm |= BoardCastleLink.WHITE_KING_CASTLE.value;
+                    this.castlePerm |= BoardCastle.WHITE_KING_CASTLE.value;
                     break;
                 case 'Q':
-                    this.castlePerm |= BoardCastleLink.WHITE_QUEEN_CASTLE.value;
+                    this.castlePerm |= BoardCastle.WHITE_QUEEN_CASTLE.value;
                     break;
                 case 'k':
-                    this.castlePerm |= BoardCastleLink.BLACK_KING_CASTLE.value;
+                    this.castlePerm |= BoardCastle.BLACK_KING_CASTLE.value;
                     break;
                 case 'q':
-                    this.castlePerm |= BoardCastleLink.BLACK_QUEEN_CASTLE.value;
+                    this.castlePerm |= BoardCastle.BLACK_QUEEN_CASTLE.value;
                     break;
                 default:
                     break;
@@ -564,10 +564,10 @@ public class BoardStructure {
         System.out.println("        Side: " + BoardConstants.sideChars.charAt(this.side));
         System.out.println("  En Passant: " + this.enPassant);
         System.out.println("      Castle: " +
-                ((this.castlePerm & BoardCastleLink.WHITE_KING_CASTLE.value)  != 0 ? "K" : "-") +
-                ((this.castlePerm & BoardCastleLink.WHITE_QUEEN_CASTLE.value) != 0 ? "Q" : "-") +
-                ((this.castlePerm & BoardCastleLink.BLACK_KING_CASTLE.value)  != 0 ? "k" : "-") +
-                ((this.castlePerm & BoardCastleLink.BLACK_QUEEN_CASTLE.value) != 0 ? "q" : "-"));
+                ((this.castlePerm & BoardCastle.WHITE_KING_CASTLE.value)  != 0 ? "K" : "-") +
+                ((this.castlePerm & BoardCastle.WHITE_QUEEN_CASTLE.value) != 0 ? "Q" : "-") +
+                ((this.castlePerm & BoardCastle.BLACK_KING_CASTLE.value)  != 0 ? "k" : "-") +
+                ((this.castlePerm & BoardCastle.BLACK_QUEEN_CASTLE.value) != 0 ? "q" : "-"));
         System.out.println("Position Key: " + this.positionKey);
     }
 

@@ -1,11 +1,11 @@
-package ca.ericliu.kasparov;
+package kasparov;
 
 /**
  * Definitions for board castle links.
  *
  * @author Eric Liu
  */
-public enum BoardCastleLink {
+public enum BoardCastle {
 
     WHITE_KING_CASTLE(1),
     WHITE_QUEEN_CASTLE(2),
@@ -14,7 +14,7 @@ public enum BoardCastleLink {
 
     public final int value;
 
-    BoardCastleLink(int value) {
+    BoardCastle(int value) {
         this.value = value;
     }
 
