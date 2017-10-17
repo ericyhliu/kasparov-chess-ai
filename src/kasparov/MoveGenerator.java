@@ -84,10 +84,10 @@ public class MoveGenerator {
         MoveList moveList = new MoveList();
         MoveGenerator.generateAllMoves(boardStructure, moveList);
         for (int moveNum = 0; moveNum < moveList.count; moveNum++) {
-            if (!MakeMove.makeMove(boardStructure, moveList.moves[moveNum].move))
+            if (!MakeMove.makeMove(boardStructure, moveList.moves[moveNum].getMove()))
                 continue;
             MakeMove.takeMove(boardStructure);
-            if (moveList.moves[moveNum].move == move)
+            if (moveList.moves[moveNum].getMove() == move)
                 return true;
         }
         return false;
@@ -99,31 +99,31 @@ public class MoveGenerator {
 
     public static void addQuietMove(BoardStructure boardStructure, int move, MoveList moveList) {
         moveList.moves[moveList.count] = new Move();
-        moveList.moves[moveList.count].move = move;
+        moveList.moves[moveList.count].setMove(move);
 
         if (boardStructure.searchKillers[0][boardStructure.ply] == move) {
-            moveList.moves[moveList.count].score = 900000;
+            moveList.moves[moveList.count].setScore(900000);
         } else if (boardStructure.searchKillers[1][boardStructure.ply] == move) {
-            moveList.moves[moveList.count].score = 800000;
+            moveList.moves[moveList.count].setScore(800000);
         } else {
-            moveList.moves[moveList.count].score = boardStructure
-                    .searchHistory[boardStructure.pieces[Move.from(move)]][Move.to(move)];
+            moveList.moves[moveList.count].setScore(boardStructure
+                    .searchHistory[boardStructure.pieces[MoveUtils.from(move)]][MoveUtils.to(move)]);
         }
         moveList.count++;
     }
 
     public static void addCaptureMove(BoardStructure boardStructure, int move, MoveList moveList) {
         moveList.moves[moveList.count] = new Move();
-        moveList.moves[moveList.count].move = move;
-        moveList.moves[moveList.count].score = mvvLva[Move.captured(move)][boardStructure.pieces[Move.from(move)]] +
-            1000000;
+        moveList.moves[moveList.count].setMove(move);
+        moveList.moves[moveList.count].setScore(mvvLva[MoveUtils.captured(move)]
+                [boardStructure.pieces[MoveUtils.from(move)]] + 1000000);
         moveList.count++;
     }
 
     public static void addEnPassantMove(BoardStructure boardStructure, int move, MoveList moveList) {
         moveList.moves[moveList.count] = new Move();
-        moveList.moves[moveList.count].move = move;
-        moveList.moves[moveList.count].score = 105 + 1000000;
+        moveList.moves[moveList.count].setMove(move);
+        moveList.moves[moveList.count].setScore(105 + 1000000);
         moveList.count++;
     }
 
@@ -183,27 +183,24 @@ public class MoveGenerator {
         int index = 0;
         int pieceIndex = 0;
 
-        // System.out.println("Side: " + side);
-
         if (side == BoardColor.WHITE.value) {
             for (pieceNum = 0; pieceNum < boardStructure.pieceNum[BoardPiece.WHITE_PAWN.value]; ++pieceNum) {
                 sqr = boardStructure.pieceList[BoardPiece.WHITE_PAWN.value][pieceNum];
-                assert(Validate.isSquareOnBoard(boardStructure, sqr));
 
                 if (boardStructure.pieces[sqr + 10] == BoardPiece.EMPTY.value) {
                     addWhitePawnMove(boardStructure, sqr, sqr + 10, moveList);
 
                     if (boardStructure.rankBoard[sqr] == BoardRank.RANK_2.value && boardStructure.pieces[sqr + 20] == BoardPiece.EMPTY.value) {
-                        addQuietMove(boardStructure, move(sqr, sqr + 20, BoardPiece.EMPTY.value, BoardPiece.EMPTY.value, Move.moveFlagPawnStart), moveList);
+                        addQuietMove(boardStructure, move(sqr, sqr + 20, BoardPiece.EMPTY.value, BoardPiece.EMPTY.value, MoveUtils.MOVE_FLAG_PAWN_START), moveList);
                     }
                 }
 
-                if (!Validate.isSquareOffboard(boardStructure, sqr + 9) &&
+                if (!BoardUtils.isSquareOffBoard(boardStructure, sqr + 9) &&
                     BoardConstants.pieceColor[boardStructure.pieces[sqr + 9]] == BoardColor.BLACK.value) {
                     addWhitePawnCaptureMove(boardStructure, sqr, sqr + 9, boardStructure.pieces[sqr + 9], moveList);
                 }
 
-                if (!Validate.isSquareOffboard(boardStructure, sqr + 11) &&
+                if (!BoardUtils.isSquareOffBoard(boardStructure, sqr + 11) &&
                     BoardConstants.pieceColor[boardStructure.pieces[sqr + 11]] == BoardColor.BLACK.value) {
                     addWhitePawnCaptureMove(boardStructure, sqr, sqr + 11, boardStructure.pieces[sqr + 11], moveList);
                 }
@@ -211,12 +208,12 @@ public class MoveGenerator {
                 if (boardStructure.enPassant != BoardSquare.NONE.value) {
                     if (sqr + 9 == boardStructure.enPassant) {
                         addEnPassantMove(boardStructure, move(sqr, sqr + 9, BoardPiece.EMPTY.value,
-                                BoardPiece.EMPTY.value, Move.moveFlagEnPassant), moveList);
+                                BoardPiece.EMPTY.value, MoveUtils.MOVE_FLAG_EN_PASSANT), moveList);
                     }
 
                     if (sqr + 11 == boardStructure.enPassant) {
                         addEnPassantMove(boardStructure, move(sqr, sqr + 11, BoardPiece.EMPTY.value,
-                                BoardPiece.EMPTY.value, Move.moveFlagEnPassant), moveList);
+                                BoardPiece.EMPTY.value, MoveUtils.MOVE_FLAG_EN_PASSANT), moveList);
                     }
                 }
             }
@@ -226,9 +223,8 @@ public class MoveGenerator {
                     boardStructure.pieces[BoardSquare.G1.value] == BoardPiece.EMPTY.value) {
                     if (!SquareAttacked.squareAttacked(BoardSquare.E1.value, BoardColor.BLACK.value, boardStructure) &&
                         !SquareAttacked.squareAttacked(BoardSquare.F1.value, BoardColor.BLACK.value, boardStructure)) {
-                        // System.out.println("WKCA Move Gen: ");
                         addQuietMove(boardStructure, move(BoardSquare.E1.value, BoardSquare.G1.value,
-                                BoardPiece.EMPTY.value, BoardPiece.EMPTY.value, Move.moveFlagCastle), moveList);
+                                BoardPiece.EMPTY.value, BoardPiece.EMPTY.value, MoveUtils.MOVE_FLAG_CASTLE), moveList);
                     }
                 }
             }
@@ -239,9 +235,8 @@ public class MoveGenerator {
                     boardStructure.pieces[BoardSquare.B1.value] == BoardPiece.EMPTY.value) {
                     if (!SquareAttacked.squareAttacked(BoardSquare.E1.value, BoardColor.BLACK.value, boardStructure) &&
                         !SquareAttacked.squareAttacked(BoardSquare.D1.value, BoardColor.BLACK.value, boardStructure)) {
-                        // System.out.println("WQCA Move Gen: ");
                         addQuietMove(boardStructure, move(BoardSquare.E1.value, BoardSquare.C1.value,
-                                BoardPiece.EMPTY.value, BoardPiece.EMPTY.value, Move.moveFlagCastle), moveList);
+                                BoardPiece.EMPTY.value, BoardPiece.EMPTY.value, MoveUtils.MOVE_FLAG_CASTLE), moveList);
                     }
                 }
             }
@@ -249,22 +244,22 @@ public class MoveGenerator {
         } else {
             for (pieceNum = 0; pieceNum < boardStructure.pieceNum[BoardPiece.BLACK_PAWN.value]; ++pieceNum) {
                 sqr = boardStructure.pieceList[BoardPiece.BLACK_PAWN.value][pieceNum];
-                assert(Validate.isSquareOnBoard(boardStructure, sqr));
+                assert(BoardUtils.isSquareOnBoard(boardStructure, sqr));
 
                 if (boardStructure.pieces[sqr - 10] == BoardPiece.EMPTY.value) {
                     addBlackPawnMove(boardStructure, sqr, sqr - 10, moveList);
 
                     if (boardStructure.rankBoard[sqr] == BoardRank.RANK_7.value && boardStructure.pieces[sqr - 20] == BoardPiece.EMPTY.value) {
-                        addQuietMove(boardStructure, move(sqr, sqr - 20, BoardPiece.EMPTY.value, BoardPiece.EMPTY.value, Move.moveFlagPawnStart), moveList);
+                        addQuietMove(boardStructure, move(sqr, sqr - 20, BoardPiece.EMPTY.value, BoardPiece.EMPTY.value, MoveUtils.MOVE_FLAG_PAWN_START), moveList);
                     }
                 }
 
-                if (!Validate.isSquareOffboard(boardStructure, sqr - 9) &&
+                if (!BoardUtils.isSquareOffBoard(boardStructure, sqr - 9) &&
                         BoardConstants.pieceColor[boardStructure.pieces[sqr - 9]] == BoardColor.WHITE.value) {
                     addBlackPawnCaptureMove(boardStructure, sqr, sqr - 9, boardStructure.pieces[sqr - 9], moveList);
                 }
 
-                if (!Validate.isSquareOffboard(boardStructure, sqr - 11) &&
+                if (!BoardUtils.isSquareOffBoard(boardStructure, sqr - 11) &&
                         BoardConstants.pieceColor[boardStructure.pieces[sqr - 11]] == BoardColor.WHITE.value) {
                     addBlackPawnCaptureMove(boardStructure, sqr, sqr - 11, boardStructure.pieces[sqr - 11], moveList);
                 }
@@ -272,12 +267,12 @@ public class MoveGenerator {
                 if (boardStructure.enPassant != BoardSquare.NONE.value) {
                     if (sqr - 9 == boardStructure.enPassant) {
                         addEnPassantMove(boardStructure, move(sqr, sqr - 9, BoardPiece.EMPTY.value,
-                                BoardPiece.EMPTY.value, Move.moveFlagEnPassant), moveList);
+                                BoardPiece.EMPTY.value, MoveUtils.MOVE_FLAG_EN_PASSANT), moveList);
                     }
 
                     if (sqr - 11 == boardStructure.enPassant) {
                         addEnPassantMove(boardStructure, move(sqr, sqr - 11, BoardPiece.EMPTY.value,
-                                BoardPiece.EMPTY.value, Move.moveFlagEnPassant), moveList);
+                                BoardPiece.EMPTY.value, MoveUtils.MOVE_FLAG_EN_PASSANT), moveList);
                     }
                 }
             }
@@ -287,9 +282,8 @@ public class MoveGenerator {
                     boardStructure.pieces[BoardSquare.G8.value] == BoardPiece.EMPTY.value) {
                     if (!SquareAttacked.squareAttacked(BoardSquare.E8.value, BoardColor.WHITE.value, boardStructure) &&
                         !SquareAttacked.squareAttacked(BoardSquare.F8.value, BoardColor.WHITE.value, boardStructure)) {
-                        // System.out.println("BKCA Move Gen: ");
                         addQuietMove(boardStructure, move(BoardSquare.E8.value, BoardSquare.G8.value,
-                                BoardPiece.EMPTY.value, BoardPiece.EMPTY.value, Move.moveFlagCastle), moveList);
+                                BoardPiece.EMPTY.value, BoardPiece.EMPTY.value, MoveUtils.MOVE_FLAG_CASTLE), moveList);
                     }
                 }
             }
@@ -300,9 +294,8 @@ public class MoveGenerator {
                     boardStructure.pieces[BoardSquare.B8.value] == BoardPiece.EMPTY.value) {
                     if (!SquareAttacked.squareAttacked(BoardSquare.E8.value, BoardColor.WHITE.value, boardStructure) &&
                         !SquareAttacked.squareAttacked(BoardSquare.D8.value, BoardColor.WHITE.value, boardStructure)) {
-                        // System.out.println("BQCA Move Gen: ");
                         addQuietMove(boardStructure, move(BoardSquare.E8.value, BoardSquare.C8.value,
-                                BoardPiece.EMPTY.value, BoardPiece.EMPTY.value, Move.moveFlagCastle), moveList);
+                                BoardPiece.EMPTY.value, BoardPiece.EMPTY.value, MoveUtils.MOVE_FLAG_CASTLE), moveList);
                     }
                 }
             }
@@ -313,30 +306,23 @@ public class MoveGenerator {
         pieceIndex = loopSlideIndex[side];
         piece = loopPieceSlides[pieceIndex++];
         while (piece != 0) {
-            // System.out.println("Sliders Piece Index: " + pieceIndex + "   Piece: " + piece);
 
             for (pieceNum = 0; pieceNum < boardStructure.pieceNum[piece]; pieceNum++) {
                 sqr = boardStructure.pieceList[piece][pieceNum];
-                // System.out.print("Piece: " + BoardConstants.pieceChars.charAt(piece) + " on ");
-                // boardStructure.printSqr(sqr);
 
                 for (int i = 0; i < numDirections[piece]; i++) {
                     dir = pieceDirections[piece][i];
                     tempSqr = sqr + dir;
 
-                    while (!Validate.isSquareOffboard(boardStructure, tempSqr)) {
+                    while (!BoardUtils.isSquareOffBoard(boardStructure, tempSqr)) {
                         if (boardStructure.pieces[tempSqr] != BoardPiece.EMPTY.value) {
                             if (BoardConstants.pieceColor[boardStructure.pieces[tempSqr]] == (side ^ 1)) {
-                                // System.out.print("Capture on: " );
-                                // boardStructure.printSqr(tempSqr);
                                 addCaptureMove(boardStructure, move(sqr, tempSqr, boardStructure.pieces[tempSqr],
                                         BoardPiece.EMPTY.value, 0), moveList);
                             }
                             break;
                         }
 
-                        // System.out.print("Normal on: " );
-                        // boardStructure.printSqr(tempSqr);
                         addQuietMove(boardStructure, move(sqr, tempSqr, BoardPiece.EMPTY.value,
                                 BoardPiece.EMPTY.value, 0), moveList);
                         tempSqr += dir;
@@ -351,33 +337,26 @@ public class MoveGenerator {
         pieceIndex = loopNonSlideIndex[side];
         piece = loopPieceNonSlides[pieceIndex++];
         while (piece != 0) {
-            // System.out.println("Non Sliders Piece Index: " + pieceIndex + "   Piece: " + piece);
 
             for (pieceNum = 0; pieceNum < boardStructure.pieceNum[piece]; pieceNum++) {
                 sqr = boardStructure.pieceList[piece][pieceNum];
-                // System.out.print("Piece: " + BoardConstants.pieceChars.charAt(piece) + " on ");
-                // boardStructure.printSqr(sqr);
 
                 for (int i = 0; i < numDirections[piece]; i++) {
                     dir = pieceDirections[piece][i];
                     tempSqr = sqr + dir;
 
-                    if (Validate.isSquareOffboard(boardStructure, tempSqr)) {
+                    if (BoardUtils.isSquareOffBoard(boardStructure, tempSqr)) {
                         continue;
                     }
 
                     if (boardStructure.pieces[tempSqr] != BoardPiece.EMPTY.value) {
                         if (BoardConstants.pieceColor[boardStructure.pieces[tempSqr]] == (side ^ 1)) {
-                            // System.out.print("Capture on: " );
-                            // boardStructure.printSqr(tempSqr);
                             addCaptureMove(boardStructure, move(sqr, tempSqr, boardStructure.pieces[tempSqr],
                                     BoardPiece.EMPTY.value, 0), moveList);
                         }
                         continue;
                     }
 
-                    // System.out.print("Normal on: " );
-                    // boardStructure.printSqr(tempSqr);
                     addQuietMove(boardStructure, move(sqr, tempSqr, BoardPiece.EMPTY.value,
                             BoardPiece.EMPTY.value, 0), moveList);
                 }
@@ -399,19 +378,16 @@ public class MoveGenerator {
         int index = 0;
         int pieceIndex = 0;
 
-        // System.out.println("Side: " + side);
-
         if (side == BoardColor.WHITE.value) {
             for (pieceNum = 0; pieceNum < boardStructure.pieceNum[BoardPiece.WHITE_PAWN.value]; ++pieceNum) {
                 sqr = boardStructure.pieceList[BoardPiece.WHITE_PAWN.value][pieceNum];
-                assert(Validate.isSquareOnBoard(boardStructure, sqr));
 
-                if (!Validate.isSquareOffboard(boardStructure, sqr + 9) &&
+                if (!BoardUtils.isSquareOffBoard(boardStructure, sqr + 9) &&
                         BoardConstants.pieceColor[boardStructure.pieces[sqr + 9]] == BoardColor.BLACK.value) {
                     addWhitePawnCaptureMove(boardStructure, sqr, sqr + 9, boardStructure.pieces[sqr + 9], moveList);
                 }
 
-                if (!Validate.isSquareOffboard(boardStructure, sqr + 11) &&
+                if (!BoardUtils.isSquareOffBoard(boardStructure, sqr + 11) &&
                         BoardConstants.pieceColor[boardStructure.pieces[sqr + 11]] == BoardColor.BLACK.value) {
                     addWhitePawnCaptureMove(boardStructure, sqr, sqr + 11, boardStructure.pieces[sqr + 11], moveList);
                 }
@@ -419,12 +395,12 @@ public class MoveGenerator {
                 if (boardStructure.enPassant != BoardSquare.NONE.value) {
                     if (sqr + 9 == boardStructure.enPassant) {
                         addEnPassantMove(boardStructure, move(sqr, sqr + 9, BoardPiece.EMPTY.value,
-                                BoardPiece.EMPTY.value, Move.moveFlagEnPassant), moveList);
+                                BoardPiece.EMPTY.value, MoveUtils.MOVE_FLAG_EN_PASSANT), moveList);
                     }
 
                     if (sqr + 11 == boardStructure.enPassant) {
                         addEnPassantMove(boardStructure, move(sqr, sqr + 11, BoardPiece.EMPTY.value,
-                                BoardPiece.EMPTY.value, Move.moveFlagEnPassant), moveList);
+                                BoardPiece.EMPTY.value, MoveUtils.MOVE_FLAG_EN_PASSANT), moveList);
                     }
                 }
             }
@@ -432,14 +408,13 @@ public class MoveGenerator {
         } else {
             for (pieceNum = 0; pieceNum < boardStructure.pieceNum[BoardPiece.BLACK_PAWN.value]; ++pieceNum) {
                 sqr = boardStructure.pieceList[BoardPiece.BLACK_PAWN.value][pieceNum];
-                assert(Validate.isSquareOnBoard(boardStructure, sqr));
 
-                if (!Validate.isSquareOffboard(boardStructure, sqr - 9) &&
+                if (!BoardUtils.isSquareOffBoard(boardStructure, sqr - 9) &&
                         BoardConstants.pieceColor[boardStructure.pieces[sqr - 9]] == BoardColor.WHITE.value) {
                     addBlackPawnCaptureMove(boardStructure, sqr, sqr - 9, boardStructure.pieces[sqr - 9], moveList);
                 }
 
-                if (!Validate.isSquareOffboard(boardStructure, sqr - 11) &&
+                if (!BoardUtils.isSquareOffBoard(boardStructure, sqr - 11) &&
                         BoardConstants.pieceColor[boardStructure.pieces[sqr - 11]] == BoardColor.WHITE.value) {
                     addBlackPawnCaptureMove(boardStructure, sqr, sqr - 11, boardStructure.pieces[sqr - 11], moveList);
                 }
@@ -447,12 +422,12 @@ public class MoveGenerator {
                 if (boardStructure.enPassant != BoardSquare.NONE.value) {
                     if (sqr - 9 == boardStructure.enPassant) {
                         addEnPassantMove(boardStructure, move(sqr, sqr - 9, BoardPiece.EMPTY.value,
-                                BoardPiece.EMPTY.value, Move.moveFlagEnPassant), moveList);
+                                BoardPiece.EMPTY.value, MoveUtils.MOVE_FLAG_EN_PASSANT), moveList);
                     }
 
                     if (sqr - 11 == boardStructure.enPassant) {
                         addEnPassantMove(boardStructure, move(sqr, sqr - 11, BoardPiece.EMPTY.value,
-                                BoardPiece.EMPTY.value, Move.moveFlagEnPassant), moveList);
+                                BoardPiece.EMPTY.value, MoveUtils.MOVE_FLAG_EN_PASSANT), moveList);
                     }
                 }
             }
@@ -471,7 +446,7 @@ public class MoveGenerator {
                     dir = pieceDirections[piece][i];
                     tempSqr = sqr + dir;
 
-                    while (!Validate.isSquareOffboard(boardStructure, tempSqr)) {
+                    while (!BoardUtils.isSquareOffBoard(boardStructure, tempSqr)) {
                         if (boardStructure.pieces[tempSqr] != BoardPiece.EMPTY.value) {
                             if (BoardConstants.pieceColor[boardStructure.pieces[tempSqr]] == (side ^ 1)) {
                                 addCaptureMove(boardStructure, move(sqr, tempSqr, boardStructure.pieces[tempSqr],
@@ -499,7 +474,7 @@ public class MoveGenerator {
                     dir = pieceDirections[piece][i];
                     tempSqr = sqr + dir;
 
-                    if (Validate.isSquareOffboard(boardStructure, tempSqr)) {
+                    if (BoardUtils.isSquareOffBoard(boardStructure, tempSqr)) {
                         continue;
                     }
 

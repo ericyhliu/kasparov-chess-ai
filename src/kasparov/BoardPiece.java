@@ -21,7 +21,7 @@ public enum BoardPiece {
     BLACK_QUEEN(11),
     BLACK_KING(12);
 
-    public final int value;
+    protected final int value;
 
     BoardPiece(int value) {
         this.value = value;

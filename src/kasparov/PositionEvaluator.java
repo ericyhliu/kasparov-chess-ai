@@ -7,7 +7,7 @@ package kasparov;
  */
 public class PositionEvaluator {
 
-    static final int[] pawnTable = {
+    protected static final int[] pawnTable = {
          0,   0,   0,   0,   0,   0,   0,   0,
         10,  10,   0, -10, -10,   0,  10,  10,
          5,   0,   0,   5,   5,   0,   0,   5,
@@ -18,7 +18,7 @@ public class PositionEvaluator {
          0,   0,   0,   0,   0,   0,   0,   0
     };
 
-    static final int[] knightTable = {
+    protected static final int[] knightTable = {
          0,	-10,   0,   0,   0,   0, -10,   0,
          0,	  0,   0,   5,   5,   0,   0,   0,
          0,	  0,  10,  10,  10,  10,   0,   0,
@@ -29,7 +29,7 @@ public class PositionEvaluator {
         0 ,	  0,   0,   0,   0,   0,   0,   0
     };
 
-    static final int[] bishopTable = {
+    protected static final int[] bishopTable = {
          0,	  0, -10,   0,	 0,	-10,   0,   0,
          0,	  0,   0,  10,  10,	  0,   0,   0,
          0,	  0,  10,  15,  15,	 10,   0,   0,
@@ -40,7 +40,7 @@ public class PositionEvaluator {
          0,	  0,   0,   0,   0,	  0,   0,   0
     };
 
-    static final int[] rookTable = {
+    protected static final int[] rookTable = {
          0,	  0,   5,  10,  10,	  5,   0,   0,
          0,	  0,   5,  10,  10,	  5,   0,	0,
          0,	  0,   5,  10,  10,	  5,   0,	0,
@@ -51,7 +51,7 @@ public class PositionEvaluator {
          0,	  0,   5,  10,  10,	  5,   0,	0
     };
 
-    static final int[] mirror64 = {
+    protected static final int[] mirror64 = {
         56,	 57,  58,  59,	60,	 61,  62,  63,
         48,	 49,  50,  51,	52,	 53,  54,  55,
         40,	 41,  42,  43,	44,	 45,  46,  47,
@@ -62,7 +62,7 @@ public class PositionEvaluator {
          0,	  1,   2,	3,	 4,	  5,   6,	7
     };
 
-    static int evaluatePosition(BoardStructure boardStructure) {
+    protected static int evaluatePosition(BoardStructure boardStructure) {
         int piece;
         int pieceNum;
         int sqr;

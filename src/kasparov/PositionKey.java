@@ -7,7 +7,7 @@ package kasparov;
  */
 public class PositionKey {
 
-    public static long generatePositionKey(BoardStructure boardStructure) {
+    protected static long generatePositionKey(BoardStructure boardStructure) {
         long finalKey = 0;
         int piece;
 

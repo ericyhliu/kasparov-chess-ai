@@ -7,38 +7,23 @@ package kasparov;
  */
 public class MakeMove {
 
-    static void hashPiece(BoardStructure boardStructure, int piece, int sqr) {
+    protected static void hashPiece(BoardStructure boardStructure, int piece, int sqr) {
         boardStructure.positionKey ^= boardStructure.pieceKeys[piece][sqr];
     }
 
-    static long hashCastle(BoardStructure boardStructure) {
+    protected static long hashCastle(BoardStructure boardStructure) {
         return boardStructure.positionKey ^ boardStructure.castleKeys[boardStructure.castlePerm];
     }
 
-    static long hashSide(BoardStructure boardStructure) {
+    protected static long hashSide(BoardStructure boardStructure) {
         return boardStructure.positionKey ^ boardStructure.sideKey;
     }
 
-    static long hashEnPassant(BoardStructure boardStructure) {
+    protected static long hashEnPassant(BoardStructure boardStructure) {
         return boardStructure.positionKey ^ boardStructure.pieceKeys[BoardPiece.EMPTY.value][boardStructure.enPassant];
     }
 
-    static int[] castlePerm = {
-        15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
-        15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
-        15, 13, 15, 15, 15, 12, 15, 15, 14, 15,
-        15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
-        15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
-        15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
-        15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
-        15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
-        15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
-        15,  7, 15, 15, 15,  3, 15, 15, 11, 15,
-        15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
-        15, 15, 15, 15, 15, 15, 15, 15, 15, 15
-    };
-
-    static void clearPiece(BoardStructure boardStructure, int sqr) {
+    protected static void clearPiece(BoardStructure boardStructure, int sqr) {
         int piece = boardStructure.pieces[sqr];
         int col = BoardConstants.pieceColor[piece];
         int tempPieceNum = -1;
@@ -72,7 +57,7 @@ public class MakeMove {
         boardStructure.pieceList[piece][tempPieceNum] = boardStructure.pieceList[piece][boardStructure.pieceNum[piece]];
     }
 
-    static void addPiece(BoardStructure boardStructure, int sqr, int piece) {
+    protected static void addPiece(BoardStructure boardStructure, int sqr, int piece) {
         int col = BoardConstants.pieceColor[piece];
         hashPiece(boardStructure, piece, sqr);
 
@@ -94,7 +79,7 @@ public class MakeMove {
         boardStructure.pieceList[piece][boardStructure.pieceNum[piece]++] = sqr;
     }
 
-    static void movePiece(BoardStructure boardStructure, int from, int to) {
+    protected static void movePiece(BoardStructure boardStructure, int from, int to) {
         int piece = boardStructure.pieces[from];
         int col = BoardConstants.pieceColor[piece];
         boolean tempPieceNum = false;
@@ -125,19 +110,19 @@ public class MakeMove {
         assert (tempPieceNum);
     }
 
-    static boolean makeMove(BoardStructure boardStructure, int move) {
-        int from = Move.from(move);
-        int to = Move.to(move);
+    protected static boolean makeMove(BoardStructure boardStructure, int move) {
+        int from = MoveUtils.from(move);
+        int to = MoveUtils.to(move);
         int side = boardStructure.side;
 
-        boardStructure.history[boardStructure.historyPly].posKey = boardStructure.positionKey;
+        boardStructure.history[boardStructure.historyPly].setPosKey(boardStructure.positionKey);
 
-        if ((move & Move.moveFlagEnPassant) != 0) {
+        if ((move & MoveUtils.MOVE_FLAG_EN_PASSANT) != 0) {
             if (side == BoardColor.WHITE.value)
                 clearPiece(boardStructure, to - 10);
             else
                 clearPiece(boardStructure, to + 10);
-        } else if ((move & Move.moveFlagCastle) != 0) {
+        } else if ((move & MoveUtils.MOVE_FLAG_CASTLE) != 0) {
             if (to == BoardSquare.C1.value) {
                 movePiece(boardStructure, BoardSquare.A1.value,
                         BoardSquare.D1.value);
@@ -157,20 +142,20 @@ public class MakeMove {
             hashEnPassant(boardStructure);
         hashCastle(boardStructure);
 
-        boardStructure.history[boardStructure.historyPly].move = move;
-        boardStructure.history[boardStructure.historyPly].fiftyMove =
-                boardStructure.fiftyMove;
-        boardStructure.history[boardStructure.historyPly].enPassant =
-                boardStructure.enPassant;
-        boardStructure.history[boardStructure.historyPly].castlePerm =
-                boardStructure.castlePerm;
-
-        boardStructure.castlePerm &= castlePerm[from];
-        boardStructure.castlePerm &= castlePerm[to];
+        boardStructure.history[boardStructure.historyPly]
+                .setMove(move);
+        boardStructure.history[boardStructure.historyPly]
+                .setFiftyMove(boardStructure.fiftyMove);
+        boardStructure.history[boardStructure.historyPly]
+                .setEnPassant(boardStructure.enPassant);
+        boardStructure.history[boardStructure.historyPly]
+                .setCastlePerm(boardStructure.castlePerm);
+        boardStructure.castlePerm &= BoardUtils.getCastlePerm(from);
+        boardStructure.castlePerm &= BoardUtils.getCastlePerm(to);
         boardStructure.enPassant = BoardSquare.NONE.value;
         hashCastle(boardStructure);
 
-        int captured = Move.captured(move);
+        int captured = MoveUtils.captured(move);
         boardStructure.fiftyMove++;
 
         if (captured != BoardPiece.EMPTY.value) {
@@ -183,7 +168,7 @@ public class MakeMove {
 
         if (BoardConstants.piecePawn[boardStructure.pieces[from]]) {
             boardStructure.fiftyMove = 0;
-            if ((move & Move.moveFlagPawnStart) != 0) {
+            if ((move & MoveUtils.MOVE_FLAG_PAWN_START) != 0) {
                 if (side == BoardColor.WHITE.value) {
                     boardStructure.enPassant = from + 10;
                 } else {
@@ -195,7 +180,7 @@ public class MakeMove {
 
         movePiece(boardStructure, from, to);
 
-        int promotedPiece = Move.promoted(move);
+        int promotedPiece = MoveUtils.promoted(move);
         if (promotedPiece != BoardPiece.EMPTY.value) {
             clearPiece(boardStructure, to);
             addPiece(boardStructure, to, promotedPiece);
@@ -216,21 +201,21 @@ public class MakeMove {
         return true;
     }
 
-    static void takeMove(BoardStructure boardStructure) {
+    protected static void takeMove(BoardStructure boardStructure) {
         boardStructure.historyPly--;
         boardStructure.ply--;
 
-        int move = boardStructure.history[boardStructure.historyPly].move;
-        int from = Move.from(move);
-        int to = Move.to(move);
+        int move = boardStructure.history[boardStructure.historyPly].getMove();
+        int from = MoveUtils.from(move);
+        int to = MoveUtils.to(move);
 
         if (boardStructure.enPassant != BoardSquare.NONE.value)
             hashEnPassant(boardStructure);
         hashCastle(boardStructure);
 
-        boardStructure.castlePerm = boardStructure.history[boardStructure.historyPly].castlePerm;
-        boardStructure.fiftyMove = boardStructure.history[boardStructure.historyPly].fiftyMove;
-        boardStructure.enPassant = boardStructure.history[boardStructure.historyPly].enPassant;
+        boardStructure.castlePerm = boardStructure.history[boardStructure.historyPly].getCastlePerm();
+        boardStructure.fiftyMove = boardStructure.history[boardStructure.historyPly].getFiftyMove();
+        boardStructure.enPassant = boardStructure.history[boardStructure.historyPly].getEnPassant();
 
         if (boardStructure.enPassant != BoardSquare.NONE.value)
             hashEnPassant(boardStructure);
@@ -239,13 +224,13 @@ public class MakeMove {
         boardStructure.side ^= 1;
         hashSide(boardStructure);
 
-        if ((move & Move.moveFlagEnPassant) != 0) {
+        if ((move & MoveUtils.MOVE_FLAG_EN_PASSANT) != 0) {
             if (boardStructure.side == BoardColor.WHITE.value) {
                 addPiece(boardStructure, to-10, BoardPiece.BLACK_PAWN.value);
             } else {
                 addPiece(boardStructure, to+10, BoardPiece.WHITE_PAWN.value);
             }
-        } else if ((move & Move.moveFlagCastle) != 0) {
+        } else if ((move & MoveUtils.MOVE_FLAG_CASTLE) != 0) {
             if (to == BoardSquare.C1.value) {
                 movePiece(boardStructure, BoardSquare.D1.value, BoardSquare.A1.value);
             } else if (to == BoardSquare.C8.value) {
@@ -263,12 +248,12 @@ public class MakeMove {
             boardStructure.kingSqr[boardStructure.side] = from;
         }
 
-        int captured = Move.captured(move);
+        int captured = MoveUtils.captured(move);
         if (captured != BoardPiece.EMPTY.value) {
             addPiece(boardStructure, to, captured);
         }
 
-        int promoted = Move.promoted(move);
+        int promoted = MoveUtils.promoted(move);
         if (promoted != BoardPiece.EMPTY.value) {
             clearPiece(boardStructure, from);
             addPiece(boardStructure, from, (BoardConstants.pieceColor[promoted] == BoardColor.WHITE.value ?

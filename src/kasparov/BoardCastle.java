@@ -12,7 +12,7 @@ public enum BoardCastle {
     BLACK_KING_CASTLE(4),
     BLACK_QUEEN_CASTLE(8);
 
-    public final int value;
+    protected final int value;
 
     BoardCastle(int value) {
         this.value = value;

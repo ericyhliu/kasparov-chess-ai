@@ -11,7 +11,7 @@ public enum BoardColor {
     BLACK(1),
     BOTH(2);
 
-    public final int value;
+    protected final int value;
 
     BoardColor(int value) {
         this.value = value;

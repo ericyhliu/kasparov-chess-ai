@@ -17,7 +17,7 @@ public enum BoardRank {
     RANK_8(7),
     RANK_NONE(8);
 
-    public final int value;
+    protected final int value;
 
     BoardRank(int value) {
         this.value = value;

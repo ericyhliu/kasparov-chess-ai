@@ -18,7 +18,7 @@ public enum BoardSquare {
     A8(91), B8(92), C8(93), D8(94), E8(95), F8(96), G8(97), H8(98),
     NONE(99), OFFBOARD(100);
 
-    public final int value;
+    protected final int value;
 
     BoardSquare(int value) {
         this.value = value;

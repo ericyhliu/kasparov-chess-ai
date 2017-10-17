@@ -758,11 +758,11 @@ public class BoardStructure {
     public String printMove(int move) {
         String moveString = "";
 
-        int fileFrom = this.fileBoard[Move.from(move)];
-        int rankFrom = this.rankBoard[Move.from(move)];
-        int fileTo = this.fileBoard[Move.to(move)];
-        int rankTo = this.rankBoard[Move.to(move)];
-        int promoted = Move.promoted(move);
+        int fileFrom = this.fileBoard[MoveUtils.from(move)];
+        int rankFrom = this.rankBoard[MoveUtils.from(move)];
+        int fileTo = this.fileBoard[MoveUtils.to(move)];
+        int rankTo = this.rankBoard[MoveUtils.to(move)];
+        int promoted = MoveUtils.promoted(move);
 
         if (promoted != 0) {
             char pChar = 'q';

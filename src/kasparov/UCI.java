@@ -9,7 +9,7 @@ import java.util.Scanner;
  */
 public class UCI {
 
-    static void parseGo(BoardStructure boardStructure, SearchEntry searchEntry, String line) {
+    protected static void parseGo(BoardStructure boardStructure, SearchEntry searchEntry, String line) {
         int ptr = 3;
         if (ptr >= line.length())
             return;
@@ -21,7 +21,7 @@ public class UCI {
         int moveTime = -1;
         int time = -1;
         int inc = 0;
-        searchEntry.timeSet = false;
+        searchEntry.setTimeSet(false);
 
         String arg;
         while (in.hasNext()) {
@@ -56,26 +56,27 @@ public class UCI {
             movesToGo = 1;
         }
 
-        searchEntry.startTime = Time.getTimeInMilleseconds();
-        searchEntry.depth = depth;
+        searchEntry.setStartTime(Time.getTimeInMilliseconds());
+        searchEntry.setDepth(depth);
 
         if (time != -1) {
-            searchEntry.timeSet = true;
+            searchEntry.setTimeSet(true);
             time /= movesToGo;
             time -= 50;
-            searchEntry.stopTime = searchEntry.startTime + time + inc;
+            searchEntry.setStopTime(searchEntry.getStartTime() + time + inc);
         }
 
         if (depth == -1) {
-            searchEntry.depth = BoardConstants.MAX_DEPTH;
+            searchEntry.setDepth(BoardConstants.MAX_DEPTH);
         }
 
         System.out.printf("Time: %d  Start: %d  Stop: %d  Depth: %d  Timeset: %b\n",
-                time, searchEntry.startTime, searchEntry.stopTime, searchEntry.depth, searchEntry.timeSet);
+                time, searchEntry.getStartTime(), searchEntry.getStopTime(),
+                searchEntry.getDepth(), searchEntry.isTimeSet());
         Search.searchPosition(boardStructure, searchEntry);
     }
 
-    static void parsePosition(BoardStructure boardStructure, String line) {
+    protected static void parsePosition(BoardStructure boardStructure, String line) {
         int ptr = 9;
         if (ptr >= line.length())
             return;
@@ -107,7 +108,7 @@ public class UCI {
 
             String[] moves = s.split(" ");
             for (int i = 0; i < moves.length; i++) {
-                int move = Move.parseMove(boardStructure, moves[i]);
+                int move = MoveUtils.parseMove(boardStructure, moves[i]);
                 if (move == BoardConstants.NO_MOVE)
                     break;
                 MakeMove.makeMove(boardStructure, move);
@@ -147,7 +148,7 @@ public class UCI {
 
             String[] moves = s.split(" ");
             for (int i = 0; i < moves.length; i++) {
-                int move = Move.parseMove(boardStructure, moves[i]);
+                int move = MoveUtils.parseMove(boardStructure, moves[i]);
                 if (move == BoardConstants.NO_MOVE)
                     break;
                 MakeMove.makeMove(boardStructure, move);
@@ -158,7 +159,7 @@ public class UCI {
         }
     }
 
-    static void start() {
+    protected static void start() {
         Scanner in = new Scanner(System.in);
         String line;
         System.out.printf("id name %s\n", BoardConstants.PROGRAM_NAME);
@@ -188,7 +189,7 @@ public class UCI {
             } else if (line.startsWith("go")) {
                 parseGo(boardStructure, searchEntry, line);
             } else if (line.startsWith("quit")) {
-                searchEntry.quit = true;
+                searchEntry.setQuit(true);
                 break;
             } else if (line.startsWith("uci")) {
                 System.out.printf("id name %s\n", BoardConstants.PROGRAM_NAME);
@@ -196,7 +197,7 @@ public class UCI {
                 System.out.printf("uciok\n");
             }
 
-            if (searchEntry.quit) {
+            if (searchEntry.isQuit()) {
                 break;
             }
         }

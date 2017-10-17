@@ -7,51 +7,48 @@ package kasparov;
  */
 public class PVTable {
 
-    static int pvSize = 0x100000 * 2;
-
     PVEntry[] pvEntryTable;
 
     int numEntries;
 
-    public PVTable() {}
+    protected PVTable() {}
 
-    public void initPVTable() {
+    protected void initPVTable() {
         this.numEntries = 150000;
         this.pvEntryTable = new PVEntry[this.numEntries];
         for (int i = 0; i < this.numEntries; i++)
             this.pvEntryTable[i] = new PVEntry();
-//        System.out.println("PVTable initialization complete with " + this.numEntries + " entries");
         clearPVTable();
     }
 
-    public void clearPVTable() {
+    protected void clearPVTable() {
         for (int i = 0; i < this.numEntries; i++) {
-            this.pvEntryTable[i].posKey = 0;
-            this.pvEntryTable[i].move = BoardConstants.NO_MOVE;
+            this.pvEntryTable[i].setPosKey(0);
+            this.pvEntryTable[i].setMove(BoardConstants.NO_MOVE);
         }
     }
 
-    static void storePVMove(BoardStructure boardStructure, int move) {
+    protected static void storePVMove(BoardStructure boardStructure, int move) {
         int index = (int) boardStructure.positionKey % boardStructure.pvTable.numEntries;
         assert(index >= 0 && index <= boardStructure.pvTable.numEntries - 1);
         if (index < 0)
             index *= -1;
-        boardStructure.pvTable.pvEntryTable[index].move = move;
-        boardStructure.pvTable.pvEntryTable[index].posKey = boardStructure.positionKey;
+        boardStructure.pvTable.pvEntryTable[index].setMove(move);
+        boardStructure.pvTable.pvEntryTable[index].setPosKey(boardStructure.positionKey);
     }
 
-    static int probePVTable(BoardStructure boardStructure) {
+    protected static int probePVTable(BoardStructure boardStructure) {
         int index = (int) boardStructure.positionKey % boardStructure.pvTable.numEntries;
         assert(index >= 0 && index <= boardStructure.pvTable.numEntries - 1);
         if (index < 0)
             index *= -1;
-        if (boardStructure.pvTable.pvEntryTable[index].posKey == boardStructure.positionKey)
-            return boardStructure.pvTable.pvEntryTable[index].move;
+        if (boardStructure.pvTable.pvEntryTable[index].getPosKey() == boardStructure.positionKey)
+            return boardStructure.pvTable.pvEntryTable[index].getMove();
 
         return BoardConstants.NO_MOVE;
     }
 
-    static int getPVLine(BoardStructure boardStructure, int depth) {
+    protected static int getPVLine(BoardStructure boardStructure, int depth) {
         int move = probePVTable(boardStructure);
 
         int count = 0;

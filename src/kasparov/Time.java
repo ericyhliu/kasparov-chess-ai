@@ -1,13 +1,18 @@
 package kasparov;
 
 /**
- * Keeping time.
+ * For time keeping purposes.
  *
  * @author Eric Liu
  */
 public class Time {
 
-    static long getTimeInMilleseconds() {
+    /**
+     * Get current time in milliseconds.
+     *
+     * @return current time in milliseconds
+     */
+    protected static long getTimeInMilliseconds() {
         return System.currentTimeMillis();
     }
 

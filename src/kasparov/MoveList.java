@@ -39,8 +39,8 @@ public class MoveList {
         int score = 0;
         System.out.println("Move List: " + moveList.count);
         for (int i = 0; i < moveList.getCount(); i++) {
-            move = moveList.moves[i].move;
-            score = moveList.moves[i].score;
+            move = moveList.moves[i].getMove();
+            score = moveList.moves[i].getScore();
             System.out.println("Move: " + boardStructure.printMove(move) + "   Score: " + score);
         }
 

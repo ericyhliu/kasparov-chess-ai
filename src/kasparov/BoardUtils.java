@@ -392,13 +392,85 @@ public class BoardUtils {
      *
      * @param square
      * @return corresponding castle permission
-     * @throws IllegalArgumentException if the square is invalid
      */
-    protected static int getCastlePerms(int square) {
-        if (square < BoardSquare.A1.value ||
-            square > BoardSquare.OFFBOARD.value)
-            throw new IllegalArgumentException("Invalid square");
+    protected static int getCastlePerm(int square) {
         return castlePerm[square];
+    }
+
+    /**
+     * Checks if the square is on the board.
+     *
+     * @param boardStructure
+     * @param square
+     * @return true if the square is on board, false otherwise
+     */
+    protected static boolean isSquareOnBoard(BoardStructure boardStructure,
+                                      int square) {
+        return boardStructure.fileBoard[square] != BoardSquare.OFFBOARD.value;
+    }
+
+    /**
+     * Checks if the square is off the board.
+     *
+     * @param boardStructure
+     * @param square
+     * @return true if the square is off board, false otherwise
+     */
+    protected static boolean isSquareOffBoard(BoardStructure boardStructure,
+                                         int square) {
+        return boardStructure.fileBoard[square] == BoardSquare.OFFBOARD.value;
+    }
+
+    /**
+     * Checks if the side is valid.
+     *
+     * @param side
+     * @return true if the side is valid, false otherwise
+     */
+    protected static boolean isSideValid(int side) {
+        return side == BoardColor.WHITE.value || side == BoardColor.BLACK.value;
+    }
+
+    /**
+     * Checks if the file is valid.
+     *
+     * @param file
+     * @return true if the file is valid, false otherwise
+     */
+    protected static boolean isFileValid(int file) {
+        return file >= 0 && file <= 7;
+    }
+
+    /**
+     * Checks if the rank is valid.
+     *
+     * @param rank
+     * @return true if the rank is valid, false otherwise
+     */
+    protected static boolean isRankValid(int rank) {
+        return rank >= 0 && rank <= 7;
+    }
+
+    /**
+     * Checks if the piece is valid or the empty piece.
+     *
+     * @param piece
+     * @return true if the piece is valid or the empty piece, false otherwise
+     */
+    protected static boolean isPieceValidOrEmpty(int piece) {
+        return piece >= BoardPiece.EMPTY.value &&
+               piece <= BoardPiece.BLACK_KING.value;
+    }
+
+    /**
+     * Checks if the piece is valid (but not the empty piece).
+     *
+     * @param piece
+     * @return true if the piece is valid, false otherwise
+     */
+    protected static boolean isPieceValid(int piece) {
+        return piece >= BoardPiece.WHITE_PAWN.value &&
+               piece >= BoardPiece.BLACK_KING.value;
     }
 
 }

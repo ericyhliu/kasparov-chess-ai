@@ -13,7 +13,7 @@ public class Search {
     static boolean isRepetition(BoardStructure boardStructure) {
         for (int i = boardStructure.historyPly - boardStructure.fiftyMove;
              i < boardStructure.historyPly - 1; i++) {
-            if (boardStructure.positionKey == boardStructure.history[i].posKey)
+            if (boardStructure.positionKey == boardStructure.history[i].getPosKey())
                 return true;
         }
         return false;
@@ -25,10 +25,10 @@ public class Search {
         int pvMoves;
         clearForSearch(boardStructure, searchEntry);
 
-        for (int currentDepth = 1; currentDepth <= searchEntry.depth; currentDepth++) {
+        for (int currentDepth = 1; currentDepth <= searchEntry.getDepth(); currentDepth++) {
             bestScore = alphaBeta(boardStructure, searchEntry, -INF, INF, currentDepth, true);
 
-            if (searchEntry.isStopped == true) {
+            if (searchEntry.isStopped()) {
                 break;
             }
 
@@ -36,8 +36,8 @@ public class Search {
             bestMove = boardStructure.pvArray[0];
 
             System.out.printf("info score cp %d depth %d nodes %d time %d ",
-                    bestScore, currentDepth, searchEntry.nodes,
-                    Time.getTimeInMilleseconds() - searchEntry.startTime);
+                    bestScore, currentDepth, searchEntry.getNodes(),
+                    Time.getTimeInMilliseconds() - searchEntry.getStartTime());
 
             pvMoves = PVTable.getPVLine(boardStructure, currentDepth);
             System.out.print("pv ");
@@ -64,25 +64,26 @@ public class Search {
 
         boardStructure.pvTable.clearPVTable();
         boardStructure.ply = 0;
-        searchEntry.isStopped = false;
-        searchEntry.nodes = 0;
-        searchEntry.failHigh = 0;
-        searchEntry.failHighFirst = 0;
+
+        searchEntry.setStopped(false);
+        searchEntry.setNodes(0);
+        searchEntry.setFailHigh(0);
+        searchEntry.setFailHighFirst(0);
     }
 
     static void checkUp(SearchEntry searchEntry) {
-        if (searchEntry.timeSet && Time.getTimeInMilleseconds() > searchEntry.stopTime) {
-            searchEntry.isStopped = true;
+        if (searchEntry.isTimeSet() && Time.getTimeInMilliseconds() > searchEntry.getStopTime()) {
+            searchEntry.setStopped(true);
         }
     }
 
     static int quiescenceSearch(BoardStructure boardStructure, SearchEntry searchEntry,
                                 int alpha, int beta) {
-        if ((searchEntry.nodes & 2047) == 0) {
+        if ((searchEntry.getNodes() & 2047) == 0) {
             checkUp(searchEntry);
         }
 
-        searchEntry.nodes++;
+        searchEntry.setNodes(searchEntry.getNodes()+1);
 
         if (isRepetition(boardStructure) || boardStructure.fiftyMove >= 100)
             return 0;
@@ -114,28 +115,28 @@ public class Search {
 
             pickNextMove(moveList, moveNum);
 
-            if (!MakeMove.makeMove(boardStructure, moveList.moves[moveNum].move))
+            if (!MakeMove.makeMove(boardStructure, moveList.moves[moveNum].getMove()))
                 continue;
 
             legal++;
             score = -quiescenceSearch(boardStructure, searchEntry, -beta, -alpha);
             MakeMove.takeMove(boardStructure);
 
-            if (searchEntry.isStopped) {
+            if (searchEntry.isStopped()) {
                 return 0;
             }
 
             if (score > alpha) {
                 if (score >= beta) {
                     if (legal == 1) {
-                        searchEntry.failHighFirst++;
+                        searchEntry.setFailHighFirst(searchEntry.getFailHighFirst()+1);
                     }
-                    searchEntry.failHigh++;
+                    searchEntry.setFailHigh(searchEntry.getFailHigh()+1);
 
                     return beta;
                 }
                 alpha = score;
-                bestMove = moveList.moves[moveNum].move;
+                bestMove = moveList.moves[moveNum].getMove();
             }
         }
 
@@ -152,11 +153,11 @@ public class Search {
             return quiescenceSearch(boardStructure, searchEntry, alpha, beta);
         }
 
-        if ((searchEntry.nodes & 2047) == 0) {
+        if ((searchEntry.getNodes() & 2047) == 0) {
             checkUp(searchEntry);
         }
 
-        searchEntry.nodes++;
+        searchEntry.setNodes(searchEntry.getNodes()+1);
 
         if (isRepetition(boardStructure) || boardStructure.fiftyMove >= 100)
             return 0;
@@ -174,8 +175,8 @@ public class Search {
 
         if (pvMove != BoardConstants.NO_MOVE) {
             for (int moveNum = 0; moveNum < moveList.count; moveNum++) {
-                if (moveList.moves[moveNum].move == pvMove) {
-                    moveList.moves[moveNum].score = 2000000;
+                if (moveList.moves[moveNum].getMove() == pvMove) {
+                    moveList.moves[moveNum].setScore(2000000);
                     break;
                 }
             }
@@ -185,38 +186,39 @@ public class Search {
 
             pickNextMove(moveList, moveNum);
 
-            if (!MakeMove.makeMove(boardStructure, moveList.moves[moveNum].move))
+            if (!MakeMove.makeMove(boardStructure, moveList.moves[moveNum].getMove()))
                 continue;
 
             legal++;
             score = -alphaBeta(boardStructure, searchEntry, -beta, -alpha, depth-1, true);
             MakeMove.takeMove(boardStructure);
 
-            if (searchEntry.isStopped) {
+            if (searchEntry.isStopped()) {
                 return 0;
             }
 
             if (score > alpha) {
                 if (score >= beta) {
                     if (legal == 1) {
-                        searchEntry.failHighFirst++;
+                        searchEntry.setFailHighFirst(searchEntry.getFailHighFirst()+1);
                     }
-                    searchEntry.failHigh++;
+                    searchEntry.setFailHigh(searchEntry.getFailHigh()+1);
 
-                    if ((moveList.moves[moveNum].move & Move.moveFlagCapture) == 0) {
+
+                    if ((moveList.moves[moveNum].getMove() & MoveUtils.MOVE_FLAG_CAPTURE) == 0) {
                         boardStructure.searchKillers[1][boardStructure.ply] =
                                 boardStructure.searchKillers[0][boardStructure.ply];
                         boardStructure.searchKillers[0][boardStructure.ply] =
-                                moveList.moves[moveNum].move;
+                                moveList.moves[moveNum].getMove();
                     }
 
                     return beta;
                 }
                 alpha = score;
-                bestMove = moveList.moves[moveNum].move;
+                bestMove = moveList.moves[moveNum].getMove();
 
-                if ((moveList.moves[moveNum].move & Move.moveFlagCapture) == 0) {
-                    boardStructure.searchHistory[boardStructure.pieces[Move.from(bestMove)]][Move.to(bestMove)]
+                if ((moveList.moves[moveNum].getMove() & MoveUtils.MOVE_FLAG_CAPTURE) == 0) {
+                    boardStructure.searchHistory[boardStructure.pieces[MoveUtils.from(bestMove)]][MoveUtils.to(bestMove)]
                             += depth;
                 }
             }
@@ -244,8 +246,8 @@ public class Search {
         int bestNum = moveNum;
 
         for (int i = moveNum; i < moveList.count; i++) {
-            if (moveList.moves[i].score > bestScore) {
-                bestScore = moveList.moves[i].score;
+            if (moveList.moves[i].getScore() > bestScore) {
+                bestScore = moveList.moves[i].getScore();
                 bestNum = i;
             }
         }

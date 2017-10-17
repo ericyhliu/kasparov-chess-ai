@@ -17,7 +17,7 @@ public enum BoardFile {
     FILE_H(7),
     FILE_NONE(8);
 
-    public final int value;
+    protected final int value;
 
     BoardFile(int value) {
         this.value = value;

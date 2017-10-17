@@ -87,7 +87,7 @@ public class MoveUtils {
         int move, promotedPiece;
 
         for (int i = 0; i < moveList.count; i++) {
-            move = moveList.moves[i].move;
+            move = moveList.moves[i].getMove();
             if (from(move) == from && to(move) == to) {
                 promotedPiece = promoted(move);
                 if (promotedPiece != BoardPiece.EMPTY.value) {
