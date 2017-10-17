@@ -7,8 +7,8 @@ package kasparov;
  */
 public class BoardConstants {
 
-    static final String PROGRAM_NAME = "kasparov";
-    static final String PROGRAM_AUTHOR = "eliucs";
+    static final String PROGRAM_NAME = "Kasparov";
+    static final String PROGRAM_AUTHOR = "Eric Liu";
 
     static final int BOARD_SQR_NUM = 120;
     static final int MAX_GAME_MOVES = 2048;

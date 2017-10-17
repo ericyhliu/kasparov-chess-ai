@@ -1,7 +1,8 @@
 package kasparov;
 
 /**
- * Definitions for valid board squares.
+ * Definitions for valid board squares, the empty square, and the offboard
+ * square, maps each to their positions on the 120 square board.
  *
  * @author Eric Liu
  */
@@ -22,4 +23,5 @@ public enum BoardSquare {
     BoardSquare(int value) {
         this.value = value;
     }
+
 }
