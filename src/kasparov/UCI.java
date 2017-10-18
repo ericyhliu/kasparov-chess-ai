@@ -9,6 +9,13 @@ import java.util.Scanner;
  */
 public class UCI {
 
+    /**
+     * Parses a UCI go command.
+     *
+     * @param boardStructure
+     * @param searchEntry
+     * @param line
+     */
     protected static void parseGo(BoardStructure boardStructure, SearchEntry searchEntry, String line) {
         int ptr = 3;
         if (ptr >= line.length())
@@ -76,6 +83,12 @@ public class UCI {
         Search.searchPosition(boardStructure, searchEntry);
     }
 
+    /**
+     * Parses a UCI position command.
+     *
+     * @param boardStructure
+     * @param line
+     */
     protected static void parsePosition(BoardStructure boardStructure, String line) {
         int ptr = 9;
         if (ptr >= line.length())
@@ -109,7 +122,7 @@ public class UCI {
             String[] moves = s.split(" ");
             for (int i = 0; i < moves.length; i++) {
                 int move = MoveUtils.parseMove(boardStructure, moves[i]);
-                if (move == BoardConstants.NO_MOVE)
+                if (move == BoardUtils.NO_MOVE)
                     break;
                 MakeMove.makeMove(boardStructure, move);
                 boardStructure.ply = 0;
@@ -149,7 +162,7 @@ public class UCI {
             String[] moves = s.split(" ");
             for (int i = 0; i < moves.length; i++) {
                 int move = MoveUtils.parseMove(boardStructure, moves[i]);
-                if (move == BoardConstants.NO_MOVE)
+                if (move == BoardUtils.NO_MOVE)
                     break;
                 MakeMove.makeMove(boardStructure, move);
                 boardStructure.ply = 0;
@@ -159,6 +172,9 @@ public class UCI {
         }
     }
 
+    /**
+     * Starts handling UCI commands.
+     */
     protected static void start() {
         Scanner in = new Scanner(System.in);
         String line;

@@ -19,6 +19,11 @@ public enum BoardRank {
 
     protected final int value;
 
+    /**
+     * Constructor for BoardRank enum.
+     *
+     * @param value
+     */
     BoardRank(int value) {
         this.value = value;
     }

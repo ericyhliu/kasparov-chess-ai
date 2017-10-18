@@ -23,6 +23,11 @@ public enum BoardPiece {
 
     protected final int value;
 
+    /**
+     * Constructor for BoardPiece enum.
+     *
+     * @param value
+     */
     BoardPiece(int value) {
         this.value = value;
     }

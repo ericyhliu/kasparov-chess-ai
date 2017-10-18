@@ -1,104 +1,104 @@
 package kasparov;
 
 /**
- * Used for checking if a square is being attacked.
+ * Used for checking if a square is being attacked, and printing
+ * out the board showing every square being attacked.
  *
  * @author Eric Liu
  */
 public class SquareAttacked {
 
     /**
-     * Directions in which a knight can attack.
-     */
-    static int[] knightDirection = {-8, -19, -21, -12, 8, 19, 21, 12};
-
-    /**
-     * Directions in which a rook can attack.
-     */
-    static int[] rookDirection = {-1, -10, 1, 10};
-
-    /**
-     * Directions in which a bishop can attack.
-     */
-    static int[] bishopDirection = {-9, -11, 11, 9};
-
-    /**
-     * Directions in which a king can attack.
-     */
-    static int[] kingDirection = {-1, -10, 1, 10, -9, -11, 11, 9};
-
-    /**
      * Checks if a square is being attacked.
+     *
+     * @param boardStructure
+     * @param square
+     * @param side
+     * @return true if the square is being attacked, false otherwise
+     * @throws NullPointerException if the BoardStructure is null
+     * @throws IllegalArgumentException if the square is invalid
+     * @throws IllegalArgumentException if the side is invalid
      */
-    public static boolean squareAttacked(int sqr,
-                                         int side,
-                                         BoardStructure boardStructure) {
-        int piece;
-        int tempSqr;
-        int dir;
+    protected static boolean isSquareAttacked(BoardStructure boardStructure,
+                                              int square, int side) {
+        if (boardStructure == null)
+            throw new NullPointerException("null BoardStructure");
+        if (square < BoardSquare.A1.value ||
+            square > BoardSquare.OFFBOARD.value)
+            throw new IllegalArgumentException("invalid square");
+        if (side < BoardColor.WHITE.value ||
+            side > BoardColor.BOTH.value)
+            throw new IllegalArgumentException("invalid side");
 
-        // Pawns:
+        int piece, tempSquare, direction;
+
         if (side == BoardColor.WHITE.value) {
-            if (boardStructure.pieces[sqr - 11] == BoardPiece.WHITE_PAWN.value ||
-                boardStructure.pieces[sqr - 9] == BoardPiece.WHITE_PAWN.value)
+            if (boardStructure.pieces[square - 11] ==
+                BoardPiece.WHITE_PAWN.value ||
+                boardStructure.pieces[square - 9] ==
+                BoardPiece.WHITE_PAWN.value)
                 return true;
         } else {
-            if (boardStructure.pieces[sqr + 11] == BoardPiece.BLACK_PAWN.value ||
-                    boardStructure.pieces[sqr + 9] == BoardPiece.BLACK_PAWN.value)
+            if (boardStructure.pieces[square + 11] ==
+                BoardPiece.BLACK_PAWN.value ||
+                boardStructure.pieces[square + 9] ==
+                BoardPiece.BLACK_PAWN.value)
                 return true;
         }
 
-        // Knights:
         for (int i = 0; i < 8; i++) {
-            piece = boardStructure.pieces[sqr + knightDirection[i]];
+            piece = boardStructure.pieces[square +
+                    BoardUtils.getKnightDirection(i)];
 
             if (piece == BoardSquare.OFFBOARD.value)
                 continue;
 
-            if (BoardConstants.isKnight(piece) && BoardConstants.pieceColor[piece] == side)
+            if (BoardUtils.isPieceKnight(piece) &&
+                BoardUtils.getPieceColor(piece) == side)
                 return true;
         }
 
-        // Rook or Queen:
         for (int i = 0; i < 4; i++) {
-            dir = rookDirection[i];
-            tempSqr = sqr + dir;
-            piece = boardStructure.pieces[tempSqr];
+            direction = BoardUtils.getRookDirection(i);
+            tempSquare = square + direction;
+            piece = boardStructure.pieces[tempSquare];
             while (piece != BoardSquare.OFFBOARD.value) {
                 if (piece != BoardPiece.EMPTY.value) {
-                    if (BoardConstants.isRookOrQueen(piece) && BoardConstants.pieceColor[piece] == side)
+                    if (BoardUtils.isPieceRookOrQueen(piece) &&
+                        BoardUtils.getPieceColor(piece) == side)
                         return true;
                     break;
                 }
-                tempSqr += dir;
-                piece = boardStructure.pieces[tempSqr];
+                tempSquare += direction;
+                piece = boardStructure.pieces[tempSquare];
             }
         }
 
-        // Bishop or Queen:
         for (int i = 0; i < 4; i++) {
-            dir = bishopDirection[i];
-            tempSqr = sqr + dir;
-            piece = boardStructure.pieces[tempSqr];
+            direction = BoardUtils.getBishopDirection(i);
+            tempSquare = square + direction;
+            piece = boardStructure.pieces[tempSquare];
             while (piece != BoardSquare.OFFBOARD.value) {
                 if (piece != BoardPiece.EMPTY.value) {
-                    if (BoardConstants.isBishopOrQueen(piece) && BoardConstants.pieceColor[piece] == side)
+                    if (BoardUtils.isPieceBishopOrQueen(piece) &&
+                        BoardUtils.getPieceColor(piece) == side)
                         return true;
                     break;
                 }
-                tempSqr += dir;
-                piece = boardStructure.pieces[tempSqr];
+                tempSquare += direction;
+                piece = boardStructure.pieces[tempSquare];
             }
         }
 
-        // Kings:
         for (int i = 0; i < 8; i++) {
-            piece = boardStructure.pieces[sqr + kingDirection[i]];
+            piece = boardStructure.pieces[square +
+                    BoardUtils.getKingDirection(i)];
 
             if (piece == BoardSquare.OFFBOARD.value)
                 continue;
 
-            if (BoardConstants.isKing(piece) && BoardConstants.pieceColor[piece] == side)
+            if (BoardUtils.isPieceKing(piece) &&
+                BoardUtils.getPieceColor(piece) == side)
                 return true;
         }
 
@@ -106,14 +106,29 @@ public class SquareAttacked {
     }
 
     /**
-     * Show square attacked by side.
+     * Print the board with X's denoting squares being attacked and
+     * -'s denoting otherwise.
+     *
+     * @param boardStructure
+     * @param side
+     * @throws NullPointerException if the BoardStructure is null
+     * @throws IllegalArgumentException if the side is invalid
      */
-    public static void showSqrAttackedBySide(int side, BoardStructure boardStructure) {
-        int sqr = 0;
-        for (int r = BoardRank.RANK_8.value; r >= BoardRank.RANK_1.value; r--) {
-            for (int f = BoardFile.FILE_A.value; f <= BoardFile.FILE_H.value; f++) {
-                sqr = BoardConstants.convertFileRankToSqr(f, r);
-                if (squareAttacked(sqr, side, boardStructure))
+    protected static void showSquareAttacked(BoardStructure boardStructure,
+                                             int side) {
+        if (boardStructure == null)
+            throw new NullPointerException("null BoardStructure");
+        if (side < BoardColor.WHITE.value ||
+            side > BoardColor.BOTH.value)
+            throw new IllegalArgumentException("invalid side");
+
+        int square;
+        for (int r = BoardRank.RANK_8.value; r >=
+             BoardRank.RANK_1.value; r--) {
+            for (int f = BoardFile.FILE_A.value; f <=
+                 BoardFile.FILE_H.value; f++) {
+                square = BoardUtils.convertFileRankToSqr(f, r);
+                if (isSquareAttacked(boardStructure, square, side))
                     System.out.print("X ");
                 else
                     System.out.print("- ");

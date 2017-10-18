@@ -13,7 +13,13 @@ public enum BoardColor {
 
     protected final int value;
 
+    /**
+     * Constructor for BoardColor enum.
+     *
+     * @param value
+     */
     BoardColor(int value) {
         this.value = value;
     }
+
 }

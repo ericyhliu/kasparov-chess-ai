@@ -7,36 +7,73 @@ package kasparov;
  */
 public class MakeMove {
 
-    protected static void hashPiece(BoardStructure boardStructure, int piece, int sqr) {
-        boardStructure.positionKey ^= boardStructure.pieceKeys[piece][sqr];
+    /**
+     * Hashes piece into the position key of the BoardStructure.
+     *
+     * @param boardStructure
+     * @param piece
+     * @param square
+     * @throws IllegalArgumentException if the piece is invalid
+     * @throws IllegalArgumentException if the square is invalid
+     */
+    protected static void hashPiece(BoardStructure boardStructure,
+                                    int piece, int square) {
+        if (piece < BoardPiece.EMPTY.value ||
+            piece > BoardPiece.BLACK_KING.value)
+            throw new IllegalArgumentException("invalid piece");
+        if (square < BoardSquare.A1.value ||
+            square > BoardSquare.OFFBOARD.value)
+            throw new IllegalArgumentException("invalid square");
+        boardStructure.positionKey ^= boardStructure.pieceKeys[piece][square];
     }
 
+    /**
+     * Hashes castle permissions into the position key of the BoardStructure.
+     *
+     * @param boardStructure
+     * @return hashed key with castle permissions
+     */
     protected static long hashCastle(BoardStructure boardStructure) {
-        return boardStructure.positionKey ^ boardStructure.castleKeys[boardStructure.castlePerm];
+        return boardStructure.positionKey ^
+               boardStructure.castleKeys[boardStructure.castlePerm];
     }
 
+    /**
+     * Hashes side into the position key of the BoardStructure.
+     *
+     * @param boardStructure
+     * @return hashed key with side
+     */
     protected static long hashSide(BoardStructure boardStructure) {
         return boardStructure.positionKey ^ boardStructure.sideKey;
     }
 
+    /**
+     * Hashes en passant square(s) into the position key of the BoardStructure.
+     *
+     * @param boardStructure
+     * @return hashed key with en passant squares
+     */
     protected static long hashEnPassant(BoardStructure boardStructure) {
-        return boardStructure.positionKey ^ boardStructure.pieceKeys[BoardPiece.EMPTY.value][boardStructure.enPassant];
+        return boardStructure.positionKey ^
+               boardStructure.pieceKeys[BoardPiece.EMPTY.value]
+                       [boardStructure.enPassant];
     }
 
     protected static void clearPiece(BoardStructure boardStructure, int sqr) {
         int piece = boardStructure.pieces[sqr];
-        int col = BoardConstants.pieceColor[piece];
+        int col = BoardUtils.getPieceColor(piece);
         int tempPieceNum = -1;
 
         hashPiece(boardStructure, piece, sqr);
 
         boardStructure.pieces[sqr] = BoardPiece.EMPTY.value;
-        boardStructure.material[col] -= BoardConstants.pieceValue[piece];
+        boardStructure.material[col] -= BoardUtils.getPieceValue(piece);
 
-        if (BoardConstants.pieceBig[piece]) {
+        if (BoardUtils.isPieceBig(piece)) {
             boardStructure.pieceBig[col]--;
 
-            if (BoardConstants.pieceMajor[piece]) {
+            if (BoardUtils.isPieceMajor(piece)) {
                 boardStructure.pieceMajor[col]--;
             } else {
                 boardStructure.pieceMinor[col]--;
@@ -58,14 +95,14 @@ public class MakeMove {
     }
 
     protected static void addPiece(BoardStructure boardStructure, int sqr, int piece) {
-        int col = BoardConstants.pieceColor[piece];
+        int col = BoardUtils.getPieceColor(piece);
         hashPiece(boardStructure, piece, sqr);
 
         boardStructure.pieces[sqr] = piece;
 
-        if (BoardConstants.pieceBig[piece]) {
+        if (BoardUtils.isPieceBig(piece)) {
             boardStructure.pieceBig[col]++;
-            if (BoardConstants.pieceMajor[piece]) {
+            if (BoardUtils.isPieceMajor(piece)) {
                 boardStructure.pieceMajor[col]++;
             } else {
                 boardStructure.pieceMinor[col]++;
@@ -75,13 +112,13 @@ public class MakeMove {
             boardStructure.setBit(boardStructure.pawns[BoardColor.BOTH.value], boardStructure.sqr64(sqr));
         }
 
-        boardStructure.material[col] += BoardConstants.pieceValue[piece];
+        boardStructure.material[col] += BoardUtils.getPieceValue(piece);
         boardStructure.pieceList[piece][boardStructure.pieceNum[piece]++] = sqr;
     }
 
     protected static void movePiece(BoardStructure boardStructure, int from, int to) {
         int piece = boardStructure.pieces[from];
-        int col = BoardConstants.pieceColor[piece];
+        int col = BoardUtils.getPieceColor(piece);
         boolean tempPieceNum = false;
 
         hashPiece(boardStructure, piece, from);
@@ -92,7 +129,7 @@ public class MakeMove {
 
         boardStructure.pieces[to] = piece;
 
-        if (!BoardConstants.pieceBig[piece]) {
+        if (!BoardUtils.isPieceBig(piece)) {
             boardStructure.clearBit(boardStructure.pawns[col], boardStructure.sqr64(from));
             boardStructure.clearBit(boardStructure.pawns[BoardColor.BOTH.value], boardStructure.sqr64(from));
             boardStructure.setBit(boardStructure.pawns[col], boardStructure.sqr64(to));
@@ -166,7 +203,7 @@ public class MakeMove {
         boardStructure.historyPly++;
         boardStructure.ply++;
 
-        if (BoardConstants.piecePawn[boardStructure.pieces[from]]) {
+        if (BoardUtils.isPiecePawn(boardStructure.pieces[from])) {
             boardStructure.fiftyMove = 0;
             if ((move & MoveUtils.MOVE_FLAG_PAWN_START) != 0) {
                 if (side == BoardColor.WHITE.value) {
@@ -186,14 +223,14 @@ public class MakeMove {
             addPiece(boardStructure, to, promotedPiece);
         }
 
-        if (BoardConstants.pieceKing[boardStructure.pieces[to]])
+        if (BoardUtils.isPieceKing(boardStructure.pieces[to]))
             boardStructure.kingSqr[boardStructure.side] = to;
 
         boardStructure.side ^= 1;
         hashSide(boardStructure);
 
-        if (SquareAttacked.squareAttacked(boardStructure.kingSqr[side],
-                boardStructure.side, boardStructure)) {
+        if (SquareAttacked.isSquareAttacked(boardStructure, boardStructure.kingSqr[side],
+                boardStructure.side)) {
             takeMove(boardStructure);
             return false;
         }
@@ -244,7 +281,7 @@ public class MakeMove {
 
         movePiece(boardStructure, to, from);
 
-        if (BoardConstants.pieceKing[boardStructure.pieces[from]]) {
+        if (BoardUtils.isPieceKing(boardStructure.pieces[from])) {
             boardStructure.kingSqr[boardStructure.side] = from;
         }
 
@@ -256,7 +293,7 @@ public class MakeMove {
         int promoted = MoveUtils.promoted(move);
         if (promoted != BoardPiece.EMPTY.value) {
             clearPiece(boardStructure, from);
-            addPiece(boardStructure, from, (BoardConstants.pieceColor[promoted] == BoardColor.WHITE.value ?
+            addPiece(boardStructure, from, (BoardUtils.getPieceChar(promoted) == BoardColor.WHITE.value ?
                     BoardPiece.WHITE_PAWN.value : BoardPiece.BLACK_PAWN.value));
         }
     }

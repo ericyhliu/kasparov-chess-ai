@@ -159,6 +159,35 @@ public class BoardUtils {
     protected static final int NO_MOVE = 0;
 
     /**
+     * Directions in which a knight can attack.
+     */
+    private static final int[] knightDirection = {
+        -8, -19, -21, -12, 8, 19, 21, 12
+    };
+
+    /**
+     * Directions in which a bishop can attack.
+     */
+    private static final int[] bishopDirection = {
+            -9, -11, 11, 9
+    };
+
+    /**
+     * Directions in which a rook can attack.
+     */
+    private static final int[] rookDirection = {
+        -1, -10, 1, 10
+    };
+
+    /**
+     * Directions in which a king can attack.
+     */
+    private static final int[] kingDirection = {
+        -1, -10, 1, 10, -9, -11, 11, 9
+    };
+
+
+    /**
      * Checks if a piece is a pawn.
      *
      * @param piece
@@ -471,6 +500,58 @@ public class BoardUtils {
     protected static boolean isPieceValid(int piece) {
         return piece >= BoardPiece.WHITE_PAWN.value &&
                piece >= BoardPiece.BLACK_KING.value;
+    }
+
+    /**
+     * Get knight direction.
+     *
+     * @param i
+     * @return knight direction
+     * @throws IllegalArgumentException if i is invalid
+     */
+    protected static int getKnightDirection(int i) {
+        if (i < 0 || i >= knightDirection.length)
+            throw new IllegalArgumentException("invalid index");
+        return knightDirection[i];
+    }
+
+    /**
+     * Get bishop direction.
+     *
+     * @param i
+     * @return bishop direction
+     * @throws IllegalArgumentException if i is invalid
+     */
+    protected static int getBishopDirection(int i) {
+        if (i < 0 || i >= bishopDirection.length)
+            throw new IllegalArgumentException("invalid index");
+        return bishopDirection[i];
+    }
+
+    /**
+     * Get rook direction.
+     *
+     * @param i
+     * @return rook direction
+     * @throws IllegalArgumentException if i is invalid
+     */
+    protected static int getRookDirection(int i) {
+        if (i < 0 || i >= rookDirection.length)
+            throw new IllegalArgumentException("invalid index");
+        return rookDirection[i];
+    }
+
+    /**
+     * Get king direction.
+     *
+     * @param i
+     * @return king direction
+     * @throws IllegalArgumentException if i is invalid
+     */
+    protected static int getKingDirection(int i) {
+        if (i < 0 || i >= kingDirection.length)
+            throw new IllegalArgumentException("invalid index");
+        return kingDirection[i];
     }
 
 }

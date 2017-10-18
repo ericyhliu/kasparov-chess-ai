@@ -111,7 +111,7 @@ public class MoveUtils {
                 return move;
             }
         }
-        return BoardConstants.NO_MOVE;
+        return BoardUtils.NO_MOVE;
     }
 
 }

@@ -196,7 +196,7 @@ public class BoardStructure {
 
         for (int r = BoardRank.RANK_1.value; r <= BoardRank.RANK_8.value; r++) {
             for (int f = BoardFile.FILE_A.value; f <= BoardFile.FILE_H.value; f++) {
-                sqr = BoardConstants.convertFileRankToSqr(f, r);
+                sqr = BoardUtils.convertFileRankToSqr(f, r);
                 sqr64ToSqr120[sqr64] = sqr;
                 sqr120ToSqr64[sqr] = sqr64;
                 sqr64++;
@@ -248,7 +248,7 @@ public class BoardStructure {
         System.out.println();
         for (int r = BoardRank.RANK_8.value; r >= BoardRank.RANK_1.value; r--) {
             for (int f = BoardFile.FILE_A.value; f <= BoardFile.FILE_H.value; f++) {
-                sqr = BoardConstants.convertFileRankToSqr(f, r);
+                sqr = BoardUtils.convertFileRankToSqr(f, r);
                 sqr64 = this.sqr120ToSqr64[sqr];
 
                 if (((1L << sqr64) & bitboard) != 0)
@@ -528,7 +528,7 @@ public class BoardStructure {
             assert (file >= BoardFile.FILE_A.value && file <= BoardFile.FILE_H.value);
             assert (rank >= BoardRank.RANK_1.value && rank <= BoardRank.RANK_8.value);
 
-            this.enPassant = BoardConstants.convertFileRankToSqr(file, rank);
+            this.enPassant = BoardUtils.convertFileRankToSqr(file, rank);
         }
 
         this.positionKey = PositionKey.generatePositionKey(this);
@@ -548,9 +548,9 @@ public class BoardStructure {
         for (int r = BoardRank.RANK_8.value; r >= BoardRank.RANK_1.value; r--) {
             System.out.print((r+1) + "  ");
             for (int f = BoardFile.FILE_A.value; f <= BoardFile.FILE_H.value; f++) {
-                sqr = BoardConstants.convertFileRankToSqr(f, r);
+                sqr = BoardUtils.convertFileRankToSqr(f, r);
                 piece = this.pieces[sqr];
-                System.out.print(BoardConstants.pieceChars.charAt(piece) + " ");
+                System.out.print(BoardUtils.getPieceChar(piece) + " ");
             }
             System.out.println();
         }
@@ -561,7 +561,7 @@ public class BoardStructure {
 
         System.out.println("\n");
 
-        System.out.println("        Side: " + BoardConstants.sideChars.charAt(this.side));
+        System.out.println("        Side: " + BoardUtils.getSideChar(this.side));
         System.out.println("  En Passant: " + this.enPassant);
         System.out.println("      Castle: " +
                 ((this.castlePerm & BoardCastle.WHITE_KING_CASTLE.value)  != 0 ? "K" : "-") +
@@ -584,15 +584,15 @@ public class BoardStructure {
 
             if (piece != BoardSquare.OFFBOARD.value &&
                 piece != BoardPiece.EMPTY.value) {
-                color = BoardConstants.pieceColor[piece];
-                if (BoardConstants.pieceBig[piece])
+                color = BoardUtils.getPieceColor(piece);
+                if (BoardUtils.isPieceBig(piece))
                     this.pieceBig[color]++;
-                if (BoardConstants.pieceMajor[piece])
+                if (BoardUtils.isPieceMajor(piece))
                     this.pieceMajor[color]++;
-                if (BoardConstants.pieceMinor[piece])
+                if (BoardUtils.isPieceMinor(piece))
                     this.pieceMinor[color]++;
 
-                this.material[color] += BoardConstants.pieceValue[piece];
+                this.material[color] += BoardUtils.getPieceValue(piece);
                 this.pieceList[piece][this.pieceNum[piece]] = sqr;
                 this.pieceNum[piece]++;
 
@@ -633,7 +633,7 @@ public class BoardStructure {
 
         for (int r = BoardRank.RANK_1.value; r <= BoardRank.RANK_8.value; r++) {
             for (int f = BoardFile.FILE_A.value; f <= BoardFile.FILE_H.value; f++) {
-                sqr = BoardConstants.convertFileRankToSqr(f, r);
+                sqr = BoardUtils.convertFileRankToSqr(f, r);
                 this.fileBoard[sqr] = f;
                 this.rankBoard[sqr] = r;
             }
@@ -699,13 +699,13 @@ public class BoardStructure {
             sqr120 = sqr120(sqr64);
             tempPiece = this.pieces[sqr120];
             tempPieceNum[tempPiece]++;
-            color = BoardConstants.pieceColor[tempPiece];
+            color = BoardUtils.getPieceColor(tempPiece);
 
-            if (BoardConstants.pieceBig[tempPiece])
+            if (BoardUtils.isPieceBig(tempPiece))
                 tempPieceBig[color]++;
-            if (BoardConstants.pieceMajor[tempPiece])
+            if (BoardUtils.isPieceMajor(tempPiece))
                 tempPieceMajor[color]++;
-            if (BoardConstants.pieceMinor[tempPiece])
+            if (BoardUtils.isPieceMinor(tempPiece))
                 tempPieceMinor[color]++;
         }
 
@@ -766,13 +766,13 @@ public class BoardStructure {
 
         if (promoted != 0) {
             char pChar = 'q';
-            if (BoardConstants.isKnight(promoted)) {
+            if (BoardUtils.isPieceKnight(promoted)) {
                 pChar = 'n';
-            } else if (BoardConstants.isRookOrQueen(promoted) &&
-                    !BoardConstants.isBishopOrQueen(promoted)) {
+            } else if (BoardUtils.isPieceRookOrQueen(promoted) &&
+                    !BoardUtils.isPieceBishopOrQueen(promoted)) {
                 pChar = 'r';
-            } else if (!BoardConstants.isRookOrQueen(promoted) &&
-                    BoardConstants.isBishopOrQueen(promoted)) {
+            } else if (!BoardUtils.isPieceRookOrQueen(promoted) &&
+                    BoardUtils.isPieceBishopOrQueen(promoted)) {
                 pChar = 'b';
             }
             moveString = new String(new char[]{

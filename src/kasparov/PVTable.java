@@ -7,10 +7,15 @@ package kasparov;
  */
 public class PVTable {
 
+    /**
+     * Stores the principal variations.
+     */
     PVEntry[] pvEntryTable;
-
     int numEntries;
 
+    /**
+     * Initializes an empty PVTable.
+     */
     protected PVTable() {}
 
     protected void initPVTable() {
@@ -24,7 +29,7 @@ public class PVTable {
     protected void clearPVTable() {
         for (int i = 0; i < this.numEntries; i++) {
             this.pvEntryTable[i].setPosKey(0);
-            this.pvEntryTable[i].setMove(BoardConstants.NO_MOVE);
+            this.pvEntryTable[i].setMove(BoardUtils.NO_MOVE);
         }
     }
 
@@ -45,14 +50,14 @@ public class PVTable {
         if (boardStructure.pvTable.pvEntryTable[index].getPosKey() == boardStructure.positionKey)
             return boardStructure.pvTable.pvEntryTable[index].getMove();
 
-        return BoardConstants.NO_MOVE;
+        return BoardUtils.NO_MOVE;
     }
 
     protected static int getPVLine(BoardStructure boardStructure, int depth) {
         int move = probePVTable(boardStructure);
 
         int count = 0;
-        while (move != BoardConstants.NO_MOVE && count < depth) {
+        while (move != BoardUtils.NO_MOVE && count < depth) {
             if (MoveGenerator.moveExists(boardStructure, move)) {
                 MakeMove.makeMove(boardStructure, move);
                 boardStructure.pvArray[count++] = move;

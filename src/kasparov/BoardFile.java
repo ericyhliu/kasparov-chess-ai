@@ -19,6 +19,11 @@ public enum BoardFile {
 
     protected final int value;
 
+    /**
+     * Constructor for BoardFile enum.
+     *
+     * @param value
+     */
     BoardFile(int value) {
         this.value = value;
     }

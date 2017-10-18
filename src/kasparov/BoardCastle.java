@@ -14,6 +14,11 @@ public enum BoardCastle {
 
     protected final int value;
 
+    /**
+     * Constructor for BoardCastle enum.
+     *
+     * @param value
+     */
     BoardCastle(int value) {
         this.value = value;
     }

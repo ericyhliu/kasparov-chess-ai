@@ -7,10 +7,10 @@ package kasparov;
  */
 public class Search {
 
-    static final int INF = 30000;
-    static final int MATE = 29000;
+    protected static final int INF = 30000;
+    protected static final int MATE = 29000;
 
-    static boolean isRepetition(BoardStructure boardStructure) {
+    protected static boolean isRepetition(BoardStructure boardStructure) {
         for (int i = boardStructure.historyPly - boardStructure.fiftyMove;
              i < boardStructure.historyPly - 1; i++) {
             if (boardStructure.positionKey == boardStructure.history[i].getPosKey())
@@ -19,8 +19,8 @@ public class Search {
         return false;
     }
 
-    static void searchPosition(BoardStructure boardStructure, SearchEntry searchEntry) {
-        int bestMove = BoardConstants.NO_MOVE;
+    protected static void searchPosition(BoardStructure boardStructure, SearchEntry searchEntry) {
+        int bestMove = BoardUtils.NO_MOVE;
         int bestScore = -INF;
         int pvMoves;
         clearForSearch(boardStructure, searchEntry);
@@ -51,7 +51,7 @@ public class Search {
         System.out.printf("bestmove %s\n", boardStructure.printMove(bestMove));
     }
 
-    static void clearForSearch(BoardStructure boardStructure, SearchEntry searchEntry) {
+    protected static void clearForSearch(BoardStructure boardStructure, SearchEntry searchEntry) {
         for (int i = 0; i < 13; i++) {
             for (int j = 0; j < BoardConstants.BOARD_SQR_NUM; j++)
                 boardStructure.searchHistory[i][j] = 0;
@@ -71,13 +71,13 @@ public class Search {
         searchEntry.setFailHighFirst(0);
     }
 
-    static void checkUp(SearchEntry searchEntry) {
+    protected static void checkUp(SearchEntry searchEntry) {
         if (searchEntry.isTimeSet() && Time.getTimeInMilliseconds() > searchEntry.getStopTime()) {
             searchEntry.setStopped(true);
         }
     }
 
-    static int quiescenceSearch(BoardStructure boardStructure, SearchEntry searchEntry,
+    protected static int quiescenceSearch(BoardStructure boardStructure, SearchEntry searchEntry,
                                 int alpha, int beta) {
         if ((searchEntry.getNodes() & 2047) == 0) {
             checkUp(searchEntry);
@@ -107,7 +107,7 @@ public class Search {
         int moveNum = 0;
         int legal = 0;
         int oldAlpha = alpha;
-        int bestMove = BoardConstants.NO_MOVE;
+        int bestMove = BoardUtils.NO_MOVE;
         score = -INF;
         int pvMove = PVTable.probePVTable(boardStructure);
 
@@ -147,7 +147,7 @@ public class Search {
         return alpha;
     }
 
-    static int alphaBeta(BoardStructure boardStructure, SearchEntry searchEntry,
+    protected static int alphaBeta(BoardStructure boardStructure, SearchEntry searchEntry,
                          int alpha, int beta, int depth, boolean isNull) {
         if (depth == 0) {
             return quiescenceSearch(boardStructure, searchEntry, alpha, beta);
@@ -169,11 +169,11 @@ public class Search {
         MoveGenerator.generateAllMoves(boardStructure, moveList);
         int legal = 0;
         int oldAlpha = alpha;
-        int bestMove = BoardConstants.NO_MOVE;
+        int bestMove = BoardUtils.NO_MOVE;
         int score = -INF;
         int pvMove = PVTable.probePVTable(boardStructure);
 
-        if (pvMove != BoardConstants.NO_MOVE) {
+        if (pvMove != BoardUtils.NO_MOVE) {
             for (int moveNum = 0; moveNum < moveList.count; moveNum++) {
                 if (moveList.moves[moveNum].getMove() == pvMove) {
                     moveList.moves[moveNum].setScore(2000000);
@@ -225,8 +225,8 @@ public class Search {
         }
 
         if (legal == 0) {
-            if (SquareAttacked.squareAttacked(boardStructure.kingSqr[boardStructure.side],
-                    boardStructure.side ^ 1, boardStructure)) {
+            if (SquareAttacked.isSquareAttacked(boardStructure, boardStructure.kingSqr[boardStructure.side],
+                    boardStructure.side ^ 1)) {
                 return -MATE + boardStructure.ply;
             } else {
                 return 0;
@@ -240,7 +240,7 @@ public class Search {
         return alpha;
     }
 
-    static void pickNextMove(MoveList moveList, int moveNum) {
+    protected static void pickNextMove(MoveList moveList, int moveNum) {
         Move temp;
         int bestScore = 0;
         int bestNum = moveNum;
