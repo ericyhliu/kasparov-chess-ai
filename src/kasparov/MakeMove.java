@@ -60,6 +60,12 @@ public class MakeMove {
                        [boardStructure.enPassant];
     }
 
+    /**
+     * Removes a piece from the board.
+     *
+     * @param boardStructure
+     * @param sqr
+     */
     protected static void clearPiece(BoardStructure boardStructure, int sqr) {
         int piece = boardStructure.pieces[sqr];
         int col = BoardUtils.getPieceColor(piece);
@@ -94,6 +100,13 @@ public class MakeMove {
         boardStructure.pieceList[piece][tempPieceNum] = boardStructure.pieceList[piece][boardStructure.pieceNum[piece]];
     }
 
+    /**
+     * Adds a piece to the board.
+     *
+     * @param boardStructure
+     * @param sqr
+     * @param piece
+     */
     protected static void addPiece(BoardStructure boardStructure, int sqr, int piece) {
         int col = BoardUtils.getPieceColor(piece);
         hashPiece(boardStructure, piece, sqr);
@@ -116,6 +129,13 @@ public class MakeMove {
         boardStructure.pieceList[piece][boardStructure.pieceNum[piece]++] = sqr;
     }
 
+    /**
+     * Moves a piece on the board.
+     *
+     * @param boardStructure
+     * @param from
+     * @param to
+     */
     protected static void movePiece(BoardStructure boardStructure, int from, int to) {
         int piece = boardStructure.pieces[from];
         int col = BoardUtils.getPieceColor(piece);
@@ -147,6 +167,13 @@ public class MakeMove {
         assert (tempPieceNum);
     }
 
+    /**
+     * Makes move.
+     *
+     * @param boardStructure
+     * @param move
+     * @return
+     */
     protected static boolean makeMove(BoardStructure boardStructure, int move) {
         int from = MoveUtils.from(move);
         int to = MoveUtils.to(move);
@@ -238,6 +265,11 @@ public class MakeMove {
         return true;
     }
 
+    /**
+     * Reverts previous move.
+     * 
+     * @param boardStructure
+     */
     protected static void takeMove(BoardStructure boardStructure) {
         boardStructure.historyPly--;
         boardStructure.ply--;
