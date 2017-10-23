@@ -267,7 +267,7 @@ public class MakeMove {
 
     /**
      * Reverts previous move.
-     * 
+     *
      * @param boardStructure
      */
     protected static void takeMove(BoardStructure boardStructure) {
