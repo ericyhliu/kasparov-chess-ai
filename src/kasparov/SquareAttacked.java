@@ -23,45 +23,37 @@ public class SquareAttacked {
                                               int square, int side) {
         if (boardStructure == null)
             throw new NullPointerException("null BoardStructure");
-        if (square < BoardSquare.A1.value ||
-            square > BoardSquare.OFFBOARD.value)
+        if (square < BoardSquare.A1.value || square > BoardSquare.OFFBOARD.value)
             throw new IllegalArgumentException("invalid square");
-        if (side < BoardColor.WHITE.value ||
-            side > BoardColor.BOTH.value)
+        if (side < BoardColor.WHITE.value || side > BoardColor.BOTH.value)
             throw new IllegalArgumentException("invalid side");
 
         int piece, tempSquare, direction;
 
         if (side == BoardColor.WHITE.value) {
-            if (boardStructure.pieces[square - 11] ==
-                BoardPiece.WHITE_PAWN.value ||
-                boardStructure.pieces[square - 9] ==
-                BoardPiece.WHITE_PAWN.value)
+            if (boardStructure.getPiece(square - 11) == BoardPiece.WHITE_PAWN.value ||
+                boardStructure.getPiece(square - 9) == BoardPiece.WHITE_PAWN.value)
                 return true;
         } else {
-            if (boardStructure.pieces[square + 11] ==
-                BoardPiece.BLACK_PAWN.value ||
-                boardStructure.pieces[square + 9] ==
-                BoardPiece.BLACK_PAWN.value)
+            if (boardStructure.getPiece(square + 11) == BoardPiece.BLACK_PAWN.value ||
+                boardStructure.getPiece(square + 9) == BoardPiece.BLACK_PAWN.value)
                 return true;
         }
 
         for (int i = 0; i < 8; i++) {
-            piece = boardStructure.pieces[square +
-                    BoardUtils.getKnightDirection(i)];
+            piece = boardStructure.getPiece(square + BoardUtils.getKnightDirection(i));
 
             if (piece == BoardSquare.OFFBOARD.value)
                 continue;
 
-            if (BoardUtils.isPieceKnight(piece) &&
-                BoardUtils.getPieceColor(piece) == side)
+            if (BoardUtils.isPieceKnight(piece) && BoardUtils.getPieceColor(piece) == side)
                 return true;
         }
 
         for (int i = 0; i < 4; i++) {
             direction = BoardUtils.getRookDirection(i);
             tempSquare = square + direction;
-            piece = boardStructure.pieces[tempSquare];
+            piece = boardStructure.getPiece(tempSquare);
             while (piece != BoardSquare.OFFBOARD.value) {
                 if (piece != BoardPiece.EMPTY.value) {
                     if (BoardUtils.isPieceRookOrQueen(piece) &&
@@ -70,14 +62,14 @@ public class SquareAttacked {
                     break;
                 }
                 tempSquare += direction;
-                piece = boardStructure.pieces[tempSquare];
+                piece = boardStructure.getPiece(tempSquare);
             }
         }
 
         for (int i = 0; i < 4; i++) {
             direction = BoardUtils.getBishopDirection(i);
             tempSquare = square + direction;
-            piece = boardStructure.pieces[tempSquare];
+            piece = boardStructure.getPiece(tempSquare);
             while (piece != BoardSquare.OFFBOARD.value) {
                 if (piece != BoardPiece.EMPTY.value) {
                     if (BoardUtils.isPieceBishopOrQueen(piece) &&
@@ -86,19 +78,17 @@ public class SquareAttacked {
                     break;
                 }
                 tempSquare += direction;
-                piece = boardStructure.pieces[tempSquare];
+                piece = boardStructure.getPiece(tempSquare);
             }
         }
 
         for (int i = 0; i < 8; i++) {
-            piece = boardStructure.pieces[square +
-                    BoardUtils.getKingDirection(i)];
+            piece = boardStructure.getPiece(square + BoardUtils.getKingDirection(i));
 
             if (piece == BoardSquare.OFFBOARD.value)
                 continue;
 
-            if (BoardUtils.isPieceKing(piece) &&
-                BoardUtils.getPieceColor(piece) == side)
+            if (BoardUtils.isPieceKing(piece) && BoardUtils.getPieceColor(piece) == side)
                 return true;
         }
 
@@ -118,15 +108,12 @@ public class SquareAttacked {
                                              int side) {
         if (boardStructure == null)
             throw new NullPointerException("null BoardStructure");
-        if (side < BoardColor.WHITE.value ||
-            side > BoardColor.BOTH.value)
+        if (side < BoardColor.WHITE.value || side > BoardColor.BOTH.value)
             throw new IllegalArgumentException("invalid side");
 
         int square;
-        for (int r = BoardRank.RANK_8.value; r >=
-             BoardRank.RANK_1.value; r--) {
-            for (int f = BoardFile.FILE_A.value; f <=
-                 BoardFile.FILE_H.value; f++) {
+        for (int r = BoardRank.RANK_8.value; r >= BoardRank.RANK_1.value; r--) {
+            for (int f = BoardFile.FILE_A.value; f <= BoardFile.FILE_H.value; f++) {
                 square = BoardUtils.convertFileRankToSqr(f, r);
                 if (isSquareAttacked(boardStructure, square, side))
                     System.out.print("X ");

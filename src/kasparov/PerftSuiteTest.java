@@ -36,12 +36,22 @@ public class PerftSuiteTest {
     }
 
     /**
-     * Getter for depth count.
+     * Getter for depth count array.
      *
      * @return depthCount
      */
-    protected long[] getDepthCount() {
+    protected long[] getDepthCountArray() {
         return depthCount;
+    }
+
+    /**
+     * Getter for depth count.
+     *
+     * @param i
+     * @return depthCount at index i
+     */
+    protected long getDepthCount(int i) {
+        return depthCount[i];
     }
 
     /**

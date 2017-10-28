@@ -7,32 +7,33 @@ package kasparov;
  */
 public class PVEntry {
 
-    private long posKey;
+    private long positionKey;
     private int move;
+
 
     /**
      * Initializes an empty PVEntry.
      */
     protected PVEntry() {
-        posKey = -1;
+        positionKey = -1;
         move = -1;
     }
 
     /**
      * Initializes a PVEntry with a position key and move.
      */
-    protected PVEntry(long posKey, int move) {
-        this.posKey = posKey;
+    protected PVEntry(long positionKey, int move) {
+        this.positionKey = positionKey;
         this.move = move;
     }
 
     /**
      * Getter for position key.
      *
-     * @return posKey
+     * @return positionKey
      */
     public long getPosKey() {
-        return posKey;
+        return positionKey;
     }
 
     /**
@@ -47,10 +48,10 @@ public class PVEntry {
     /**
      * Setter for position key.
      *
-     * @param posKey
+     * @param positionKey
      */
-    public void setPosKey(long posKey) {
-        this.posKey = posKey;
+    public void setPosKey(long positionKey) {
+        this.positionKey = positionKey;
     }
 
     /**

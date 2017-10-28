@@ -5,35 +5,35 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+/**
+ * Runs the perft suite tests.
+ *
+ * @author Eric Liu
+ */
 public class PerftSuite {
 
-    static class PerftSuiteTest {
-        String fen;
-        long[] depthCount;
+    /**
+     * Perft suite size.
+     */
+    protected static final int PERFT_SUITE_SIZE = 126;
 
-        public PerftSuiteTest(String fen, long[] depthCount) {
-            this.fen = fen;
-            this.depthCount = depthCount;
-        }
+    /**
+     * Perft suite depth.
+     */
+    protected static final int PERFT_SUITE_DEPTH = 6;
 
-        public String toString() {
-            StringBuilder sb = new StringBuilder();
-            sb.append(fen);
-            sb.append("[");
-            for (long dc : depthCount) {
-                sb.append(" ");
-                sb.append(dc);
-                sb.append(" ");
-            }
-            sb.append("]");
-            return sb.toString();
-        }
-    }
+    /**
+     * Perft suite file location.
+     */
+    protected static final String PERFT_SUITE_FILE = "src/perft/perftsuite.txt";
 
-    static final int PERFT_SUITE_SIZE = 126;
-    static final String PERFT_SUITE_FILE = "src/perft/perftsuite.txt";
-
-    static PerftSuiteTest[] generatePerftSuiteTests() {
+    /**
+     * Parses the perft suite tests from file and returns an array of
+     * PerftSuiteTests.
+     *
+     * @return array of PerftSuiteTests
+     */
+    protected static PerftSuiteTest[] generatePerftSuiteTests() {
         PerftSuiteTest[] tests = new PerftSuiteTest[PERFT_SUITE_SIZE];
 
         String line;
@@ -55,38 +55,40 @@ public class PerftSuite {
 
             return tests;
         } catch (FileNotFoundException e) {
-            System.out.println("File Not Found: '" + PERFT_SUITE_FILE + "'");
+            System.out.println("File Not Found: '" +
+                    PERFT_SUITE_FILE + "'");
             return null;
         } catch (IOException e) {
-            System.out.println("Error reading file '" + PERFT_SUITE_FILE + "'");
+            System.out.println("Error reading file '" +
+                    PERFT_SUITE_FILE + "'");
             return null;
         }
     }
 
+    /**
+     * Runs all PerftSuiteTests.
+     */
     public static void main(String[] args) {
         PerftSuiteTest[] tests = generatePerftSuiteTests();
         PerftTest pf;
         BoardStructure boardStructure;
         long result;
         for (int i = 0; i < PERFT_SUITE_SIZE; i++) {
-            for (int j = 1; j <= 6; j++) {
+            for (int j = 1; j <= PERFT_SUITE_DEPTH; j++) {
                 boardStructure = new BoardStructure();
-                boardStructure.initSqr120AndSqr64();
-                boardStructure.initBitMasks();
-                boardStructure.initHashKeys();
-                boardStructure.initFileAndRankBoard();
-                boardStructure.initHistory();
-                boardStructure.parseFEN(tests[i].fen);
+                boardStructure.parseFEN(tests[i].getFen());
                 boardStructure.updateListMaterials();
 
                 pf = new PerftTest();
                 result = pf.perftTest(boardStructure, j);
                 System.out.print("Test " + (i+1) + ", " + j + ": ");
 
-                if (tests[i].depthCount[j-1] == result)
-                    System.out.println("Passed " + (tests[i].depthCount[j-1]) + " " + result);
+                if (tests[i].getDepthCount(j-1) == result)
+                    System.out.println("Passed " +
+                            (tests[i].getDepthCount(j-1) + " " + result));
                 else
-                    System.out.println("Failed " + (tests[i].depthCount[j-1]) + " " + result);
+                    System.out.println("Failed " +
+                            (tests[i].getDepthCount(j-1) + " " + result));
             }
         }
     }

@@ -16,7 +16,8 @@ public class UCI {
      * @param searchEntry
      * @param line
      */
-    protected static void parseGo(BoardStructure boardStructure, SearchEntry searchEntry, String line) {
+    protected static void parseGo(BoardStructure boardStructure, SearchEntry searchEntry,
+                                  String line) {
         int ptr = 3;
         if (ptr >= line.length())
             return;
@@ -36,16 +37,16 @@ public class UCI {
             if (arg.equals("infinite"))
                 return;
 
-            if (arg.equals("winc") && boardStructure.side == BoardColor.WHITE.value)
+            if (arg.equals("winc") && boardStructure.getSide() == BoardColor.WHITE.value)
                 inc = Integer.parseInt(in.next());
 
-            if (arg.equals("binc") && boardStructure.side == BoardColor.BLACK.value)
+            if (arg.equals("binc") && boardStructure.getSide() == BoardColor.BLACK.value)
                 inc = Integer.parseInt(in.next());
 
-            if (arg.equals("wtime") && boardStructure.side == BoardColor.WHITE.value)
+            if (arg.equals("wtime") && boardStructure.getSide() == BoardColor.WHITE.value)
                 time = Integer.parseInt(in.next());
 
-            if (arg.equals("btime") && boardStructure.side == BoardColor.BLACK.value)
+            if (arg.equals("btime") && boardStructure.getSide() == BoardColor.BLACK.value)
                 time = Integer.parseInt(in.next());
 
             if (arg.equals("movestogo"))
@@ -125,7 +126,7 @@ public class UCI {
                 if (move == BoardUtils.NO_MOVE)
                     break;
                 MakeMove.makeMove(boardStructure, move);
-                boardStructure.ply = 0;
+                boardStructure.setPly(0);
             }
             boardStructure.printBoard();
             return;
@@ -165,7 +166,7 @@ public class UCI {
                 if (move == BoardUtils.NO_MOVE)
                     break;
                 MakeMove.makeMove(boardStructure, move);
-                boardStructure.ply = 0;
+                boardStructure.setPly(0);
             }
             boardStructure.printBoard();
             return;
@@ -185,11 +186,6 @@ public class UCI {
         BoardStructure boardStructure = new BoardStructure();
         SearchEntry searchEntry = new SearchEntry();
 
-        boardStructure.initSqr120AndSqr64();
-        boardStructure.initBitMasks();
-        boardStructure.initHashKeys();
-        boardStructure.initFileAndRankBoard();
-        boardStructure.initHistory();
         MoveGenerator.initMvvLva();
 
         while (true) {

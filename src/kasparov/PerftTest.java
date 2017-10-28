@@ -9,8 +9,17 @@ public class PerftTest {
 
     long leafNodes;
 
+    /**
+     * Initialize an empty PerftTest.
+     */
     public PerftTest() {}
 
+    /**
+     * Run peft test.
+     *
+     * @param boardStructure
+     * @param depth
+     */
     void perft(BoardStructure boardStructure, int depth) {
         if (depth == 0) {
             leafNodes++;
@@ -28,6 +37,13 @@ public class PerftTest {
         }
     }
 
+    /**
+     * Start perft test.
+     *
+     * @param boardStructure
+     * @param depth
+     * @return
+     */
     long perftTest(BoardStructure boardStructure, int depth) {
         System.out.println("\nStarting Test to Depth: " + depth);
         leafNodes = 0;

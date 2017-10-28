@@ -52,24 +52,42 @@ public class MoveList {
         this.count = count;
     }
 
-
+    /**
+     * Add a move to the MoveList.
+     *
+     * @param move
+     */
     protected void addMove(int move) {
         moves[count] = new Move(move, 0);
         count++;
     }
 
+    /**
+     * Return the Move at the specified index.
+     *
+     * @param i
+     * @return
+     */
     protected Move getMove(int i) {
         return moves[i];
     }
 
-    protected static void printMoveList(MoveList moveList, BoardStructure boardStructure) {
+    /**
+     * Print the MoveList.
+     *
+     * @param moveList
+     * @param boardStructure
+     */
+    protected static void printMoveList(MoveList moveList,
+                                        BoardStructure boardStructure) {
         int move = 0;
         int score = 0;
         System.out.println("Move List: " + moveList.count);
         for (int i = 0; i < moveList.getCount(); i++) {
             move = moveList.moves[i].getMove();
             score = moveList.moves[i].getScore();
-            System.out.println("Move: " + boardStructure.printMove(move) + "   Score: " + score);
+            System.out.println("Move: " + boardStructure.printMove(move) +
+                    "   Score: " + score);
         }
 
         System.out.println("Move List Total Moves: " + moveList.count);

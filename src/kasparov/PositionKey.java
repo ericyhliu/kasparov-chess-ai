@@ -7,35 +7,35 @@ package kasparov;
  */
 public class PositionKey {
 
+    /**
+     * Generates position key.
+     *
+     * @param boardStructure
+     * @return position key
+     */
     protected static long generatePositionKey(BoardStructure boardStructure) {
         long finalKey = 0;
         int piece;
 
         for (int sqr = 0; sqr < BoardConstants.BOARD_SQR_NUM; sqr++) {
-            piece = boardStructure.pieces[sqr];
+            piece = boardStructure.getPiece(sqr);
 
-            if (piece != BoardSquare.OFFBOARD.value && piece != BoardPiece.EMPTY.value) {
-                assert (piece >= BoardPiece.WHITE_PAWN.value &&
-                        piece <= BoardPiece.BLACK_KING.value);
-                finalKey ^= boardStructure.pieceKeys[piece][sqr];
+            if (piece != BoardSquare.OFFBOARD.value &&
+                piece != BoardPiece.EMPTY.value) {
+                finalKey ^= boardStructure.getPieceKey(piece, sqr);
             }
         }
 
-        if (boardStructure.side == BoardColor.WHITE.value) {
-            finalKey ^= boardStructure.sideKey;
+        if (boardStructure.getSide() == BoardColor.WHITE.value) {
+            finalKey ^= boardStructure.getSideKey();
         }
 
-        if (boardStructure.enPassant != BoardSquare.NONE.value) {
-            assert(boardStructure.enPassant >= 0 &&
-                   boardStructure.enPassant < BoardConstants.BOARD_SQR_NUM);
-            finalKey ^= boardStructure.pieceKeys[BoardPiece.EMPTY.value][boardStructure.enPassant];
+        if (boardStructure.getEnPassant() != BoardSquare.NONE.value) {
+            finalKey ^= boardStructure.getPieceKey(BoardPiece.EMPTY.value,
+                    boardStructure.getEnPassant());
         }
 
-        assert(boardStructure.castlePerm >= 0 && boardStructure.castlePerm <= 15);
-
-        finalKey ^= boardStructure.castleKeys[boardStructure.castlePerm];
-
-        System.out.println();
+        finalKey ^= boardStructure.getCastleKey(boardStructure.getCastlePerm());
 
         return finalKey;
     }

@@ -12,187 +12,714 @@ public class BoardStructure {
     /**
      * Represents the board pieces on the entire size 120 board.
      */
-    int[] pieces = new int[BoardConstants.BOARD_SQR_NUM];
+    private int[] pieces = new int[BoardConstants.BOARD_SQR_NUM];
 
     /**
      * 64 bits represents 8 x 8 board, where 1 denotes pawn at that
      * location, and 0 denotes no pawn at that location.
      */
-    long[] pawns = new long[3];
+    private long[] pawns = new long[3];
 
     /**
      * Locations of the two kings.
      */
-    int[] kingSqr = new int[2];
+    private int[] kingSqr = new int[2];
 
     /**
      * Current side to move.
      */
-    int side;
+    private int side;
 
     /**
      * Current active en passant square.
      */
-    int enPassant;
+    private int enPassant;
 
     /**
      * Counter for the 50-move rule.
      */
-    int fiftyMove;
+    private int fiftyMove;
 
     /**
      * Number of half moves in current search.
      */
-    int ply;
+    private int ply;
 
     /**
      * Total number of half moves in entire game.
      */
-    int historyPly;
+    private int historyPly;
 
     /**
      * Unique 64 bit key for the current position.
      */
-    long positionKey;
+    private long positionKey;
 
     /**
      * Number of pieces, by piece type.
      */
-    int[] pieceNum = new int[13];
+    private int[] pieceNum = new int[13];
 
     /**
      * Number of big pieces (any piece not a pawn), by color
      * (white, black, both).
      */
-    int[] pieceBig = new int[2];
+    private int[] pieceBig = new int[2];
 
     /**
      * Number of major pieces (queens and rooks), by color
      * (white, black, both).
      */
-    int[] pieceMajor = new int[2];
+    private int[] pieceMajor = new int[2];
 
     /**
      * Number of minor pieces (bishops and knights), by color
      * (white, black, both).
      */
-    int[] pieceMinor = new int[2];
+    private int[] pieceMinor = new int[2];
 
     /**
      * Material.
      */
-    int[] material = new int[2];
+    private int[] material = new int[2];
 
     /**
      * Castle permissions.
      */
-    int castlePerm;
+    private int castlePerm;
 
     /**
      * Keeps track of the history of the game.
      */
-    UndoStructure[] history = new UndoStructure[BoardConstants.MAX_GAME_MOVES];
+    private UndoStructure[] history = new UndoStructure[BoardConstants.MAX_GAME_MOVES];
 
     /**
      * Maps square index from size 120 board to size 64 board.
      */
-    int[] sqr120ToSqr64 = new int[BoardConstants.BOARD_SQR_NUM];
+    private int[] sqr120ToSqr64 = new int[BoardConstants.BOARD_SQR_NUM];
 
     /**
      * Maps square index from size 64 board to size 120 board.
      */
-    int[] sqr64ToSqr120 = new int[64];
+    private int[] sqr64ToSqr120 = new int[64];
 
     /**
      * Piece list.
      */
-    int[][] pieceList = new int[13][10];
-
-    /**
-     * Bit table.
-     */
-    int[] bitTable = {
-        63, 30,  3, 32, 25, 41, 22, 33,
-        15, 50, 42, 13, 11, 53, 19, 34,
-        61, 29,  2, 51, 21, 43, 45, 10,
-        18, 47,  1, 54,  9, 57,  0, 35,
-        62, 31, 40,  4, 49,  5, 52, 26,
-        60,  6, 23, 44, 46, 27, 56, 16,
-         7, 39, 48, 24, 59, 14, 12, 55,
-        38, 28, 58, 20, 37, 17, 36,  8
-    };
+    private int[][] pieceList = new int[13][10];
 
     /**
      * Set mask.
      */
-    long[] setMask = new long[64];
+    private long[] setMask = new long[64];
 
     /**
      * Clear mask.
      */
-    long[] clearMask = new long[64];
+    private long[] clearMask = new long[64];
 
     /**
      * Piece keys.
      */
-    long[][] pieceKeys = new long[13][120];
+    private long[][] pieceKeys = new long[13][120];
 
     /**
      * Side key.
      */
-    long sideKey;
+    private long sideKey;
 
     /**
      * Castle keys.
      */
-    long[] castleKeys = new long[16];
+    private long[] castleKeys = new long[16];
 
     /**
      * Files board.
      */
-    int[] fileBoard = new int[BoardConstants.BOARD_SQR_NUM];
+    private int[] fileBoard = new int[BoardConstants.BOARD_SQR_NUM];
 
     /**
      * Ranks board.
      */
-    int[] rankBoard = new int[BoardConstants.BOARD_SQR_NUM];
+    private int[] rankBoard = new int[BoardConstants.BOARD_SQR_NUM];
 
     /**
-     * Pieces check.
+     * Principal variation table.
      */
-    int[] piecesKnight = new int[13];
-    int[] piecesKing = new int[13];
-    int[] piecesRookOrQueen = new int[13];
-    int[] piecesBishopOrQueen = new int[13];
+    private PVTable pvTable;
 
     /**
-     * Principle variation table.
+     * Principal variation array.
      */
-    PVTable pvTable;
-    int[] pvArray = new int[BoardConstants.MAX_DEPTH];
+    private int[] pvArray = new int[BoardConstants.MAX_DEPTH];
 
     /**
      * Search history.
      */
-    int[][] searchHistory = new int[13][BoardConstants.BOARD_SQR_NUM];
-    int[][] searchKillers = new int[2][BoardConstants.MAX_DEPTH];
+    private int[][] searchHistory = new int[13][BoardConstants.BOARD_SQR_NUM];
+    private int[][] searchKillers = new int[2][BoardConstants.MAX_DEPTH];
 
 
     /**
      * Initializes an empty BoardStructure.
      */
-    public BoardStructure() {}
+    public BoardStructure() {
+        initSqr120AndSqr64();
+        initBitMasks();
+        initHashKeys();
+        initFileAndRankBoard();
+        initHistory();
+    }
+
+    /**
+     * Getter for pieces.
+     *
+     * @param square
+     * @return piece at index square
+     * @throws IndexOutOfBoundsException if square is invalid
+     */
+    protected int getPiece(int square) {
+        if (square < 0 || square >= BoardConstants.BOARD_SQR_NUM)
+            throw new IndexOutOfBoundsException("invalid index");
+        return pieces[square];
+    }
+
+    /**
+     * Setter for piece.
+     *
+     * @param piece
+     * @param square
+     * @throws IllegalArgumentException if piece is invalid
+     * @throws IndexOutOfBoundsException if square is invalid
+     */
+    protected void setPiece(int piece, int square) {
+        if (piece < BoardPiece.EMPTY.value || piece > BoardPiece.BLACK_KING.value)
+            throw new IllegalArgumentException("invalid piece");
+        if (square < 0 || square >= BoardConstants.BOARD_SQR_NUM)
+            throw new IndexOutOfBoundsException("invalid square");
+        pieces[square] = piece;
+    }
+
+    /**
+     * Getter for pawns.
+     *
+     * @param color
+     * @return pawn at index color
+     * @throws IndexOutOfBoundsException if color is invalid
+     */
+    protected long getPawn(int color) {
+        if (color < BoardColor.WHITE.value || color > BoardColor.BOTH.value)
+            throw new IndexOutOfBoundsException("invalid color");
+        return pawns[color];
+    }
+
+    /**
+     * Setter for pawns.
+     *
+     * @param board
+     * @param color
+     * @throws IndexOutOfBoundsException if color is invalid
+     */
+    protected void setPawn(long board, int color) {
+        if (color < BoardColor.WHITE.value || color > BoardColor.BOTH.value)
+            throw new IndexOutOfBoundsException("invalid color");
+        pawns[color] = board;
+    }
+
+    /**
+     * Getter for king locations.
+     *
+     * @param color
+     * @return king location
+     * @throws IllegalArgumentException if color is invalid
+     */
+    protected int getKing(int color) {
+        if (color != BoardColor.WHITE.value && color != BoardColor.BLACK.value)
+            throw new IllegalArgumentException("invalid color");
+        return kingSqr[color];
+    }
+
+    /**
+     * Setter for king square.
+     *
+     * @param square
+     * @param color
+     * @throws IllegalArgumentException if color is invalid
+     */
+    protected void setKing(int square, int color) {
+        if (color != BoardColor.WHITE.value && color != BoardColor.BLACK.value)
+            throw new IllegalArgumentException("invalid color");
+        kingSqr[color] = square;
+    }
+
+    /**
+     * Getter for side.
+     *
+     * @return side
+     */
+    protected int getSide() {
+        return side;
+    }
+
+    /**
+     * Setter for side.
+     *
+     * @param side
+     */
+    protected void setSide(int side) {
+        this.side = side;
+    }
+
+    /**
+     * Getter for en passant.
+     *
+     * @return enPassant
+     */
+    protected int getEnPassant() {
+        return enPassant;
+    }
+
+    /**
+     * Setter for en passant.
+     *
+     * @param enPassant
+     */
+    protected void setEnPassant(int enPassant) {
+        this.enPassant = enPassant;
+    }
+
+    /**
+     * Getter for fifty move.
+     *
+     * @return fiftyMove
+     */
+    protected int getFiftyMove() {
+        return fiftyMove;
+    }
+
+    /**
+     * Setter for fifty move.
+     *
+     * @param fiftyMove
+     */
+    protected void setFiftyMove(int fiftyMove) {
+        this.fiftyMove = fiftyMove;
+    }
+
+    /**
+     * Getter for ply.
+     *
+     * @return ply
+     */
+    protected int getPly() {
+        return ply;
+    }
+
+    /**
+     * Setter for ply.
+     *
+     * @param ply
+     */
+    protected void setPly(int ply) {
+        this.ply = ply;
+    }
+
+    /**
+     * Getter for history ply.
+     *
+     * @return historyPly
+     */
+    protected int getHistoryPly() {
+        return historyPly;
+    }
+
+    /**
+     * Setter for history ply.
+     *
+     * @param historyPly
+     */
+    protected void setHistoryPly(int historyPly) {
+        this.historyPly = historyPly;
+    }
+
+    /**
+     * Getter for position key.
+     *
+     * @return positionKey
+     */
+    protected long getPositionKey() {
+        return positionKey;
+    }
+
+    /**
+     * Setter for position key.
+     *
+     * @param positionKey
+     */
+    protected void setPositionKey(long positionKey) {
+        this.positionKey = positionKey;
+    }
+
+    /**
+     * Getter for piece number.
+     *
+     * @param piece
+     * @return pieceNum at index piece
+     * @throws IllegalArgumentException if invalid piece
+     */
+    protected int getPieceNum(int piece) {
+        if (piece < BoardPiece.EMPTY.value || piece > BoardPiece.BLACK_KING.value)
+            throw new IllegalArgumentException("invalid piece");
+        return pieceNum[piece];
+    }
+
+    /**
+     * Setter for piece number.
+     *
+     * @param n
+     * @param piece
+     * @throws IllegalArgumentException if invalid piece
+     */
+    protected void setPieceNum(int n, int piece) {
+        if (piece < BoardPiece.EMPTY.value || piece > BoardPiece.BLACK_KING.value)
+            throw new IllegalArgumentException("invalid piece");
+        pieceNum[piece] = n;
+    }
+
+    /**
+     * Getter for big piece number.
+     *
+     * @param color
+     * @return pieceBig at index color
+     * @throws IllegalArgumentException if invalid color
+     */
+    protected int getPieceNumBig(int color) {
+        if (color != BoardColor.WHITE.value && color != BoardColor.BLACK.value)
+            throw new IllegalArgumentException("invalid color");
+        return pieceBig[color];
+    }
+
+    /**
+     * Setter for big piece number.
+     *
+     * @param n
+     * @param color
+     * @throws IllegalArgumentException if invalid color
+     */
+    protected void setPieceNumBig(int n, int color) {
+        if (color != BoardColor.WHITE.value && color != BoardColor.BLACK.value)
+            throw new IllegalArgumentException("invalid color");
+        pieceBig[color] = n;
+    }
+
+    /**
+     * Getter for major piece number.
+     *
+     * @param color
+     * @return pieceMajor at index color
+     * @throws IllegalArgumentException if invalid color
+     */
+    protected int getPieceNumMajor(int color) {
+        if (color != BoardColor.WHITE.value && color != BoardColor.BLACK.value)
+            throw new IllegalArgumentException("invalid color");
+        return pieceMajor[color];
+    }
+
+    /**
+     * Setter for major piece number.
+     *
+     * @param n
+     * @param color
+     * @throws IllegalArgumentException if invalid color
+     */
+    protected void setPieceNumMajor(int n, int color) {
+        if (color != BoardColor.WHITE.value && color != BoardColor.BLACK.value)
+            throw new IllegalArgumentException("invalid color");
+        pieceMajor[color] = n;
+    }
+
+    /**
+     * Getter for minor piece number.
+     *
+     * @param color
+     * @return pieceMinor at index color
+     * @throws IllegalArgumentException if invalid color
+     */
+    protected int getPieceNumMinor(int color) {
+        if (color != BoardColor.WHITE.value && color != BoardColor.BLACK.value)
+            throw new IllegalArgumentException("invalid color");
+        return pieceMinor[color];
+    }
+
+    /**
+     * Setter for minor piece number.
+     *
+     * @param n
+     * @param color
+     * @throws IllegalArgumentException if invalid color
+     */
+    protected void setPieceNumMinor(int n, int color) {
+        if (color != BoardColor.WHITE.value && color != BoardColor.BLACK.value)
+            throw new IllegalArgumentException("invalid color");
+        pieceMinor[color] = n;
+    }
+
+    /**
+     * Getter for material.
+     *
+     * @param color
+     * @return material at index color
+     * @throws IllegalArgumentException if invalid color
+     */
+    protected int getMaterial(int color) {
+        if (color != BoardColor.WHITE.value && color != BoardColor.BLACK.value)
+            throw new IllegalArgumentException("invalid color");
+        return material[color];
+    }
+
+    /**
+     * Setter for material.
+     *
+     * @param score
+     * @param color
+     * @throws IllegalArgumentException if invalid color
+     */
+    protected void setMaterial(int score, int color) {
+        if (color != BoardColor.WHITE.value && color != BoardColor.BLACK.value)
+            throw new IllegalArgumentException("invalid color");
+        material[color] = score;
+    }
+
+    /**
+     * Getter for castle permissions.
+     *
+     * @return castlePerm
+     */
+    protected int getCastlePerm() {
+        return castlePerm;
+    }
+
+    /**
+     * Setter for castle permissions.
+     *
+     * @param castlePerm
+     */
+    protected void setCastlePerm(int castlePerm) {
+        this.castlePerm = castlePerm;
+    }
+
+    /**
+     * Getter for history entry.
+     *
+     * @param i
+     * @return UndoStructure entry at index i
+     */
+    protected UndoStructure getHistoryEntry(int i) {
+        return history[i];
+    }
+
+    /**
+     * Setter for history entry.
+     *
+     * @param entry
+     * @param i
+     */
+    protected void setHistoryEntry(UndoStructure entry, int i) {
+        history[i] = entry;
+    }
+
+    /**
+     * Getter for piece list entry.
+     *
+     * @param x
+     * @param y
+     * @return piece list entry at index (x, y)
+     */
+    protected int getPieceListEntry(int x, int y) {
+        return pieceList[x][y];
+    }
+
+    /**
+     * Setter for piece list entry.
+     *
+     * @param piece
+     * @param x
+     * @param y
+     */
+    protected void setPieceListEntry(int piece, int x, int y) {
+        pieceList[x][y] = piece;
+    }
+
+    /**
+     * Getter for piece keys.
+     *
+     * @param x
+     * @param y
+     * @return piece key at index (x, y)
+     */
+    protected long getPieceKey(int x, int y) {
+        return pieceKeys[x][y];
+    }
+
+    /**
+     * Setter for piece keys.
+     *
+     * @param key
+     * @param x
+     * @param y
+     */
+    protected void setPieceKey(long key, int x, int y) {
+        pieceKeys[x][y] = key;
+    }
+
+    /**
+     * Getter for side key.
+     *
+     * @return sideKey
+     */
+    protected long getSideKey() {
+        return sideKey;
+    }
+
+    /**
+     * Setter for side key.
+     *
+     * @param sideKey
+     */
+    protected void setSideKey(long sideKey) {
+        this.sideKey = sideKey;
+    }
+
+    /**
+     * Getter for castle key.
+     *
+     * @param i
+     * @return castle key at index i
+     */
+    protected long getCastleKey(int i) {
+        return castleKeys[i];
+    }
+
+    /**
+     * Setter for castle key.
+     *
+     * @param castleKey
+     */
+    protected void setCastleKey(long castleKey, int i) {
+        castleKeys[i] = castleKey;
+    }
+
+    /**
+     * Getter for file board entry.
+     *
+     * @param i
+     * @return file board entry at index i
+     */
+    protected int getFileBoardEntry(int i) {
+        if (i < 0 || i >= BoardConstants.BOARD_SQR_NUM)
+            throw new IndexOutOfBoundsException("invalid index");
+        return fileBoard[i];
+    }
+
+    /**
+     * Getter for rank board entry.
+     *
+     * @param i
+     * @return rank board entry at index i
+     */
+    protected int getRankBoardEntry(int i) {
+        if (i < 0 || i >= BoardConstants.BOARD_SQR_NUM)
+            throw new IndexOutOfBoundsException("invalid index");
+        return rankBoard[i];
+    }
+
+    /**
+     * Getter for PVTable.
+     *
+     * @return pvTable
+     */
+    protected PVTable getPVTable() {
+        return pvTable;
+    }
+
+    /**
+     * Getter for PV array entry.
+     *
+     * @param i
+     * @return PV array entry at index i
+     */
+    protected int getPVArrayEntry(int i) {
+        if (i < 0 || i >= BoardConstants.MAX_DEPTH)
+            throw new IndexOutOfBoundsException("invalid index");
+        return pvArray[i];
+    }
+
+    /**
+     * Setter for PV array entry.
+     *
+     * @param move
+     * @param i
+     */
+    protected void setPVArrayEntry(int move, int i) {
+        if (i < 0 || i >= BoardConstants.MAX_DEPTH)
+            throw new IndexOutOfBoundsException("invalid index");
+        pvArray[i] = move;
+    }
+
+    /**
+     * Getter for search history entry.
+     *
+     * @param x
+     * @param y
+     * @return search history entry at index (x, y)
+     */
+    protected int getSearchHistoryEntry(int x, int y) {
+        return searchHistory[x][y];
+    }
+
+    /**
+     * Setter for search history entry.
+     *
+     * @param entry
+     * @param x
+     * @param y
+     */
+    protected void setSearchHistoryEntry(int entry, int x, int y) {
+        searchHistory[x][y] = entry;
+    }
+
+    /**
+     * Getter for search killer entry.
+     *
+     * @param x
+     * @param y
+     * @return search killer entry at index (x, y)
+     */
+    protected int getSearchKillersEntry(int x, int y) {
+        return searchKillers[x][y];
+    }
+
+    /**
+     * Setter for search killer entry.
+     *
+     * @param entry
+     * @param x
+     * @param y
+     */
+    protected void setSearchKillerEntry(int entry, int x, int y) {
+        searchKillers[x][y] = entry;
+    }
 
     /**
      * Initializes the array mappings from the size 120 board to
      * the size 64 board.
      */
-    public void initSqr120AndSqr64() {
+    private void initSqr120AndSqr64() {
         int sqr;
         int sqr64 = 0;
 
         for (int i = 0; i < BoardConstants.BOARD_SQR_NUM; i++)
-            this.sqr120ToSqr64[i] = 65;
+            sqr120ToSqr64[i] = 65;
 
         for (int r = BoardRank.RANK_1.value; r <= BoardRank.RANK_8.value; r++) {
             for (int f = BoardFile.FILE_A.value; f <= BoardFile.FILE_H.value; f++) {
@@ -205,104 +732,9 @@ public class BoardStructure {
     }
 
     /**
-     * Prints the size 120 board.
-     *
-     * @param hideOuter
-     */
-    public void printSqr120(boolean hideOuter) {
-        for (int i = 0; i < BoardConstants.BOARD_SQR_NUM; i++) {
-            if (i % 10 == 0)
-                System.out.println();
-            if (this.sqr120ToSqr64[i] < 10)
-                System.out.print(" ");
-            if (hideOuter && this.sqr120ToSqr64[i] == 65)
-                System.out.print(" * ");
-            else
-                System.out.print(this.sqr120ToSqr64[i] + " ");
-        }
-        System.out.println();
-    }
-
-    /**
-     * Prints the size 64 board.
-     */
-    public void printSqr64() {
-        for (int i = 0; i < 64; i++) {
-            if (i % 8 == 0)
-                System.out.println();
-            System.out.print(this.sqr64ToSqr120[i] + " ");
-        }
-        System.out.println();
-    }
-
-    /**
-     * Prints the bitboard.
-     *
-     * @param bitboard
-     */
-    public void printBitBoard(long bitboard) {
-
-        int sqr;
-        int sqr64;
-
-        System.out.println();
-        for (int r = BoardRank.RANK_8.value; r >= BoardRank.RANK_1.value; r--) {
-            for (int f = BoardFile.FILE_A.value; f <= BoardFile.FILE_H.value; f++) {
-                sqr = BoardUtils.convertFileRankToSqr(f, r);
-                sqr64 = this.sqr120ToSqr64[sqr];
-
-                if (((1L << sqr64) & bitboard) != 0)
-                    System.out.print("X ");
-                else
-                    System.out.print("- ");
-            }
-            System.out.println();
-        }
-        System.out.println();
-    }
-
-    /**
-     * Pops a bit from the bitboard.
-     *
-     * @param bitboard
-     */
-    public long popBit(long bitboard) {
-        return bitboard & (bitboard - 1);
-    }
-
-    /**
-     * Counts the number of 1 bits in the bitboard.
-     *
-     * @param bitboard
-     */
-    public int countBits(long bitboard) {
-        int r;
-        for (r = 0; bitboard != 0; r++, bitboard &= bitboard - 1);
-        return r;
-    }
-
-    /**
-     * Get index from size 120 board to size 64 board.
-     *
-     * @param sqr120
-     */
-    public int sqr64(int sqr120) {
-        return this.sqr120ToSqr64[sqr120];
-    }
-
-    /**
-     * Get index from size 64 board to size 120 board.
-     *
-     * @param sqr64
-     */
-    public int sqr120(int sqr64) {
-        return this.sqr64ToSqr120[sqr64];
-    }
-
-    /**
      * Initialize bit masks.
      */
-    public void initBitMasks() {
+    private void initBitMasks() {
         for (int i = 0; i < 64; i++) {
             setMask[i] = 1L << i;
             clearMask[i] = ~setMask[i];
@@ -310,40 +742,18 @@ public class BoardStructure {
     }
 
     /**
-     * Clear bit.
-     */
-    public long clearBit(long bitboard, int sqr) {
-        return bitboard & clearMask[sqr];
-    }
-
-    /**
-     * Set bit.
-     */
-    public long setBit(long bitboard, int sqr) {
-        return bitboard | setMask[sqr];
-    }
-
-    /**
-     * Initializes history.
-     */
-    public void initHistory() {
-        for (int i = 0; i < BoardConstants.MAX_GAME_MOVES; i++)
-            history[i] = new UndoStructure();
-    }
-
-    /**
      * Initializes hash keys.
      */
-    public void initHashKeys() {
+    private void initHashKeys() {
         Random random = new Random();
 
         for (int i = 0; i < 13; i++) {
             for (int j = 0; j < 120; j++) {
-                this.pieceKeys[i][j] = random.nextLong();
+                pieceKeys[i][j] = random.nextLong();
             }
         }
 
-        this.sideKey = random.nextLong();
+        sideKey = random.nextLong();
 
         for (int i = 0; i < 16; i++) {
             castleKeys[i] = random.nextLong();
@@ -351,53 +761,115 @@ public class BoardStructure {
     }
 
     /**
+     * Initializes file and rank board.
+     */
+    private void initFileAndRankBoard() {
+        int sqr = BoardSquare.A1.value;
+        for (int i = 0; i < BoardConstants.BOARD_SQR_NUM; i++) {
+            this.fileBoard[i] = BoardSquare.OFFBOARD.value;
+            this.rankBoard[i] = BoardSquare.OFFBOARD.value;
+        }
+
+        for (int r = BoardRank.RANK_1.value; r <= BoardRank.RANK_8.value; r++) {
+            for (int f = BoardFile.FILE_A.value; f <= BoardFile.FILE_H.value; f++) {
+                sqr = BoardUtils.convertFileRankToSqr(f, r);
+                this.fileBoard[sqr] = f;
+                this.rankBoard[sqr] = r;
+            }
+        }
+    }
+
+    /**
+     * Initializes history.
+     */
+    private void initHistory() {
+        for (int i = 0; i < BoardConstants.MAX_GAME_MOVES; i++)
+            history[i] = new UndoStructure();
+    }
+
+    /**
+     * Get index from size 120 board to size 64 board.
+     *
+     * @param sqr120
+     */
+    protected int sqr64(int sqr120) {
+        return sqr120ToSqr64[sqr120];
+    }
+
+    /**
+     * Get index from size 64 board to size 120 board.
+     *
+     * @param sqr64
+     */
+    protected int sqr120(int sqr64) {
+        return sqr64ToSqr120[sqr64];
+    }
+
+    /**
+     * Clears the square from the bitboard.
+     *
+     * @param bitboard
+     * @param sqr
+     * @return bitboard
+     */
+    protected long clearBit(long bitboard, int sqr) {
+        return bitboard & clearMask[sqr];
+    }
+
+    /**
+     * Sets the square on the bitboard.
+     *
+     * @param bitboard
+     * @param sqr
+     * @return bitboard
+     */
+    protected long setBit(long bitboard, int sqr) {
+        return bitboard | setMask[sqr];
+    }
+
+    /**
      * Resets the board structure.
      */
-    public void resetBoard() {
-        int i;
-        for (i = 0; i < BoardConstants.BOARD_SQR_NUM; i++)
-            this.pieces[i] = BoardSquare.OFFBOARD.value;
+    protected void resetBoard() {
+        for (int i = 0; i < BoardConstants.BOARD_SQR_NUM; i++)
+            pieces[i] = BoardSquare.OFFBOARD.value;
 
-        for (i = 0; i < 64; i++)
-            this.pieces[sqr120(i)] = BoardPiece.EMPTY.value;
+        for (int i = 0; i < 64; i++)
+            pieces[sqr120(i)] = BoardPiece.EMPTY.value;
 
-        for (i = 0; i < 2; i++) {
-            this.pieceBig[i] = 0;
-            this.pieceMajor[i] = 0;
-            this.pieceMinor[i] = 0;
-            this.material[i] = 0;
+        for (int i = 0; i < 2; i++) {
+            pieceBig[i] = 0;
+            pieceMajor[i] = 0;
+            pieceMinor[i] = 0;
+            material[i] = 0;
         }
 
-        for (i = 0; i < 3; i++) {
-            this.pawns[i] = 0L;
-        }
+        for (int i = 0; i < 3; i++)
+            pawns[i] = 0L;
 
-        for (i = 0; i < 13; i++) {
-            this.pieceNum[i] = 0;
-        }
+        for (int i = 0; i < 13; i++)
+            pieceNum[i] = 0;
 
-        this.kingSqr[BoardColor.WHITE.value] = BoardSquare.NONE.value;
-        this.kingSqr[BoardColor.BLACK.value] = BoardSquare.NONE.value;
-
-        this.side = BoardColor.BOTH.value;
-        this.enPassant = BoardSquare.NONE.value;
-        this.fiftyMove = 0;
-
-        this.ply = 0;
-        this.historyPly = 0;
-
-        this.castlePerm = 0;
-        this.positionKey = 0L;
-
-        this.pvTable = new PVTable();
-        this.pvTable.initPVTable();
+        kingSqr[BoardColor.WHITE.value] = BoardSquare.NONE.value;
+        kingSqr[BoardColor.BLACK.value] = BoardSquare.NONE.value;
+        side = BoardColor.BOTH.value;
+        enPassant = BoardSquare.NONE.value;
+        fiftyMove = 0;
+        ply = 0;
+        historyPly = 0;
+        castlePerm = 0;
+        positionKey = 0L;
+        pvTable = new PVTable();
+        pvTable.initPVTable();
     }
 
     /**
      * Parses a board position in Forsyth-Edwards Notation (FEN).
+     *
+     * @param fen
+     * @return 0
      */
-    public int parseFEN(String fen) {
-
+    protected int parseFEN(String fen) {
         int rank = BoardRank.RANK_8.value;
         int file = BoardFile.FILE_A.value;
         int piece = 0;
@@ -407,7 +879,7 @@ public class BoardStructure {
         int ptr = 0;
         char currentChar = ' ';
 
-        this.resetBoard();
+        resetBoard();
 
         while ((rank >= BoardRank.RANK_1.value) && ptr < fen.length()) {
             count = 1;
@@ -479,7 +951,7 @@ public class BoardStructure {
                 sqr64 = rank * 8 + file;
                 sqr120 = sqr120(sqr64);
                 if (piece != BoardPiece.EMPTY.value)
-                    this.pieces[sqr120] = piece;
+                    pieces[sqr120] = piece;
                 file++;
             }
 
@@ -487,9 +959,8 @@ public class BoardStructure {
         }
 
         currentChar = fen.charAt(ptr);
-        assert (currentChar == 'w' || currentChar == 'b');
 
-        this.side = (currentChar == 'w') ? BoardColor.WHITE.value : BoardColor.BLACK.value;
+        side = (currentChar == 'w') ? BoardColor.WHITE.value : BoardColor.BLACK.value;
         ptr += 2;
 
         for (int i = 0; i < 4; i++) {
@@ -518,28 +989,21 @@ public class BoardStructure {
         }
         ptr++;
 
-        assert (this.castlePerm >= 0 && this.castlePerm <= 15);
-
         currentChar = fen.charAt(ptr);
         if (currentChar != '-') {
             file = fen.charAt(ptr) - 'a';
             rank = fen.charAt(ptr+1) - '1';
-
-            assert (file >= BoardFile.FILE_A.value && file <= BoardFile.FILE_H.value);
-            assert (rank >= BoardRank.RANK_1.value && rank <= BoardRank.RANK_8.value);
-
-            this.enPassant = BoardUtils.convertFileRankToSqr(file, rank);
+            enPassant = BoardUtils.convertFileRankToSqr(file, rank);
         }
 
-        this.positionKey = PositionKey.generatePositionKey(this);
+        positionKey = PositionKey.generatePositionKey(this);
         return 0;
     }
 
     /**
      * Prints the state of the board.
      */
-    public void printBoard() {
-
+    protected void printBoard() {
         int sqr;
         int piece;
 
@@ -549,7 +1013,7 @@ public class BoardStructure {
             System.out.print((r+1) + "  ");
             for (int f = BoardFile.FILE_A.value; f <= BoardFile.FILE_H.value; f++) {
                 sqr = BoardUtils.convertFileRankToSqr(f, r);
-                piece = this.pieces[sqr];
+                piece = pieces[sqr];
                 System.out.print(BoardUtils.getPieceChar(piece) + " ");
             }
             System.out.println();
@@ -561,207 +1025,75 @@ public class BoardStructure {
 
         System.out.println("\n");
 
-        System.out.println("        Side: " + BoardUtils.getSideChar(this.side));
-        System.out.println("  En Passant: " + this.enPassant);
+        System.out.println("        Side: " + BoardUtils.getSideChar(side));
+        System.out.println("  En Passant: " + enPassant);
         System.out.println("      Castle: " +
-                ((this.castlePerm & BoardCastle.WHITE_KING_CASTLE.value)  != 0 ? "K" : "-") +
-                ((this.castlePerm & BoardCastle.WHITE_QUEEN_CASTLE.value) != 0 ? "Q" : "-") +
-                ((this.castlePerm & BoardCastle.BLACK_KING_CASTLE.value)  != 0 ? "k" : "-") +
-                ((this.castlePerm & BoardCastle.BLACK_QUEEN_CASTLE.value) != 0 ? "q" : "-"));
-        System.out.println("Position Key: " + this.positionKey);
+                ((castlePerm & BoardCastle.WHITE_KING_CASTLE.value)  != 0 ? "K" : "-") +
+                ((castlePerm & BoardCastle.WHITE_QUEEN_CASTLE.value) != 0 ? "Q" : "-") +
+                ((castlePerm & BoardCastle.BLACK_KING_CASTLE.value)  != 0 ? "k" : "-") +
+                ((castlePerm & BoardCastle.BLACK_QUEEN_CASTLE.value) != 0 ? "q" : "-"));
+        System.out.println("Position Key: " + positionKey);
     }
 
     /**
      * Updates list materials.
      */
-    public void updateListMaterials() {
+    protected void updateListMaterials() {
         int piece = 0;
         int sqr = 0;
         int color = 0;
         for (int i = 0; i < BoardConstants.BOARD_SQR_NUM; i++) {
             sqr = i;
-            piece = this.pieces[i];
+            piece = pieces[i];
 
             if (piece != BoardSquare.OFFBOARD.value &&
                 piece != BoardPiece.EMPTY.value) {
                 color = BoardUtils.getPieceColor(piece);
                 if (BoardUtils.isPieceBig(piece))
-                    this.pieceBig[color]++;
+                    pieceBig[color]++;
                 if (BoardUtils.isPieceMajor(piece))
-                    this.pieceMajor[color]++;
+                    pieceMajor[color]++;
                 if (BoardUtils.isPieceMinor(piece))
-                    this.pieceMinor[color]++;
+                    pieceMinor[color]++;
 
-                this.material[color] += BoardUtils.getPieceValue(piece);
-                this.pieceList[piece][this.pieceNum[piece]] = sqr;
-                this.pieceNum[piece]++;
+                material[color] += BoardUtils.getPieceValue(piece);
+                pieceList[piece][pieceNum[piece]] = sqr;
+                pieceNum[piece]++;
 
                 if (piece == BoardPiece.WHITE_KING.value) {
-                    this.kingSqr[BoardColor.WHITE.value] = sqr;
+                    kingSqr[BoardColor.WHITE.value] = sqr;
                 } else if (piece == BoardPiece.BLACK_KING.value) {
-                    this.kingSqr[BoardColor.BLACK.value] = sqr;
+                    kingSqr[BoardColor.BLACK.value] = sqr;
                 }
 
                 if (piece == BoardPiece.WHITE_PAWN.value) {
-                    this.pawns[BoardColor.WHITE.value] =
-                            this.setBit(this.pawns[BoardColor.WHITE.value], sqr64(sqr));
-                    this.pawns[BoardColor.BOTH.value] =
-                            this.setBit(this.pawns[BoardColor.BOTH.value], sqr64(sqr));
+                    pawns[BoardColor.WHITE.value] =
+                            setBit(pawns[BoardColor.WHITE.value], sqr64(sqr));
+                    pawns[BoardColor.BOTH.value] =
+                            setBit(pawns[BoardColor.BOTH.value], sqr64(sqr));
                 } else if (piece == BoardPiece.BLACK_PAWN.value) {
-                    this.pawns[BoardColor.BLACK.value] =
-                            this.setBit(this.pawns[BoardColor.BLACK.value], sqr64(sqr));
-                    this.pawns[BoardColor.BOTH.value] =
-                            this.setBit(this.pawns[BoardColor.BOTH.value], sqr64(sqr));
+                    pawns[BoardColor.BLACK.value] =
+                            setBit(pawns[BoardColor.BLACK.value], sqr64(sqr));
+                    pawns[BoardColor.BOTH.value] =
+                            setBit(pawns[BoardColor.BOTH.value], sqr64(sqr));
                 }
             }
         }
-    }
-
-    /**
-     * Initializes file and rank board.
-     */
-    public void initFileAndRankBoard() {
-        int file = BoardFile.FILE_A.value;
-        int rank = BoardRank.RANK_1.value;
-        int sqr = BoardSquare.A1.value;
-        int sqr64 = 0;
-
-        for (int i = 0; i < BoardConstants.BOARD_SQR_NUM; i++) {
-            this.fileBoard[i] = BoardSquare.OFFBOARD.value;
-            this.rankBoard[i] = BoardSquare.OFFBOARD.value;
-        }
-
-        for (int r = BoardRank.RANK_1.value; r <= BoardRank.RANK_8.value; r++) {
-            for (int f = BoardFile.FILE_A.value; f <= BoardFile.FILE_H.value; f++) {
-                sqr = BoardUtils.convertFileRankToSqr(f, r);
-                this.fileBoard[sqr] = f;
-                this.rankBoard[sqr] = r;
-            }
-        }
-    }
-
-    /**
-     * Prints the file board.
-     */
-    public void printFileBoard() {
-        System.out.println("\nFiles Board:\n");
-        for (int i = 0; i < BoardConstants.BOARD_SQR_NUM; i++) {
-            if (i % 10 == 0 && i != 0)
-                System.out.println();
-            System.out.printf("%4d", this.fileBoard[i]);
-        }
-        System.out.println();
-    }
-
-    /**
-     * Prints the rank board.
-     */
-    public void printRankBoard() {
-        System.out.println("\nRanks Board:\n");
-        for (int i = 0; i < BoardConstants.BOARD_SQR_NUM; i++) {
-            if (i % 10 == 0 && i != 0)
-                System.out.println();
-            System.out.printf("%4d", this.rankBoard[i]);
-        }
-        System.out.println();
-    }
-
-    /**
-     * Checkboard.
-     */
-    public boolean checkBoard() {
-
-        int[] tempPieceNum = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-        int[] tempPieceBig = {0, 0};
-        int[] tempPieceMajor = {0, 0};
-        int[] tempPieceMinor = {0, 0};
-        int[] tempMaterial = {0, 0};
-
-        int tempPiece;
-        int sqr120;
-        int color;
-        int pCount;
-
-        long[] tempPawns = {0L, 0L, 0L};
-
-        tempPawns[BoardColor.WHITE.value] = this.pawns[BoardColor.WHITE.value];
-        tempPawns[BoardColor.BLACK.value] = this.pawns[BoardColor.BLACK.value];
-        tempPawns[BoardColor.BOTH.value] = this.pawns[BoardColor.BOTH.value];
-
-        for (tempPiece = BoardPiece.WHITE_PAWN.value; tempPiece <= BoardPiece.BLACK_KING.value; tempPiece++) {
-            for (int num = 0; num < this.pieceNum[tempPiece]; num++) {
-                sqr120 = this.pieceList[tempPiece][num];
-                assert (tempPiece == this.pieces[sqr120]);
-            }
-        }
-
-        for (int sqr64 = 0; sqr64 < 64; sqr64++) {
-            sqr120 = sqr120(sqr64);
-            tempPiece = this.pieces[sqr120];
-            tempPieceNum[tempPiece]++;
-            color = BoardUtils.getPieceColor(tempPiece);
-
-            if (BoardUtils.isPieceBig(tempPiece))
-                tempPieceBig[color]++;
-            if (BoardUtils.isPieceMajor(tempPiece))
-                tempPieceMajor[color]++;
-            if (BoardUtils.isPieceMinor(tempPiece))
-                tempPieceMinor[color]++;
-        }
-
-        for (tempPiece = BoardPiece.WHITE_PAWN.value; tempPiece <= BoardPiece.BLACK_KING.value; tempPiece++) {
-            assert (tempPieceNum[tempPiece] == this.pieceNum[tempPiece]);
-        }
-
-        assert((tempPieceMajor[BoardColor.WHITE.value] == this.pieceMajor[BoardColor.WHITE.value]) &&
-               (tempPieceMajor[BoardColor.BLACK.value] == this.pieceMajor[BoardColor.BLACK.value]));
-        assert((tempPieceMinor[BoardColor.WHITE.value] == this.pieceMinor[BoardColor.WHITE.value]) &&
-               (tempPieceMinor[BoardColor.BLACK.value] == this.pieceMinor[BoardColor.BLACK.value]));
-        assert((tempPieceBig[BoardColor.WHITE.value] == this.pieceBig[BoardColor.WHITE.value]) &&
-               (tempPieceBig[BoardColor.BLACK.value] == this.pieceBig[BoardColor.BLACK.value]));
-        assert (this.side == BoardColor.WHITE.value ||
-                this.side == BoardColor.BLACK.value);
-        assert (PositionKey.generatePositionKey(this) == this.positionKey);
-
-        assert (this.enPassant == BoardSquare.NONE.value ||
-                (this.rankBoard[this.enPassant] == BoardRank.RANK_6.value &&
-                 this.side == BoardColor.WHITE.value) ||
-                (this.rankBoard[this.enPassant] == BoardRank.RANK_3.value &&
-                 this.side == BoardColor.BLACK.value));
-
-        assert (this.pieces[this.kingSqr[BoardColor.WHITE.value]] == BoardPiece.WHITE_KING.value);
-        assert (this.pieces[this.kingSqr[BoardColor.BLACK.value]] == BoardPiece.BLACK_KING.value);
-
-        return true;
-    }
-
-    /**
-     * Prints out a square.
-     */
-    public void printSqr(int sqr) {
-        String sqrStr = "";
-
-        int file = this.fileBoard[sqr];
-        int rank = this.rankBoard[sqr];
-
-        sqrStr = new String(new char[] {
-                (char)('a' + file),
-                (char)('1' + rank)
-        });
-
-        System.out.println(sqrStr);
     }
 
     /**
      * Prints out the move.
+     *
+     * @param move
+     * @return moveString
      */
-    public String printMove(int move) {
+    protected String printMove(int move) {
         String moveString = "";
 
-        int fileFrom = this.fileBoard[MoveUtils.from(move)];
-        int rankFrom = this.rankBoard[MoveUtils.from(move)];
-        int fileTo = this.fileBoard[MoveUtils.to(move)];
-        int rankTo = this.rankBoard[MoveUtils.to(move)];
+        int fileFrom = fileBoard[MoveUtils.from(move)];
+        int rankFrom = rankBoard[MoveUtils.from(move)];
+        int fileTo = fileBoard[MoveUtils.to(move)];
+        int rankTo = rankBoard[MoveUtils.to(move)];
         int promoted = MoveUtils.promoted(move);
 
         if (promoted != 0) {
@@ -792,12 +1124,4 @@ public class BoardStructure {
         }
         return moveString;
     }
-
-    /**
-     * Initializes the PVTable.
-     */
-    public void initPVTable() {
-        this.pvTable.initPVTable();
-    }
-
 }

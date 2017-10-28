@@ -195,8 +195,7 @@ public class BoardUtils {
      * @throws IllegalArgumentException if the piece is invalid
      */
     protected static boolean isPiecePawn(int piece) {
-        if (piece < BoardPiece.EMPTY.value ||
-            piece > BoardPiece.BLACK_KING.value)
+        if (piece < BoardPiece.EMPTY.value || piece > BoardPiece.BLACK_KING.value)
             throw new IllegalArgumentException("Invalid piece");
         return isPiecePawn[piece];
     }
@@ -209,8 +208,7 @@ public class BoardUtils {
      * @throws IllegalArgumentException if the piece is invalid
      */
     protected static boolean isPieceKnight(int piece) {
-        if (piece < BoardPiece.EMPTY.value ||
-            piece > BoardPiece.BLACK_KING.value)
+        if (piece < BoardPiece.EMPTY.value || piece > BoardPiece.BLACK_KING.value)
             throw new IllegalArgumentException("Invalid piece");
         return isPieceKnight[piece];
     }
@@ -223,8 +221,7 @@ public class BoardUtils {
      * @throws IllegalArgumentException if the piece is invalid
      */
     protected static boolean isPieceRookOrQueen(int piece) {
-        if (piece < BoardPiece.EMPTY.value ||
-            piece > BoardPiece.BLACK_KING.value)
+        if (piece < BoardPiece.EMPTY.value || piece > BoardPiece.BLACK_KING.value)
             throw new IllegalArgumentException("Invalid piece");
         return isPieceRookOrQueen[piece];
     }
@@ -237,8 +234,7 @@ public class BoardUtils {
      * @throws IllegalArgumentException if the piece is invalid
      */
     protected static boolean isPieceBishopOrQueen(int piece) {
-        if (piece < BoardPiece.EMPTY.value ||
-            piece > BoardPiece.BLACK_KING.value)
+        if (piece < BoardPiece.EMPTY.value || piece > BoardPiece.BLACK_KING.value)
             throw new IllegalArgumentException("Invalid piece");
         return isPieceBishopOrQueen[piece];
     }
@@ -251,8 +247,7 @@ public class BoardUtils {
      * @throws IllegalArgumentException if the piece is invalid
      */
     protected static boolean isPieceKing(int piece) {
-        if (piece < BoardPiece.EMPTY.value ||
-            piece > BoardPiece.BLACK_KING.value)
+        if (piece < BoardPiece.EMPTY.value || piece > BoardPiece.BLACK_KING.value)
             throw new IllegalArgumentException("Invalid piece");
         return isPieceKing[piece];
     }
@@ -265,8 +260,7 @@ public class BoardUtils {
      * @throws IllegalArgumentException if the piece is invalid
      */
     protected static boolean isPieceSlider(int piece) {
-        if (piece < BoardPiece.EMPTY.value ||
-            piece > BoardPiece.BLACK_KING.value)
+        if (piece < BoardPiece.EMPTY.value || piece > BoardPiece.BLACK_KING.value)
             throw new IllegalArgumentException("Invalid piece");
         return isPieceSlider[piece];
     }
@@ -279,8 +273,7 @@ public class BoardUtils {
      * @throws IllegalArgumentException if the piece is invalid
      */
     protected static boolean isPieceBig(int piece) {
-        if (piece < BoardPiece.EMPTY.value ||
-            piece > BoardPiece.BLACK_KING.value)
+        if (piece < BoardPiece.EMPTY.value || piece > BoardPiece.BLACK_KING.value)
             throw new IllegalArgumentException("Invalid piece");
         return isPieceBig[piece];
     }
@@ -293,8 +286,7 @@ public class BoardUtils {
      * @throws IllegalArgumentException if the piece is invalid
      */
     protected static boolean isPieceMajor(int piece) {
-        if (piece < BoardPiece.EMPTY.value ||
-            piece > BoardPiece.BLACK_KING.value)
+        if (piece < BoardPiece.EMPTY.value || piece > BoardPiece.BLACK_KING.value)
             throw new IllegalArgumentException("Invalid piece");
         return isPieceMajor[piece];
     }
@@ -307,8 +299,7 @@ public class BoardUtils {
      * @throws IllegalArgumentException if the piece is invalid
      */
     protected static boolean isPieceMinor(int piece) {
-        if (piece < BoardPiece.EMPTY.value ||
-            piece > BoardPiece.BLACK_KING.value)
+        if (piece < BoardPiece.EMPTY.value || piece > BoardPiece.BLACK_KING.value)
             throw new IllegalArgumentException("Invalid piece");
         return isPieceMinor[piece];
     }
@@ -323,11 +314,9 @@ public class BoardUtils {
      * @throws IllegalArgumentException if the rank is invalid
      */
     protected static int convertFileRankToSqr(int file, int rank) {
-        if (file < BoardFile.FILE_A.value ||
-            file > BoardFile.FILE_NONE.value)
+        if (file < BoardFile.FILE_A.value || file > BoardFile.FILE_NONE.value)
             throw new IllegalArgumentException("Invalid file");
-        if (rank < BoardRank.RANK_1.value ||
-            rank > BoardRank.RANK_NONE.value)
+        if (rank < BoardRank.RANK_1.value || rank > BoardRank.RANK_NONE.value)
             throw new IllegalArgumentException("Invalid rank");
         return 21 + file + 10 * rank;
     }
@@ -340,8 +329,7 @@ public class BoardUtils {
      * @throws IllegalArgumentException if the piece is invalid
      */
     protected static char getPieceChar(int piece) {
-        if (piece < BoardPiece.EMPTY.value ||
-            piece > BoardPiece.BLACK_KING.value)
+        if (piece < BoardPiece.EMPTY.value || piece > BoardPiece.BLACK_KING.value)
             throw new IllegalArgumentException("Invalid piece");
         return pieceChars.charAt(piece);
     }
@@ -354,8 +342,7 @@ public class BoardUtils {
      * @throws IllegalArgumentException if the side is invalid
      */
     protected static char getSideChar(int side) {
-        if (side < BoardColor.WHITE.value ||
-            side > BoardColor.BOTH.value)
+        if (side < BoardColor.WHITE.value || side > BoardColor.BOTH.value)
             throw new IllegalArgumentException("Invalid side");
         return sideChars.charAt(side);
     }
@@ -368,8 +355,7 @@ public class BoardUtils {
      * @throws IllegalArgumentException if the file is invalid
      */
     protected static char getFileChar(int file) {
-        if (file < BoardFile.FILE_A.value ||
-            file > BoardFile.FILE_NONE.value)
+        if (file < BoardFile.FILE_A.value || file > BoardFile.FILE_NONE.value)
             throw new IllegalArgumentException("Invalid file");
         return fileChars.charAt(file);
     }
@@ -382,8 +368,7 @@ public class BoardUtils {
      * @throws IllegalArgumentException if the rank is invalid
      */
     protected static char getRankChar(int rank) {
-        if (rank < BoardRank.RANK_1.value ||
-            rank > BoardRank.RANK_NONE.value)
+        if (rank < BoardRank.RANK_1.value || rank > BoardRank.RANK_NONE.value)
             throw new IllegalArgumentException("Invalid rank");
         return rankChars.charAt(rank);
     }
@@ -396,8 +381,7 @@ public class BoardUtils {
      * @throws IllegalArgumentException if the piece is invalid
      */
     protected static int getPieceValue(int piece) {
-        if (piece < BoardPiece.EMPTY.value ||
-            piece > BoardPiece.BLACK_KING.value)
+        if (piece < BoardPiece.EMPTY.value || piece > BoardPiece.BLACK_KING.value)
             throw new IllegalArgumentException("Invalid piece");
         return pieceValue[piece];
     }
@@ -410,8 +394,7 @@ public class BoardUtils {
      * @throws IllegalArgumentException if the piece is invalid
      */
     protected static int getPieceColor(int piece) {
-        if (piece < BoardPiece.EMPTY.value ||
-            piece > BoardPiece.BLACK_KING.value)
+        if (piece < BoardPiece.EMPTY.value || piece > BoardPiece.BLACK_KING.value)
             throw new IllegalArgumentException("Invalid piece");
         return pieceColor[piece];
     }
@@ -433,9 +416,8 @@ public class BoardUtils {
      * @param square
      * @return true if the square is on board, false otherwise
      */
-    protected static boolean isSquareOnBoard(BoardStructure boardStructure,
-                                      int square) {
-        return boardStructure.fileBoard[square] != BoardSquare.OFFBOARD.value;
+    protected static boolean isSquareOnBoard(BoardStructure boardStructure, int square) {
+        return boardStructure.getFileBoardEntry(square) != BoardSquare.OFFBOARD.value;
     }
 
     /**
@@ -445,9 +427,8 @@ public class BoardUtils {
      * @param square
      * @return true if the square is off board, false otherwise
      */
-    protected static boolean isSquareOffBoard(BoardStructure boardStructure,
-                                         int square) {
-        return boardStructure.fileBoard[square] == BoardSquare.OFFBOARD.value;
+    protected static boolean isSquareOffBoard(BoardStructure boardStructure, int square) {
+        return boardStructure.getFileBoardEntry(square) == BoardSquare.OFFBOARD.value;
     }
 
     /**
@@ -487,8 +468,7 @@ public class BoardUtils {
      * @return true if the piece is valid or the empty piece, false otherwise
      */
     protected static boolean isPieceValidOrEmpty(int piece) {
-        return piece >= BoardPiece.EMPTY.value &&
-               piece <= BoardPiece.BLACK_KING.value;
+        return piece >= BoardPiece.EMPTY.value && piece <= BoardPiece.BLACK_KING.value;
     }
 
     /**
@@ -498,8 +478,7 @@ public class BoardUtils {
      * @return true if the piece is valid, false otherwise
      */
     protected static boolean isPieceValid(int piece) {
-        return piece >= BoardPiece.WHITE_PAWN.value &&
-               piece >= BoardPiece.BLACK_KING.value;
+        return piece >= BoardPiece.WHITE_PAWN.value && piece >= BoardPiece.BLACK_KING.value;
     }
 
     /**

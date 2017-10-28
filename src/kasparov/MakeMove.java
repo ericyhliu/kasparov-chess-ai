@@ -16,15 +16,14 @@ public class MakeMove {
      * @throws IllegalArgumentException if the piece is invalid
      * @throws IllegalArgumentException if the square is invalid
      */
-    protected static void hashPiece(BoardStructure boardStructure,
-                                    int piece, int square) {
-        if (piece < BoardPiece.EMPTY.value ||
-            piece > BoardPiece.BLACK_KING.value)
+    protected static void hashPiece(BoardStructure boardStructure, int piece, int square) {
+        if (piece < BoardPiece.EMPTY.value || piece > BoardPiece.BLACK_KING.value)
             throw new IllegalArgumentException("invalid piece");
-        if (square < BoardSquare.A1.value ||
-            square > BoardSquare.OFFBOARD.value)
+        if (square < BoardSquare.A1.value || square > BoardSquare.OFFBOARD.value)
             throw new IllegalArgumentException("invalid square");
-        boardStructure.positionKey ^= boardStructure.pieceKeys[piece][square];
+
+        boardStructure.setPositionKey(boardStructure.getPositionKey() ^
+        boardStructure.getPieceKey(piece, square));
     }
 
     /**
@@ -34,8 +33,8 @@ public class MakeMove {
      * @return hashed key with castle permissions
      */
     protected static long hashCastle(BoardStructure boardStructure) {
-        return boardStructure.positionKey ^
-               boardStructure.castleKeys[boardStructure.castlePerm];
+        return boardStructure.getPositionKey() ^
+               boardStructure.getCastleKey(boardStructure.getCastlePerm());
     }
 
     /**
@@ -45,7 +44,7 @@ public class MakeMove {
      * @return hashed key with side
      */
     protected static long hashSide(BoardStructure boardStructure) {
-        return boardStructure.positionKey ^ boardStructure.sideKey;
+        return boardStructure.getPositionKey() ^ boardStructure.getSideKey();
     }
 
     /**
@@ -55,9 +54,8 @@ public class MakeMove {
      * @return hashed key with en passant squares
      */
     protected static long hashEnPassant(BoardStructure boardStructure) {
-        return boardStructure.positionKey ^
-               boardStructure.pieceKeys[BoardPiece.EMPTY.value]
-                       [boardStructure.enPassant];
+        return boardStructure.getPositionKey() ^
+               boardStructure.getPieceKey(BoardPiece.EMPTY.value, boardStructure.getEnPassant());
     }
 
     /**
@@ -67,37 +65,40 @@ public class MakeMove {
      * @param sqr
      */
     protected static void clearPiece(BoardStructure boardStructure, int sqr) {
-        int piece = boardStructure.pieces[sqr];
+        int piece = boardStructure.getPiece(sqr);
         int col = BoardUtils.getPieceColor(piece);
         int tempPieceNum = -1;
 
         hashPiece(boardStructure, piece, sqr);
 
-        boardStructure.pieces[sqr] = BoardPiece.EMPTY.value;
-        boardStructure.material[col] -= BoardUtils.getPieceValue(piece);
+
+        boardStructure.setPiece(BoardPiece.EMPTY.value, sqr);
+        boardStructure.setMaterial(boardStructure.getMaterial(col) -
+                BoardUtils.getPieceValue(piece), col);
 
         if (BoardUtils.isPieceBig(piece)) {
-            boardStructure.pieceBig[col]--;
+            boardStructure.setPieceNumBig(boardStructure.getPieceNumBig(col) - 1, col);
 
-            if (BoardUtils.isPieceMajor(piece)) {
-                boardStructure.pieceMajor[col]--;
-            } else {
-                boardStructure.pieceMinor[col]--;
-            }
+            if (BoardUtils.isPieceMajor(piece))
+                boardStructure.setPieceNumMajor(boardStructure.getPieceNumMajor(col) - 1, col);
+            else
+                boardStructure.setPieceNumMinor(boardStructure.getPieceNumMinor(col) - 1, col);
         } else {
-            boardStructure.clearBit(boardStructure.pawns[col], boardStructure.sqr64(sqr));
-            boardStructure.clearBit(boardStructure.pawns[BoardColor.BOTH.value], boardStructure.sqr64(sqr));
+            boardStructure.clearBit(boardStructure.getPawn(col), boardStructure.sqr64(sqr));
+            boardStructure.clearBit(boardStructure.getPawn(BoardColor.BOTH.value),
+                    boardStructure.sqr64(sqr));
         }
 
-        for (int i = 0; i < boardStructure.pieceNum[piece]; i++) {
-            if (boardStructure.pieceList[piece][i] == sqr) {
+        for (int i = 0; i < boardStructure.getPieceNum(piece); i++) {
+            if (boardStructure.getPieceListEntry(piece, i) == sqr) {
                 tempPieceNum = i;
                 break;
             }
         }
 
-        boardStructure.pieceNum[piece]--;
-        boardStructure.pieceList[piece][tempPieceNum] = boardStructure.pieceList[piece][boardStructure.pieceNum[piece]];
+        boardStructure.setPieceNum(boardStructure.getPieceNum(piece) - 1, piece);
+        boardStructure.setPieceListEntry(boardStructure.getPieceListEntry(piece,
+                boardStructure.getPieceNum(piece)), piece, tempPieceNum);
     }
 
     /**
@@ -111,22 +112,25 @@ public class MakeMove {
         int col = BoardUtils.getPieceColor(piece);
         hashPiece(boardStructure, piece, sqr);
 
-        boardStructure.pieces[sqr] = piece;
+        boardStructure.setPiece(piece, sqr);
 
         if (BoardUtils.isPieceBig(piece)) {
-            boardStructure.pieceBig[col]++;
-            if (BoardUtils.isPieceMajor(piece)) {
-                boardStructure.pieceMajor[col]++;
-            } else {
-                boardStructure.pieceMinor[col]++;
-            }
+            boardStructure.setPieceNumBig(boardStructure.getPieceNumBig(col) + 1, col);
+
+            if (BoardUtils.isPieceMajor(piece))
+                boardStructure.setPieceNumMajor(boardStructure.getPieceNumMajor(col) + 1, col);
+            else
+                boardStructure.setPieceNumMinor(boardStructure.getPieceNumMinor(col) + 1, col);
         } else {
-            boardStructure.setBit(boardStructure.pawns[col], boardStructure.sqr64(sqr));
-            boardStructure.setBit(boardStructure.pawns[BoardColor.BOTH.value], boardStructure.sqr64(sqr));
+            boardStructure.setBit(boardStructure.getPawn(col), boardStructure.sqr64(sqr));
+            boardStructure.setBit(boardStructure.getPawn(BoardColor.BOTH.value),
+                    boardStructure.sqr64(sqr));
         }
 
-        boardStructure.material[col] += BoardUtils.getPieceValue(piece);
-        boardStructure.pieceList[piece][boardStructure.pieceNum[piece]++] = sqr;
+        boardStructure.setMaterial(boardStructure.getMaterial(col) +
+                BoardUtils.getPieceValue(piece), col);
+        boardStructure.setPieceListEntry(sqr, piece, boardStructure.getPieceNum(piece));
+        boardStructure.setPieceNum(boardStructure.getPieceNum(piece) + 1, piece);
     }
 
     /**
@@ -136,35 +140,33 @@ public class MakeMove {
      * @param from
      * @param to
      */
-    protected static void movePiece(BoardStructure boardStructure, int from, int to) {
-        int piece = boardStructure.pieces[from];
+    protected static void movePiece(BoardStructure boardStructure,
+                                    int from, int to) {
+        int piece = boardStructure.getPiece(from);
         int col = BoardUtils.getPieceColor(piece);
         boolean tempPieceNum = false;
 
         hashPiece(boardStructure, piece, from);
-
-        boardStructure.pieces[from] = BoardPiece.EMPTY.value;
-
+        boardStructure.setPiece(BoardPiece.EMPTY.value, from);
         hashPiece(boardStructure, piece, to);
-
-        boardStructure.pieces[to] = piece;
+        boardStructure.setPiece(piece, to);
 
         if (!BoardUtils.isPieceBig(piece)) {
-            boardStructure.clearBit(boardStructure.pawns[col], boardStructure.sqr64(from));
-            boardStructure.clearBit(boardStructure.pawns[BoardColor.BOTH.value], boardStructure.sqr64(from));
-            boardStructure.setBit(boardStructure.pawns[col], boardStructure.sqr64(to));
-            boardStructure.setBit(boardStructure.pawns[BoardColor.BOTH.value], boardStructure.sqr64(to));
+            boardStructure.clearBit(boardStructure.getPawn(col), boardStructure.sqr64(from));
+            boardStructure.clearBit(boardStructure.getPawn(BoardColor.BOTH.value),
+                    boardStructure.sqr64(from));
+            boardStructure.setBit(boardStructure.getPawn(col), boardStructure.sqr64(to));
+            boardStructure.setBit(boardStructure.getPawn(BoardColor.BOTH.value),
+                    boardStructure.sqr64(to));
         }
 
-        for (int i = 0; i < boardStructure.pieceNum[piece]; i++) {
-            if (boardStructure.pieceList[piece][i] == from) {
-                boardStructure.pieceList[piece][i] = to;
+        for (int i = 0; i < boardStructure.getPieceNum(piece); i++) {
+            if (boardStructure.getPieceListEntry(piece, i) == from) {
+                boardStructure.setPieceListEntry(to, piece, i);
                 tempPieceNum = true;
                 break;
             }
         }
-
-        assert (tempPieceNum);
     }
 
     /**
@@ -174,12 +176,14 @@ public class MakeMove {
      * @param move
      * @return
      */
-    protected static boolean makeMove(BoardStructure boardStructure, int move) {
+    protected static boolean makeMove(BoardStructure boardStructure,
+                                      int move) {
         int from = MoveUtils.from(move);
         int to = MoveUtils.to(move);
-        int side = boardStructure.side;
+        int side = boardStructure.getSide();
 
-        boardStructure.history[boardStructure.historyPly].setPosKey(boardStructure.positionKey);
+        boardStructure.getHistoryEntry(boardStructure.getHistoryPly())
+                .setPosKey(boardStructure.getPositionKey());
 
         if ((move & MoveUtils.MOVE_FLAG_EN_PASSANT) != 0) {
             if (side == BoardColor.WHITE.value)
@@ -187,57 +191,57 @@ public class MakeMove {
             else
                 clearPiece(boardStructure, to + 10);
         } else if ((move & MoveUtils.MOVE_FLAG_CASTLE) != 0) {
-            if (to == BoardSquare.C1.value) {
-                movePiece(boardStructure, BoardSquare.A1.value,
-                        BoardSquare.D1.value);
-            } else if (to == BoardSquare.C8.value) {
-                movePiece(boardStructure, BoardSquare.A8.value,
-                        BoardSquare.D8.value);
-            } else if (to == BoardSquare.G1.value) {
-                movePiece(boardStructure, BoardSquare.H1.value,
-                        BoardSquare.F1.value);
-            } else if (to == BoardSquare.G8.value) {
-                movePiece(boardStructure, BoardSquare.H8.value,
-                        BoardSquare.F8.value);
-            }
+            if (to == BoardSquare.C1.value)
+                movePiece(boardStructure, BoardSquare.A1.value, BoardSquare.D1.value);
+            else if (to == BoardSquare.C8.value)
+                movePiece(boardStructure, BoardSquare.A8.value, BoardSquare.D8.value);
+            else if (to == BoardSquare.G1.value)
+                movePiece(boardStructure, BoardSquare.H1.value, BoardSquare.F1.value);
+            else if (to == BoardSquare.G8.value)
+                movePiece(boardStructure, BoardSquare.H8.value, BoardSquare.F8.value);
         }
 
-        if (boardStructure.enPassant != BoardSquare.NONE.value)
+        if (boardStructure.getEnPassant() != BoardSquare.NONE.value)
             hashEnPassant(boardStructure);
+
         hashCastle(boardStructure);
 
-        boardStructure.history[boardStructure.historyPly]
+        boardStructure.getHistoryEntry(boardStructure.getHistoryPly())
                 .setMove(move);
-        boardStructure.history[boardStructure.historyPly]
-                .setFiftyMove(boardStructure.fiftyMove);
-        boardStructure.history[boardStructure.historyPly]
-                .setEnPassant(boardStructure.enPassant);
-        boardStructure.history[boardStructure.historyPly]
-                .setCastlePerm(boardStructure.castlePerm);
-        boardStructure.castlePerm &= BoardUtils.getCastlePerm(from);
-        boardStructure.castlePerm &= BoardUtils.getCastlePerm(to);
-        boardStructure.enPassant = BoardSquare.NONE.value;
+        boardStructure.getHistoryEntry(boardStructure.getHistoryPly())
+                .setFiftyMove(boardStructure.getFiftyMove());
+        boardStructure.getHistoryEntry(boardStructure.getHistoryPly())
+                .setEnPassant(boardStructure.getEnPassant());
+        boardStructure.getHistoryEntry(boardStructure.getHistoryPly())
+                .setCastlePerm(boardStructure.getCastlePerm());
+        boardStructure.setCastlePerm(boardStructure.getCastlePerm() &
+                BoardUtils.getCastlePerm(from));
+        boardStructure.setCastlePerm(boardStructure.getCastlePerm() &
+                BoardUtils.getCastlePerm(to));
+        boardStructure.setEnPassant(BoardSquare.NONE.value);
         hashCastle(boardStructure);
 
         int captured = MoveUtils.captured(move);
-        boardStructure.fiftyMove++;
+
+        boardStructure.setFiftyMove(boardStructure.getFiftyMove() + 1);
 
         if (captured != BoardPiece.EMPTY.value) {
             clearPiece(boardStructure, to);
-            boardStructure.fiftyMove = 0;
+            boardStructure.setFiftyMove(0);
         }
 
-        boardStructure.historyPly++;
-        boardStructure.ply++;
+        boardStructure.setHistoryPly(boardStructure.getHistoryPly() + 1);
+        boardStructure.setPly(boardStructure.getPly() + 1);
 
-        if (BoardUtils.isPiecePawn(boardStructure.pieces[from])) {
-            boardStructure.fiftyMove = 0;
+        if (BoardUtils.isPiecePawn(boardStructure.getPiece(from))) {
+            boardStructure.setFiftyMove(0);
+
             if ((move & MoveUtils.MOVE_FLAG_PAWN_START) != 0) {
-                if (side == BoardColor.WHITE.value) {
-                    boardStructure.enPassant = from + 10;
-                } else {
-                    boardStructure.enPassant = from - 10;
-                }
+                if (side == BoardColor.WHITE.value)
+                    boardStructure.setEnPassant(from + 10);
+                else
+                    boardStructure.setEnPassant(from - 10);
+
                 hashEnPassant(boardStructure);
             }
         }
@@ -250,14 +254,14 @@ public class MakeMove {
             addPiece(boardStructure, to, promotedPiece);
         }
 
-        if (BoardUtils.isPieceKing(boardStructure.pieces[to]))
-            boardStructure.kingSqr[boardStructure.side] = to;
+        if (BoardUtils.isPieceKing(boardStructure.getPiece(to)))
+            boardStructure.setKing(to, boardStructure.getSide());
 
-        boardStructure.side ^= 1;
+        boardStructure.setSide(boardStructure.getSide() ^ 1);
         hashSide(boardStructure);
 
-        if (SquareAttacked.isSquareAttacked(boardStructure, boardStructure.kingSqr[side],
-                boardStructure.side)) {
+        if (SquareAttacked.isSquareAttacked(boardStructure, boardStructure.getKing(side),
+                boardStructure.getSide())) {
             takeMove(boardStructure);
             return false;
         }
@@ -271,62 +275,70 @@ public class MakeMove {
      * @param boardStructure
      */
     protected static void takeMove(BoardStructure boardStructure) {
-        boardStructure.historyPly--;
-        boardStructure.ply--;
+        boardStructure.setHistoryPly(boardStructure.getHistoryPly() - 1);
+        boardStructure.setPly(boardStructure.getPly() - 1);
 
-        int move = boardStructure.history[boardStructure.historyPly].getMove();
+        int move = boardStructure.getHistoryEntry(boardStructure.getHistoryPly()).getMove();
         int from = MoveUtils.from(move);
         int to = MoveUtils.to(move);
 
-        if (boardStructure.enPassant != BoardSquare.NONE.value)
+        if (boardStructure.getEnPassant() != BoardSquare.NONE.value)
             hashEnPassant(boardStructure);
+
         hashCastle(boardStructure);
 
-        boardStructure.castlePerm = boardStructure.history[boardStructure.historyPly].getCastlePerm();
-        boardStructure.fiftyMove = boardStructure.history[boardStructure.historyPly].getFiftyMove();
-        boardStructure.enPassant = boardStructure.history[boardStructure.historyPly].getEnPassant();
+        boardStructure.setCastlePerm(boardStructure
+                .getHistoryEntry(boardStructure.getHistoryPly())
+                .getCastlePerm());
 
-        if (boardStructure.enPassant != BoardSquare.NONE.value)
+        boardStructure.setFiftyMove(boardStructure
+                .getHistoryEntry(boardStructure.getHistoryPly())
+                .getFiftyMove());
+
+        boardStructure.setEnPassant(boardStructure
+                .getHistoryEntry(boardStructure.getHistoryPly())
+                .getEnPassant());
+
+        if (boardStructure.getEnPassant() != BoardSquare.NONE.value)
             hashEnPassant(boardStructure);
+
         hashCastle(boardStructure);
 
-        boardStructure.side ^= 1;
+        boardStructure.setSide(boardStructure.getSide() ^ 1);
         hashSide(boardStructure);
 
         if ((move & MoveUtils.MOVE_FLAG_EN_PASSANT) != 0) {
-            if (boardStructure.side == BoardColor.WHITE.value) {
+            if (boardStructure.getSide() == BoardColor.WHITE.value)
                 addPiece(boardStructure, to-10, BoardPiece.BLACK_PAWN.value);
-            } else {
+            else
                 addPiece(boardStructure, to+10, BoardPiece.WHITE_PAWN.value);
-            }
         } else if ((move & MoveUtils.MOVE_FLAG_CASTLE) != 0) {
-            if (to == BoardSquare.C1.value) {
+            if (to == BoardSquare.C1.value)
                 movePiece(boardStructure, BoardSquare.D1.value, BoardSquare.A1.value);
-            } else if (to == BoardSquare.C8.value) {
+            else if (to == BoardSquare.C8.value)
                 movePiece(boardStructure, BoardSquare.D8.value, BoardSquare.A8.value);
-            } else if (to == BoardSquare.G1.value) {
+            else if (to == BoardSquare.G1.value)
                 movePiece(boardStructure, BoardSquare.F1.value, BoardSquare.H1.value);
-            } else if (to == BoardSquare.G8.value) {
+            else if (to == BoardSquare.G8.value)
                 movePiece(boardStructure, BoardSquare.F8.value, BoardSquare.H8.value);
-            }
         }
 
         movePiece(boardStructure, to, from);
 
-        if (BoardUtils.isPieceKing(boardStructure.pieces[from])) {
-            boardStructure.kingSqr[boardStructure.side] = from;
-        }
+        if (BoardUtils.isPieceKing(boardStructure.getPiece(from)))
+            boardStructure.setKing(from, boardStructure.getSide());
 
         int captured = MoveUtils.captured(move);
-        if (captured != BoardPiece.EMPTY.value) {
+        if (captured != BoardPiece.EMPTY.value)
             addPiece(boardStructure, to, captured);
-        }
 
         int promoted = MoveUtils.promoted(move);
         if (promoted != BoardPiece.EMPTY.value) {
             clearPiece(boardStructure, from);
-            addPiece(boardStructure, from, (BoardUtils.getPieceColor(promoted) == BoardColor.WHITE.value ?
-                    BoardPiece.WHITE_PAWN.value : BoardPiece.BLACK_PAWN.value));
+            addPiece(boardStructure, from,
+                (BoardUtils.getPieceColor(promoted) == BoardColor.WHITE.value ?
+                BoardPiece.WHITE_PAWN.value :
+                BoardPiece.BLACK_PAWN.value));
         }
     }
 
