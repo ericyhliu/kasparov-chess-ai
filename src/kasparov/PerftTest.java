@@ -29,8 +29,8 @@ public class PerftTest {
         MoveList moveList = new MoveList();
         MoveGenerator.generateAllMoves(boardStructure, moveList);
 
-        for (int moveNum = 0; moveNum < moveList.count; moveNum++) {
-            if (!MakeMove.makeMove(boardStructure, moveList.moves[moveNum].getMove()))
+        for (int moveNum = 0; moveNum < moveList.getCount(); moveNum++) {
+            if (!MakeMove.makeMove(boardStructure, moveList.getMove(moveNum).getMove()))
                 continue;
             perft(boardStructure, depth-1);
             MakeMove.takeMove(boardStructure);
@@ -52,8 +52,8 @@ public class PerftTest {
         MoveGenerator.generateAllMoves(boardStructure, moveList);
 
         int move;
-        for (int moveNum = 0; moveNum < moveList.count; moveNum++) {
-            move = moveList.moves[moveNum].getMove();
+        for (int moveNum = 0; moveNum < moveList.getCount(); moveNum++) {
+            move = moveList.getMove(moveNum).getMove();
             if (!MakeMove.makeMove(boardStructure, move))
                 continue;
             long cumNodes = leafNodes;

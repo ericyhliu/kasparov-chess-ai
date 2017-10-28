@@ -5,8 +5,8 @@ package kasparov;
  */
 public class MoveList {
 
-    Move[] moves;
-    int count;
+    private Move[] moves;
+    private int count;
 
     /**
      * Initializes a MoveList.
@@ -66,10 +66,20 @@ public class MoveList {
      * Return the Move at the specified index.
      *
      * @param i
-     * @return
+     * @return Move at index i
      */
     protected Move getMove(int i) {
         return moves[i];
+    }
+
+    /**
+     * Sets the Move at the specified index.
+     *
+     * @param move
+     * @param i
+     */
+    protected void setMove(Move move, int i) {
+        moves[i] = move;
     }
 
     /**

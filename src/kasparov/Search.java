@@ -142,11 +142,11 @@ public class Search {
         score = -INF;
         int pvMove = PVTable.probePVTable(boardStructure);
 
-        for (moveNum = 0; moveNum < moveList.count; moveNum++) {
+        for (moveNum = 0; moveNum < moveList.getCount(); moveNum++) {
 
             pickNextMove(moveList, moveNum);
 
-            if (!MakeMove.makeMove(boardStructure, moveList.moves[moveNum].getMove()))
+            if (!MakeMove.makeMove(boardStructure, moveList.getMove(moveNum).getMove()))
                 continue;
 
             legal++;
@@ -167,7 +167,7 @@ public class Search {
                     return beta;
                 }
                 alpha = score;
-                bestMove = moveList.moves[moveNum].getMove();
+                bestMove = moveList.getMove(moveNum).getMove();
             }
         }
 
@@ -216,19 +216,19 @@ public class Search {
         int pvMove = PVTable.probePVTable(boardStructure);
 
         if (pvMove != BoardUtils.NO_MOVE) {
-            for (int moveNum = 0; moveNum < moveList.count; moveNum++) {
-                if (moveList.moves[moveNum].getMove() == pvMove) {
-                    moveList.moves[moveNum].setScore(2000000);
+            for (int moveNum = 0; moveNum < moveList.getCount(); moveNum++) {
+                if (moveList.getMove(moveNum).getMove() == pvMove) {
+                    moveList.getMove(moveNum).setScore(2000000);
                     break;
                 }
             }
         }
 
-        for (int moveNum = 0; moveNum < moveList.count; moveNum++) {
+        for (int moveNum = 0; moveNum < moveList.getCount(); moveNum++) {
 
             pickNextMove(moveList, moveNum);
 
-            if (!MakeMove.makeMove(boardStructure, moveList.moves[moveNum].getMove()))
+            if (!MakeMove.makeMove(boardStructure, moveList.getMove(moveNum).getMove()))
                 continue;
 
             legal++;
@@ -247,19 +247,19 @@ public class Search {
                     searchEntry.setFailHigh(searchEntry.getFailHigh()+1);
 
 
-                    if ((moveList.moves[moveNum].getMove() & MoveUtils.MOVE_FLAG_CAPTURE) == 0) {
+                    if ((moveList.getMove(moveNum).getMove() & MoveUtils.MOVE_FLAG_CAPTURE) == 0) {
                         boardStructure.setSearchKillerEntry(boardStructure.getSearchKillersEntry(0,
                                 boardStructure.getPly()), 1, boardStructure.getPly());
-                        boardStructure.setSearchKillerEntry(moveList.moves[moveNum].getMove(), 0,
+                        boardStructure.setSearchKillerEntry(moveList.getMove(moveNum).getMove(), 0,
                                 boardStructure.getPly());
                     }
 
                     return beta;
                 }
                 alpha = score;
-                bestMove = moveList.moves[moveNum].getMove();
+                bestMove = moveList.getMove(moveNum).getMove();
 
-                if ((moveList.moves[moveNum].getMove() & MoveUtils.MOVE_FLAG_CAPTURE) == 0) {
+                if ((moveList.getMove(moveNum).getMove() & MoveUtils.MOVE_FLAG_CAPTURE) == 0) {
                     boardStructure.setSearchHistoryEntry(boardStructure
                             .getSearchHistoryEntry(boardStructure
                                     .getPiece(MoveUtils.from(bestMove)),
@@ -296,16 +296,17 @@ public class Search {
         int bestScore = 0;
         int bestNum = moveNum;
 
-        for (int i = moveNum; i < moveList.count; i++) {
-            if (moveList.moves[i].getScore() > bestScore) {
-                bestScore = moveList.moves[i].getScore();
+        for (int i = moveNum; i < moveList.getCount(); i++) {
+            if (moveList.getMove(i).getScore() > bestScore) {
+                bestScore = moveList.getMove(i).getScore();
                 bestNum = i;
             }
         }
 
-        temp = moveList.moves[moveNum];
-        moveList.moves[moveNum] = moveList.moves[bestNum];
-        moveList.moves[bestNum] = temp;
+        temp = moveList.getMove(moveNum);
+
+        moveList.setMove(moveList.getMove(bestNum), moveNum);
+        moveList.setMove(temp, bestNum);
     }
 
 }

@@ -86,8 +86,8 @@ public class MoveUtils {
         MoveGenerator.generateAllMoves(boardStructure, moveList);
         int move, promotedPiece;
 
-        for (int i = 0; i < moveList.count; i++) {
-            move = moveList.moves[i].getMove();
+        for (int i = 0; i < moveList.getCount(); i++) {
+            move = moveList.getMove(i).getMove();
             if (from(move) == from && to(move) == to) {
                 promotedPiece = promoted(move);
                 if (promotedPiece != BoardPiece.EMPTY.value) {

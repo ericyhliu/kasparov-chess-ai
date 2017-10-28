@@ -113,11 +113,11 @@ class MoveGenerator {
                                         int move) {
         MoveList moveList = new MoveList();
         MoveGenerator.generateAllMoves(boardStructure, moveList);
-        for (int moveNum = 0; moveNum < moveList.count; moveNum++) {
-            if (!MakeMove.makeMove(boardStructure, moveList.moves[moveNum].getMove()))
+        for (int moveNum = 0; moveNum < moveList.getCount(); moveNum++) {
+            if (!MakeMove.makeMove(boardStructure, moveList.getMove(moveNum).getMove()))
                 continue;
             MakeMove.takeMove(boardStructure);
-            if (moveList.moves[moveNum].getMove() == move)
+            if (moveList.getMove(moveNum).getMove() == move)
                 return true;
         }
         return false;
@@ -146,19 +146,20 @@ class MoveGenerator {
      */
     protected static void addQuietMove(BoardStructure boardStructure,
                                        int move, MoveList moveList) {
-        moveList.moves[moveList.count] = new Move();
-        moveList.moves[moveList.count].setMove(move);
+
+        moveList.setMove(new Move(), moveList.getCount());
+        moveList.getMove(moveList.getCount()).setMove(move);
 
         if (boardStructure.getSearchKillersEntry(0, boardStructure.getPly()) == move)
-            moveList.moves[moveList.count].setScore(900000);
+            moveList.getMove(moveList.getCount()).setScore(900000);
         else if (boardStructure.getSearchKillersEntry(1, boardStructure.getPly()) == move)
-            moveList.moves[moveList.count].setScore(800000);
+            moveList.getMove(moveList.getCount()).setScore(800000);
         else {
-            moveList.moves[moveList.count].setScore(boardStructure
+            moveList.getMove(moveList.getCount()).setScore(boardStructure
                     .getSearchHistoryEntry(boardStructure
                     .getPiece(MoveUtils.from(move)), MoveUtils.to(move)));
         }
-        moveList.count++;
+        moveList.setCount(moveList.getCount() + 1);
     }
 
     /**
@@ -170,11 +171,11 @@ class MoveGenerator {
      */
     protected static void addCaptureMove(BoardStructure boardStructure, int move,
                                          MoveList moveList) {
-        moveList.moves[moveList.count] = new Move();
-        moveList.moves[moveList.count].setMove(move);
-        moveList.moves[moveList.count].setScore(mvvLva[MoveUtils.captured(move)]
+        moveList.setMove(new Move(), moveList.getCount());
+        moveList.getMove(moveList.getCount()).setMove(move);
+        moveList.getMove(moveList.getCount()).setScore(mvvLva[MoveUtils.captured(move)]
                 [boardStructure.getPiece(MoveUtils.from(move))] + 1000000);
-        moveList.count++;
+        moveList.setCount(moveList.getCount() + 1);
     }
 
     /**
@@ -186,10 +187,10 @@ class MoveGenerator {
      */
     protected static void addEnPassantMove(BoardStructure boardStructure, int move,
                                            MoveList moveList) {
-        moveList.moves[moveList.count] = new Move();
-        moveList.moves[moveList.count].setMove(move);
-        moveList.moves[moveList.count].setScore(105 + 1000000);
-        moveList.count++;
+        moveList.setMove(new Move(), moveList.getCount());
+        moveList.getMove(moveList.getCount()).setMove(move);
+        moveList.getMove(moveList.getCount()).setScore(105 + 1000000);
+        moveList.setCount(moveList.getCount() + 1);
     }
 
     /**
