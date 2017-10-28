@@ -467,7 +467,7 @@ public class BoardUtils {
      * @return true if the file is valid, false otherwise
      */
     protected static boolean isFileValid(int file) {
-        return file >= 0 && file <= 7;
+        return file >= BoardFile.FILE_A.value && file <= BoardFile.FILE_NONE.value;
     }
 
     /**
@@ -477,7 +477,7 @@ public class BoardUtils {
      * @return true if the rank is valid, false otherwise
      */
     protected static boolean isRankValid(int rank) {
-        return rank >= 0 && rank <= 7;
+        return rank >= BoardRank.RANK_1.value && rank <= BoardRank.RANK_NONE.value;
     }
 
     /**

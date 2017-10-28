@@ -325,7 +325,7 @@ public class MakeMove {
         int promoted = MoveUtils.promoted(move);
         if (promoted != BoardPiece.EMPTY.value) {
             clearPiece(boardStructure, from);
-            addPiece(boardStructure, from, (BoardUtils.getPieceChar(promoted) == BoardColor.WHITE.value ?
+            addPiece(boardStructure, from, (BoardUtils.getPieceColor(promoted) == BoardColor.WHITE.value ?
                     BoardPiece.WHITE_PAWN.value : BoardPiece.BLACK_PAWN.value));
         }
     }
