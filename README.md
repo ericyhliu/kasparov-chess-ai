@@ -1,7 +1,7 @@
 # Kasparov Chess AI
 
 This is a project on building a UCI (Universal Chess Interface) compatible
-chess engine, 
+chess engine.
 
 ## Table of Contents
 

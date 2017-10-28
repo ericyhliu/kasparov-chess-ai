@@ -2,4 +2,6 @@
 out
 *.iml
 *.log
-src/META-INF
+*.jar
+src/test
+src/main/resources
