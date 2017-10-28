@@ -1,7 +1,7 @@
 # Kasparov Chess AI
 
-This is a project on building a UCI (Universal Chess Interface) compatible
-chess engine.
+This project is a UCI ([Universal Chess Interface](http://wbec-ridderkerk.nl/html/UCIProtocol.html))
+compatible chess engine built in Java. 
 
 ## Table of Contents
 
@@ -13,9 +13,11 @@ chess engine.
     - Perft Testing
 - Search and Move Ordering
     - PV Table (Principal Variation Table)
+    - Most Valuable Victim Least Valuable Attacker (MVVLVA)
     - Iterative Deepening
     - Alpha-beta Pruning
     - Quiescence Search
 - Misc
     - UCI (Universal Chess Interface)
     - Future Improvements
+
