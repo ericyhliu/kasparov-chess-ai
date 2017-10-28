@@ -5,3 +5,4 @@ out
 *.jar
 src/test
 src/main/resources
+target
