@@ -6,3 +6,6 @@ out
 src/test
 src/main/resources
 target
+.classpath
+.project
+.settings
