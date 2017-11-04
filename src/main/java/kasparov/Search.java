@@ -14,7 +14,7 @@ public class Search {
      * Checks if a position has been repeated.
      *
      * @param boardStructure
-     * @return
+     * @return true if the position has been repeated, false otherwise
      */
     protected static boolean isRepetition(BoardStructure boardStructure) {
         for (int i = boardStructure.getHistoryPly() - boardStructure.getFiftyMove();
@@ -135,15 +135,13 @@ public class Search {
         MoveList moveList = new MoveList();
         MoveGenerator.generateAllCaptureMoves(boardStructure, moveList);
 
-        int moveNum = 0;
         int legal = 0;
         int oldAlpha = alpha;
         int bestMove = BoardUtils.NO_MOVE;
         score = -INF;
         int pvMove = PVTable.probePVTable(boardStructure);
 
-        for (moveNum = 0; moveNum < moveList.getCount(); moveNum++) {
-
+        for (int moveNum = 0; moveNum < moveList.getCount(); moveNum++) {
             pickNextMove(moveList, moveNum);
 
             if (!MakeMove.makeMove(boardStructure, moveList.getMove(moveNum).getMove()))
