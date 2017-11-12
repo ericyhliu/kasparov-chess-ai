@@ -5,7 +5,7 @@ package kasparov;
  *
  * @author Eric Liu
  */
-class MoveGenerator {
+public class MoveGenerator {
 
     /**
      * Array of slider pieces.
